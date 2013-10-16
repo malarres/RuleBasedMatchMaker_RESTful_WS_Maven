@@ -1,0 +1,93 @@
+package com.certh.iti.cloud4all.restful;
+
+import com.certh.iti.cloud4all.inference.RulesManager;
+import com.certh.iti.cloud4all.instantiation.InstantiationManager;
+import com.certh.iti.cloud4all.ontology.OntologyManager;
+import com.certh.iti.cloud4all.prevayler.PrevaylerManager;
+import java.nio.charset.Charset;
+import java.util.Scanner;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Response;
+import sun.nio.cs.StandardCharsets;
+
+
+
+@Path("/RBMM")
+public class RBMM_WebService
+{
+    private static String str_piece(String str, char separator, int index) {
+        String str_result = "";
+        int count = 0;
+        for(int i = 0; i < str.length(); i++) {
+            if(str.charAt(i) == separator) {
+                count++;
+                if(count == index) {
+                    break;
+                }
+            }
+            else {
+                if(count == index-1) {
+                    str_result += str.charAt(i);
+                }
+            }
+        }
+        return str_result;
+    }
+    
+    private void parseUserProfile(String tmpUser)
+    {
+        String fontSize = str_piece(tmpUser, '|', 1);
+        String magnification = str_piece(tmpUser, '|', 2);
+        String foregroundColor = str_piece(tmpUser, '|', 3);
+        String backgroundColor = str_piece(tmpUser, '|', 4);
+        String highContrast = str_piece(tmpUser, '|', 5);
+        String magnifierFullScreen = str_piece(tmpUser, '|', 6);
+        String specificPreferencesForSolutions_IDs = str_piece(tmpUser, '|', 7);
+        
+        OntologyManager.getInstance(); //initialization
+        
+        InstantiationManager.getInstance().USER_fontSize = Integer.parseInt(fontSize);
+        InstantiationManager.getInstance().USER_magnification = Double.parseDouble(magnification);
+        InstantiationManager.getInstance().USER_foregroundColor = foregroundColor;
+        InstantiationManager.getInstance().USER_backgroundColor = backgroundColor;
+        InstantiationManager.getInstance().USER_highContrast = Boolean.parseBoolean(highContrast);
+        InstantiationManager.getInstance().USER_magnifierFullScreen = Boolean.parseBoolean(magnifierFullScreen);
+        InstantiationManager.getInstance().USER_SpecificPreferencesForSolutions_IDs = specificPreferencesForSolutions_IDs;
+    }
+    
+    private void parseEnvironment(String tmpEnvironment)
+    {
+        String os_id = str_piece(tmpEnvironment, '|', 1);
+        String os_version = str_piece(tmpEnvironment, '|', 2);
+        String installed_solutions_ids = str_piece(tmpEnvironment, '|', 3);
+        String available_solutions_ids = str_piece(tmpEnvironment, '|', 4);
+    
+        InstantiationManager.getInstance().DEVICE_REPORTER_OS_id = os_id;
+        if(os_version.startsWith("6.1"))
+            os_version = "6.1";
+        InstantiationManager.getInstance().DEVICE_REPORTER_OS_version = os_version;
+        InstantiationManager.getInstance().DEVICE_REPORTER_INSTALLEDSOLUTIONS_IDs = installed_solutions_ids;
+        InstantiationManager.getInstance().DEVICE_REPORTER_AVAILABLESOLUTIONS_IDs = available_solutions_ids;
+    }
+    
+    @GET
+    @Path("/runRules/{tmpUser}/{tmpEnvironment}")
+    public Response getAllUsers(@PathParam("tmpUser") String tempUser, @PathParam("tmpEnvironment") String tempEnvironment)
+    {
+        PrevaylerManager.getInstance().debug = "";
+        
+        parseUserProfile(tempUser);
+        parseEnvironment(tempEnvironment);
+        
+        InstantiationManager.getInstance().createInstanceInOntologyForJSONUserPreferencesSet();
+        InstantiationManager.getInstance().createInstanceInOntologyForJSONEnvironment();
+
+        String finalUserPrefs = RulesManager.getInstance().executeMyCloudRulesForFindingHandicapSituations(false);
+        if(PrevaylerManager.getInstance().SHOW_DEBUG_INFO)
+            finalUserPrefs = finalUserPrefs + "- DEBUG: " + PrevaylerManager.getInstance().debug;
+
+        return Response.status(200).entity(finalUserPrefs).build();
+    }
+}
