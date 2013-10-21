@@ -2,6 +2,7 @@ package com.certh.iti.cloud4all.restful;
 
 import com.certh.iti.cloud4all.inference.RulesManager;
 import com.certh.iti.cloud4all.instantiation.InstantiationManager;
+import com.certh.iti.cloud4all.ontology.CommonPref;
 import com.certh.iti.cloud4all.ontology.OntologyManager;
 import com.certh.iti.cloud4all.prevayler.PrevaylerManager;
 import java.nio.charset.Charset;
@@ -45,6 +46,7 @@ public class RBMM_WebService
         String highContrast = str_piece(tmpUser, '|', 5);
         String magnifierFullScreen = str_piece(tmpUser, '|', 6);
         String specificPreferencesForSolutions_IDs = str_piece(tmpUser, '|', 7);
+        String commonTermsAndValues_oneString = str_piece(tmpUser, '|', 8);
         
         OntologyManager.getInstance(); //initialization
         
@@ -55,6 +57,17 @@ public class RBMM_WebService
         InstantiationManager.getInstance().USER_highContrast = Boolean.parseBoolean(highContrast);
         InstantiationManager.getInstance().USER_magnifierFullScreen = Boolean.parseBoolean(magnifierFullScreen);
         InstantiationManager.getInstance().USER_SpecificPreferencesForSolutions_IDs = specificPreferencesForSolutions_IDs;
+        String[] commonTermsAndValues = commonTermsAndValues_oneString.split("\\*");
+        for(int i=0; i<commonTermsAndValues.length; i=i+2)
+        {
+            if((i+1) ==  commonTermsAndValues.length)
+                break;
+            CommonPref tmpCommonPref = new CommonPref();
+            tmpCommonPref.commonTermID = commonTermsAndValues[i];
+            tmpCommonPref.value = commonTermsAndValues[i+1];
+            InstantiationManager.getInstance().USER_CommonTermsIDs.add(tmpCommonPref);
+            //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "[" + tmpCommonPref.toString() + "]";
+        }
     }
     
     private void parseEnvironment(String tmpEnvironment)

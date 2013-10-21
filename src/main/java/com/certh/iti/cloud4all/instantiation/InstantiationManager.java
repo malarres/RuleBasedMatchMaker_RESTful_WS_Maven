@@ -1,5 +1,6 @@
 package com.certh.iti.cloud4all.instantiation;
 
+import com.certh.iti.cloud4all.ontology.CommonPref;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.Individual;
@@ -24,6 +25,7 @@ public class InstantiationManager
     public boolean USER_highContrast;
     public boolean USER_magnifierFullScreen;
     public String USER_SpecificPreferencesForSolutions_IDs;
+    public ArrayList<CommonPref> USER_CommonTermsIDs;
     
     public String DEVICE_REPORTER_OS_id;
     public String DEVICE_REPORTER_OS_version;
@@ -65,6 +67,7 @@ public class InstantiationManager
         USER_highContrast = false;
         USER_magnifierFullScreen = false;
         USER_SpecificPreferencesForSolutions_IDs = "";
+        USER_CommonTermsIDs = new ArrayList<CommonPref>();
 
         DEVICE_REPORTER_OS_id = "";
         DEVICE_REPORTER_OS_version = "";
@@ -115,6 +118,7 @@ public class InstantiationManager
         preferredSolutionStats.clear();
         installedSolutionsIDsStats.clear();
         availableSolutionsIDsStats.clear();
+        USER_CommonTermsIDs.clear();
     }
     
     public String createInstanceInOntologyForJSONUserPreferencesSet()

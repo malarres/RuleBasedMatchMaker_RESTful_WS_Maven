@@ -1,5 +1,7 @@
 package com.certh.iti.cloud4all.ontology;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author nkak
@@ -22,6 +24,7 @@ public class Solution
     //String runsOnPlatform;
     //String hasCostCurrency;
     //String hasSolutionVersion;
+    public ArrayList<AppSpecificSettingRelatedToCommonTerm> appSpecificSettingsRelatedToCommonTerms;
 
     public Solution()
     {
@@ -41,6 +44,7 @@ public class Solution
         //runsOnPlatform = "";
         //hasCostCurrency = "";
         //hasSolutionVersion = "";
+        appSpecificSettingsRelatedToCommonTerms = new ArrayList<AppSpecificSettingRelatedToCommonTerm>();
     }
     
     public Solution(Solution tmpSolution)

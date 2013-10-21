@@ -37,7 +37,7 @@ public class PrevaylerManager
     private PrevaylerManager() throws Exception
     {
         USE_PREVAYLER = false;
-        SHOW_DEBUG_INFO = false;
+        SHOW_DEBUG_INFO = true;
         
         // Create or load existing prevalence layer from journal and/or snapshot.
         if(USE_PREVAYLER)

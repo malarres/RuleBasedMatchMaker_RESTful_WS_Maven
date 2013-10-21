@@ -11,6 +11,7 @@ import com.certh.iti.cloud4all.inference.RulesManager;
 import com.certh.iti.cloud4all.instantiation.InstantiationManager;
 import com.certh.iti.cloud4all.prevayler.OntologyModel;
 import com.certh.iti.cloud4all.prevayler.PrevaylerManager;
+import com.hp.hpl.jena.ontology.ObjectProperty;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -441,6 +442,7 @@ public class OntologyManager implements Serializable
                     }
                 }
             }
+            fillAppSpecificSettingsMappedToCommonTerms();
             
             if(PrevaylerManager.getInstance().USE_PREVAYLER == true)
             {
@@ -481,6 +483,53 @@ public class OntologyManager implements Serializable
             in.close();
         }  catch(Exception ex) {
             Logger.getLogger(OntologyManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void fillAppSpecificSettingsMappedToCommonTerms()
+    {
+        for(int i=0; i<allInstances_Solution.size(); i++)
+        {
+            Solution tmpSolution = allInstances_Solution.get(i);
+            //screenreaders
+            if(getClassFromInstanceName(tmpSolution.instanceName).equals(InstantiationManager.NS + "ScreenReaderSoftware"))    
+            {
+                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n[" + tmpSolution.hasSolutionName + " hasType " + getClassFromInstanceName(tmpSolution.instanceName) + "]";
+                //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[" + tmpSolution.hasSolutionName + " hasSetting " + model.getIndividual(tmpSolution.instanceName).getProperty(model.getProperty(InstantiationManager.NS + "hasSolutionSpecificSettings")).getObject().toString() + "]";
+                
+                //get settings of a screen reader
+                Individual tmpScreenReader = model.getIndividual(model.getIndividual(tmpSolution.instanceName).getProperty(model.getProperty(InstantiationManager.NS + "hasSolutionSpecificSettings")).getObject().toString());
+                StmtIterator propertiesStatements = tmpScreenReader.listProperties();
+                while(propertiesStatements.hasNext())
+                {
+                    Statement tmpPropertyStatement = (Statement)propertiesStatements.next();
+                    if(tmpPropertyStatement.getPredicate().toString().endsWith("isMappedToRegTerm"))
+                    {
+                        String settingPrefix = tmpPropertyStatement.getPredicate().toString().substring(0, tmpPropertyStatement.getPredicate().toString().lastIndexOf("_"));
+                        AppSpecificSettingRelatedToCommonTerm tmpAppSpecificSettingRelatedToCommonTerm = new AppSpecificSettingRelatedToCommonTerm();
+                        tmpAppSpecificSettingRelatedToCommonTerm.appSpecificSettingValue = tmpScreenReader.getPropertyValue(model.getProperty(settingPrefix)).toString();
+                        if(tmpScreenReader.hasProperty(model.getProperty(settingPrefix + "_hasID")))
+                            tmpAppSpecificSettingRelatedToCommonTerm.appSpecificSettingID = tmpScreenReader.getPropertyValue(model.getProperty(settingPrefix + "_hasID")).toString();
+                        else
+                            continue;
+                        Individual tmpCommonTerm = model.getIndividual(tmpPropertyStatement.getObject().toString());
+                        if(tmpCommonTerm != null)
+                        {
+                            if(tmpCommonTerm.hasProperty(model.getProperty(InstantiationManager.NS + "RegistryTerm_hasID")))
+                                tmpAppSpecificSettingRelatedToCommonTerm.mappedCommonTermID = tmpCommonTerm.getPropertyValue(model.getProperty(InstantiationManager.NS + "RegistryTerm_hasID")).toString();
+                            if(tmpCommonTerm.hasProperty(model.getProperty(InstantiationManager.NS + "RegistryTerm_hasType")))
+                                tmpAppSpecificSettingRelatedToCommonTerm.mappedCommonTermTypeStr = tmpCommonTerm.getPropertyValue(model.getProperty(InstantiationManager.NS + "RegistryTerm_hasType")).toString();
+                        }
+                        tmpAppSpecificSettingRelatedToCommonTerm.findType();
+                        tmpAppSpecificSettingRelatedToCommonTerm.removeRDFPrefix();
+                        if(tmpAppSpecificSettingRelatedToCommonTerm.alignmentHasCompatibleTypes())
+                        {
+                            tmpSolution.appSpecificSettingsRelatedToCommonTerms.add(tmpAppSpecificSettingRelatedToCommonTerm);
+                            PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + tmpAppSpecificSettingRelatedToCommonTerm.toString();
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -769,6 +818,12 @@ public class OntologyManager implements Serializable
                 }
             }
         }
+        if(allInstances_TempSolutionsToBeLaunched.size() == 0) //because if rules return NO solution to be launched, the function above will never be called
+        {   
+            TempSolutionsToBeLaunched tmpTempSolutionsToBeLaunched = new TempSolutionsToBeLaunched();
+            tmpTempSolutionsToBeLaunched.IDs = getSolutionsToBeLaunched(RulesManager.GET_FIRST_INSTANCE_BETWEEN_SOLUTIONS_OF_THE_SAME_TYPE);
+            allInstances_TempSolutionsToBeLaunched.add(tmpTempSolutionsToBeLaunched);
+        }
     }
     
     public String getInstanceNameBySolutionID(String tmpID)
@@ -817,6 +872,63 @@ public class OntologyManager implements Serializable
         return res;
     }
     
+    public boolean aSolutionOfThisTypeIsGoingToBeLaunched(String type)
+    {
+        for(int i=0; i<solutionsToBeLaunched.size(); i++)
+        {
+            SolutionToBeLaunched tmpSolutionToBeLaunched = solutionsToBeLaunched.get(i);
+            if(tmpSolutionToBeLaunched.category.equals(type))
+                return true;
+        }
+        return false;
+    }
+    
+    public ArrayList<AppSpecificSettingRelatedToCommonTerm> getAppSpecificSettingRelatedToCommonTerm(String tmpSolutionID)
+    {
+        for(int i=0; i<allInstances_Solution.size(); i++)
+        {
+            Solution tmpSolution = allInstances_Solution.get(i);
+            if(tmpSolution.id.equals(tmpSolutionID))
+                return tmpSolution.appSpecificSettingsRelatedToCommonTerms;
+        }
+        return null;
+    }
+    
+    public String findTheMostSuitableInstalledScreenReaderFromCommonTerms(int preferredSpeechRate)
+    {
+        String screenReaderID = "";
+        int smallestSpeechRateDifference = 1000000000;
+        String[] tmpInstalledSolutionsIDs_Str = InstantiationManager.getInstance().DEVICE_REPORTER_INSTALLEDSOLUTIONS_IDs.split(" ");
+        //examine all installed solutions
+        for(int tmpCnt=0; tmpCnt<tmpInstalledSolutionsIDs_Str.length; tmpCnt++)
+        {
+            String tmpInstalledSolutionID = tmpInstalledSolutionsIDs_Str[tmpCnt];
+            ArrayList<AppSpecificSettingRelatedToCommonTerm> tmpAppSpecificSettingsRelatedToCommonTerms = getAppSpecificSettingRelatedToCommonTerm(tmpInstalledSolutionID);
+            //examine all app-specific settings aligned with common terms
+            if(tmpAppSpecificSettingsRelatedToCommonTerms != null)
+            {
+                for(int j=0; j<tmpAppSpecificSettingsRelatedToCommonTerms.size(); j++)
+                {
+                    AppSpecificSettingRelatedToCommonTerm tmpAppSpecificSettingRelatedToCommonTerm = tmpAppSpecificSettingsRelatedToCommonTerms.get(j);
+                    //get app-specific terms aligned to speechRate common term
+                    if(tmpAppSpecificSettingRelatedToCommonTerm.mappedCommonTermID.equals("display.screenReader.speechRate"))
+                    {
+                        int tmpDiff = preferredSpeechRate - Integer.parseInt(tmpAppSpecificSettingRelatedToCommonTerm.appSpecificSettingValue);
+                        if(tmpDiff < 0)
+                            tmpDiff = (-1)*tmpDiff;
+                        if(smallestSpeechRateDifference > tmpDiff)
+                        {
+                            smallestSpeechRateDifference = tmpDiff;
+                            screenReaderID = tmpInstalledSolutionID;
+                        }
+                    }
+                }
+            }
+        }
+        PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[SELECTED SCREENREADER: " + screenReaderID + ", speechRateDiff: " + Integer.toString(smallestSpeechRateDifference) + "]";
+        return screenReaderID;
+    }
+    
     public String getSolutionsToBeLaunched(int mode)
     {
         String res = "";
@@ -845,6 +957,25 @@ public class OntologyManager implements Serializable
                 SolutionToBeLaunched tmpSolutionToBeLaunched = finalSolutionsToBeLaunched.get(i);
                 res = res + tmpSolutionToBeLaunched.ID + " ";
             }
+            
+            //if no screen reader is going to be launched, which means that we have no app-specific preferences for a screen reader,
+            //examine common terms (Note: app-specific terms have priority against common terms)
+            String mostSuitableScreenReader_ID = "";
+            if(aSolutionOfThisTypeIsGoingToBeLaunched(InstantiationManager.NS+"ScreenReaderSoftware") == false)
+            {
+                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n\n\n\n[Trying to find the most suitable screen reader]";
+                for(int tmpComPrefCnt=0; tmpComPrefCnt<InstantiationManager.getInstance().USER_CommonTermsIDs.size(); tmpComPrefCnt++)
+                {
+                    CommonPref tmpCommonPref = InstantiationManager.getInstance().USER_CommonTermsIDs.get(tmpComPrefCnt);
+                    //user has common preferences for speech rate -> he wants a screen reader
+                    if(tmpCommonPref.commonTermID.equals("display.screenReader.speechRate"))
+                        mostSuitableScreenReader_ID = findTheMostSuitableInstalledScreenReaderFromCommonTerms(Integer.parseInt(tmpCommonPref.value));
+                }
+            }  
+            else
+                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n\n\n\n[A screen reader has been selected from app-specific preferences]";
+            
+            res = res + mostSuitableScreenReader_ID;
         }
         else if(mode == RulesManager.GET_RANDOM_INSTANCE_BEWTWEEN_SOLUTIONS_OF_THE_SAME_TYPE)
         {
