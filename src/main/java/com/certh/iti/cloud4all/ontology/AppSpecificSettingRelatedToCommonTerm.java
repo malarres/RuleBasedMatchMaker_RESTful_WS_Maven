@@ -1,5 +1,7 @@
 package com.certh.iti.cloud4all.ontology;
 
+import com.certh.iti.cloud4all.prevayler.PrevaylerManager;
+
 /**
  *
  * @author nkak
@@ -30,30 +32,35 @@ public class AppSpecificSettingRelatedToCommonTerm
     
     public void findType()
     {
-        if(appSpecificSettingValue.endsWith("^^http://www.w3.org/2001/XMLSchema#string"))
+        if(appSpecificSettingValue.trim().toLowerCase().endsWith("^^http://www.w3.org/2001/xmlschema#string"))
             appSpecificSettingType = STRING;
-        else if(appSpecificSettingValue.endsWith("^^http://www.w3.org/2001/XMLSchema#int"))
+        else if(appSpecificSettingValue.trim().toLowerCase().endsWith("^^http://www.w3.org/2001/xmlschema#int"))
             appSpecificSettingType = INTEGER;
-        else if(appSpecificSettingValue.endsWith("^^http://www.w3.org/2001/XMLSchema#float"))
+        else if(appSpecificSettingValue.trim().toLowerCase().endsWith("^^http://www.w3.org/2001/xmlschema#float"))
             appSpecificSettingType = FLOAT;
-        else if(appSpecificSettingValue.endsWith("^^http://www.w3.org/2001/XMLSchema#boolean"))
+        else if(appSpecificSettingValue.trim().toLowerCase().endsWith("^^http://www.w3.org/2001/xmlschema#boolean"))
             appSpecificSettingType = BOOLEAN;
         
-        if(mappedCommonTermTypeStr.toLowerCase().startsWith("string"))
+        if(mappedCommonTermTypeStr.trim().toLowerCase().startsWith("string"))
             mappedCommonTermType = STRING;
-        else if(mappedCommonTermTypeStr.toLowerCase().startsWith("integer"))
+        else if(mappedCommonTermTypeStr.trim().toLowerCase().startsWith("integer"))
             mappedCommonTermType = INTEGER;
-        else if(mappedCommonTermTypeStr.toLowerCase().startsWith("float"))
+        else if(mappedCommonTermTypeStr.trim().toLowerCase().startsWith("float"))
             mappedCommonTermType = FLOAT;
-        else if(mappedCommonTermTypeStr.toLowerCase().startsWith("boolean"))
+        else if(mappedCommonTermTypeStr.trim().toLowerCase().startsWith("boolean"))
             mappedCommonTermType = BOOLEAN;
     }
     
     public void removeRDFPrefix()
     {
-        appSpecificSettingID = appSpecificSettingID.substring(0, appSpecificSettingID.indexOf("^^http://"));
-        appSpecificSettingValue = appSpecificSettingValue.substring(0, appSpecificSettingValue.indexOf("^^http://"));
-        mappedCommonTermID = mappedCommonTermID.substring(0, mappedCommonTermID.indexOf("^^http://"));
+        if(appSpecificSettingID.indexOf("^^http://") != -1)
+            appSpecificSettingID = appSpecificSettingID.substring(0, appSpecificSettingID.indexOf("^^http://"));
+        else
+            
+        if(appSpecificSettingValue.indexOf("^^http://") != -1)
+            appSpecificSettingValue = appSpecificSettingValue.substring(0, appSpecificSettingValue.indexOf("^^http://"));
+        if(mappedCommonTermID.indexOf("^^http://") != -1)
+            mappedCommonTermID = mappedCommonTermID.substring(0, mappedCommonTermID.indexOf("^^http://"));
         mappedCommonTermTypeStr = "";
     }
     
@@ -86,7 +93,17 @@ public class AppSpecificSettingRelatedToCommonTerm
             commonTermTypeStr = "float";
         else if(mappedCommonTermType == BOOLEAN)
             commonTermTypeStr = "boolean";
-        res = "\n    [ID:" + appSpecificSettingID + " TYPE:" + typeStr + " DEFAULT_VALUE:" + appSpecificSettingValue + " mappedTo " + mappedCommonTermID + " TYPE:" + commonTermTypeStr + "]";
+        
+        
+        if(mappedCommonTermID.equals("display.screenReader.-provisional-speakTutorialMessages")
+            || mappedCommonTermID.equals("display.screenReader.-provisional-keyEcho")
+            || mappedCommonTermID.equals("display.screenReader.-provisional-wordEcho")
+            || mappedCommonTermID.equals("display.screenReader.-provisional-announceCapitals")
+            || mappedCommonTermID.equals("display.screenReader.-provisional-screenReaderBrailleOutput")
+            || mappedCommonTermID.equals("display.screenReader.-provisional-screenReaderTTSEnabled") )
+            res = "\n    [INTERESTING :) -> ID:" + appSpecificSettingID + " TYPE:" + typeStr + " DEFAULT_VALUE:" + appSpecificSettingValue + " mappedTo " + mappedCommonTermID + " TYPE:" + commonTermTypeStr + "]";
+        else
+            res = "\n    [ID:" + appSpecificSettingID + " TYPE:" + typeStr + " DEFAULT_VALUE:" + appSpecificSettingValue + " mappedTo " + mappedCommonTermID + " TYPE:" + commonTermTypeStr + "]";
         return res;
     }
 }

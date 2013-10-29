@@ -66,7 +66,7 @@ public class RBMM_WebService
             tmpCommonPref.commonTermID = commonTermsAndValues[i];
             tmpCommonPref.value = commonTermsAndValues[i+1];
             InstantiationManager.getInstance().USER_CommonTermsIDs.add(tmpCommonPref);
-            //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "[" + tmpCommonPref.toString() + "]";
+            PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[Common Term -> " + tmpCommonPref.toString() + "]";
         }
     }
     

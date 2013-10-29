@@ -522,11 +522,11 @@ public class OntologyManager implements Serializable
                         }
                         tmpAppSpecificSettingRelatedToCommonTerm.findType();
                         tmpAppSpecificSettingRelatedToCommonTerm.removeRDFPrefix();
-                        if(tmpAppSpecificSettingRelatedToCommonTerm.alignmentHasCompatibleTypes())
-                        {
+                        //if(tmpAppSpecificSettingRelatedToCommonTerm.alignmentHasCompatibleTypes())
+                        //{
                             tmpSolution.appSpecificSettingsRelatedToCommonTerms.add(tmpAppSpecificSettingRelatedToCommonTerm);
                             PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + tmpAppSpecificSettingRelatedToCommonTerm.toString();
-                        }
+                        //}
                     }
                 }
             }
@@ -868,7 +868,10 @@ public class OntologyManager implements Serializable
     {
         String res = "";
         Individual tmpIndividual = model.getIndividual(tmpInstanceName);
-        res = tmpIndividual.getRDFType(true).toString();
+        if(tmpIndividual!=null && tmpIndividual.getRDFType(true)!=null)
+            res = tmpIndividual.getRDFType(true).toString();
+        else
+            PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n[EXCEPTION! - getClassFromInstanceName(" + tmpInstanceName + ")]\n\n";
         return res;
     }
     
@@ -894,7 +897,7 @@ public class OntologyManager implements Serializable
         return null;
     }
     
-    public String findTheMostSuitableInstalledScreenReaderFromCommonTerms(int preferredSpeechRate)
+    public String findTheMostSuitableInstalledScreenReaderFromCommonSpeechRate(int preferredSpeechRate)
     {
         String screenReaderID = "";
         int smallestSpeechRateDifference = 1000000000;
@@ -925,7 +928,70 @@ public class OntologyManager implements Serializable
                 }
             }
         }
-        PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[SELECTED SCREENREADER: " + screenReaderID + ", speechRateDiff: " + Integer.toString(smallestSpeechRateDifference) + "]";
+        PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[SELECTED SCREENREADER: " + screenReaderID + ", speechRateDiff: " + Integer.toString(smallestSpeechRateDifference) + "]\n\n\n";
+        return screenReaderID;
+    }
+    
+    public boolean preferredCommonTermForScreenReadersIsSupportedBySolution(ArrayList<AppSpecificSettingRelatedToCommonTerm> tempAppSpecificSettingsRelatedToCommonTerms, String tempCommonTermID)
+    {
+        if(tempAppSpecificSettingsRelatedToCommonTerms != null)
+        {
+            for(int i=0; i<tempAppSpecificSettingsRelatedToCommonTerms.size(); i++)
+            {
+                AppSpecificSettingRelatedToCommonTerm tmpAppSpecificSettingRelatedToCommonTerm = tempAppSpecificSettingsRelatedToCommonTerms.get(i);
+                if(tmpAppSpecificSettingRelatedToCommonTerm.mappedCommonTermID.equals(tempCommonTermID))
+                    return true;
+            }
+        }
+        return false;
+    }
+    
+    public String findTheMostSuitableInstalledScreenReaderFromBooleanCommonPrefs()
+    {
+        String screenReaderID = "";
+        int maxNumberOfBooleanCommonTermsForScreenReadersSupported = 0;
+        String[] tmpInstalledSolutionsIDs_Str = InstantiationManager.getInstance().DEVICE_REPORTER_INSTALLEDSOLUTIONS_IDs.split(" ");
+        //examine all installed solutions
+        for(int tmpCnt=0; tmpCnt<tmpInstalledSolutionsIDs_Str.length; tmpCnt++)
+        {
+            int numberOfBooleanCommonTermsForScreenReadersSupported = 0;
+            String tmpInstalledSolutionID = tmpInstalledSolutionsIDs_Str[tmpCnt];
+            String tmpInstalledSolutionInstanceName = getInstanceNameBySolutionID(tmpInstalledSolutionID);
+            String tmpInstalledSolutionType = getClassFromInstanceName(tmpInstalledSolutionInstanceName);
+            if(tmpInstalledSolutionType.equals(InstantiationManager.NS + "ScreenReaderSoftware"))
+            {
+                ArrayList<AppSpecificSettingRelatedToCommonTerm> tmpAppSpecificSettingsRelatedToCommonTerms = getAppSpecificSettingRelatedToCommonTerm(tmpInstalledSolutionID);
+                
+                for(int k=0; k<InstantiationManager.getInstance().USER_CommonTermsIDs.size(); k++)
+                {
+                    CommonPref tmpCommonPref = InstantiationManager.getInstance().USER_CommonTermsIDs.get(k);
+                    //examine only boolean common preferences related to screen readers
+                    //reference: https://docs.google.com/spreadsheet/ccc?key=0AppduB_JZh5EdGltZnF3dVpKdXcxSVhEZ0VjZGY1U3c&usp=drive_web#gid=0
+                    if(tmpCommonPref.commonTermID.equals("display.screenReader.-provisional-speakTutorialMessages")
+                            || tmpCommonPref.commonTermID.equals("display.screenReader.-provisional-keyEcho")
+                            || tmpCommonPref.commonTermID.equals("display.screenReader.-provisional-wordEcho")
+                            || tmpCommonPref.commonTermID.equals("display.screenReader.-provisional-announceCapitals")
+                            || tmpCommonPref.commonTermID.equals("display.screenReader.-provisional-screenReaderBrailleOutput")
+                            || tmpCommonPref.commonTermID.equals("display.screenReader.-provisional-screenReaderTTSEnabled") )
+                    {
+                        if(preferredCommonTermForScreenReadersIsSupportedBySolution(tmpAppSpecificSettingsRelatedToCommonTerms, tmpCommonPref.commonTermID))
+                        {
+                            numberOfBooleanCommonTermsForScreenReadersSupported++;
+                            PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[" + tmpInstalledSolutionID + " SUPPORTS " + tmpCommonPref.commonTermID;
+                        }
+                    }
+                }
+                
+                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n  [" + tmpInstalledSolutionID + " supports " + Integer.toString(numberOfBooleanCommonTermsForScreenReadersSupported) + " boolean common prefs related to screen readers]";
+                
+                if(maxNumberOfBooleanCommonTermsForScreenReadersSupported < numberOfBooleanCommonTermsForScreenReadersSupported)
+                {
+                    maxNumberOfBooleanCommonTermsForScreenReadersSupported = numberOfBooleanCommonTermsForScreenReadersSupported;
+                    screenReaderID = tmpInstalledSolutionID;
+                }
+            }
+        }
+        PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[SELECTED SCREENREADER: " + screenReaderID + ", NumberOfBooleanPrefsForScreenReadersSupported: " + Integer.toString(maxNumberOfBooleanCommonTermsForScreenReadersSupported) + "]\n\n\n";
         return screenReaderID;
     }
     
@@ -964,16 +1030,19 @@ public class OntologyManager implements Serializable
             if(aSolutionOfThisTypeIsGoingToBeLaunched(InstantiationManager.NS+"ScreenReaderSoftware") == false)
             {
                 PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n\n\n\n[Trying to find the most suitable screen reader]";
-                for(int tmpComPrefCnt=0; tmpComPrefCnt<InstantiationManager.getInstance().USER_CommonTermsIDs.size(); tmpComPrefCnt++)
+                // according to speech rate...
+                /* for(int tmpComPrefCnt=0; tmpComPrefCnt<InstantiationManager.getInstance().USER_CommonTermsIDs.size(); tmpComPrefCnt++)
                 {
                     CommonPref tmpCommonPref = InstantiationManager.getInstance().USER_CommonTermsIDs.get(tmpComPrefCnt);
                     //user has common preferences for speech rate -> he wants a screen reader
                     if(tmpCommonPref.commonTermID.equals("display.screenReader.speechRate"))
-                        mostSuitableScreenReader_ID = findTheMostSuitableInstalledScreenReaderFromCommonTerms(Integer.parseInt(tmpCommonPref.value));
-                }
+                        mostSuitableScreenReader_ID = findTheMostSuitableInstalledScreenReaderFromCommonSpeechRate(Integer.parseInt(tmpCommonPref.value));
+                }*/
+                // according to boolean common prefs for screen readers
+                mostSuitableScreenReader_ID = findTheMostSuitableInstalledScreenReaderFromBooleanCommonPrefs();
             }  
             else
-                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n\n\n\n[A screen reader has been selected from app-specific preferences]";
+                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n\n\n\n[A screen reader has been selected from app-specific preferences]\n\n\n";
             
             res = res + mostSuitableScreenReader_ID;
         }
