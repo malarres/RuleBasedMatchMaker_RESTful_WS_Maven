@@ -1,5 +1,6 @@
 package com.certh.iti.cloud4all.restful;
 
+import com.certh.iti.cloud4all.feedback.FeedbackManager;
 import com.certh.iti.cloud4all.inference.RulesManager;
 import com.certh.iti.cloud4all.instantiation.InstantiationManager;
 import com.certh.iti.cloud4all.ontology.CommonPref;
@@ -90,6 +91,7 @@ public class RBMM_WebService
     public Response getAllUsers(@PathParam("tmpUser") String tempUser, @PathParam("tmpEnvironment") String tempEnvironment)
     {
         PrevaylerManager.getInstance().debug = "";
+        FeedbackManager.getInstance().init();
         
         parseUserProfile(tempUser);
         parseEnvironment(tempEnvironment);
@@ -98,9 +100,13 @@ public class RBMM_WebService
         InstantiationManager.getInstance().createInstanceInOntologyForJSONEnvironment();
 
         String finalUserPrefs = RulesManager.getInstance().executeMyCloudRulesForFindingHandicapSituations(false);
+        
+        if(FeedbackManager.getInstance().writeFeedbackToFile)
+            FeedbackManager.getInstance().writeHTML();
+        
         if(PrevaylerManager.getInstance().SHOW_DEBUG_INFO)
             finalUserPrefs = finalUserPrefs + "- DEBUG: " + PrevaylerManager.getInstance().debug;
-
+        
         return Response.status(200).entity(finalUserPrefs).build();
     }
 }

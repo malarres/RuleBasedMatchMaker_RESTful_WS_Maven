@@ -1,5 +1,6 @@
 package com.certh.iti.cloud4all.ontology;
 
+import com.certh.iti.cloud4all.feedback.FeedbackManager;
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
@@ -845,6 +846,25 @@ public class OntologyManager implements Serializable
         return res;
     }
     
+    public String getNameBySolutionID(String tmpID)
+    {
+        String res = "not found!";
+        
+        if(allInstances_Solution != null)
+        {
+            for(int i=0; i<allInstances_Solution.size(); i++)
+            {
+                Solution tmpSolution = allInstances_Solution.get(i);
+                if(tmpSolution.id!=null && tmpSolution.id.length()>0
+                        && tmpSolution.id.toLowerCase().equals(tmpID.toLowerCase()))
+                {
+                    return tmpSolution.hasSolutionName;
+                }
+            }
+        }
+        return res;
+    }
+    
     public String getSolutionIDFromInstanceName(String tmpInstanceName)
     {
         String res = "not found!";
@@ -948,6 +968,8 @@ public class OntologyManager implements Serializable
     
     public String findTheMostSuitableInstalledScreenReaderFromBooleanCommonPrefs()
     {
+        String allAvailableScreenReaderNames = "";
+        String maxSupportedCommonPrefs = "";
         String screenReaderID = "";
         int maxNumberOfBooleanCommonTermsForScreenReadersSupported = 0;
         String[] tmpInstalledSolutionsIDs_Str = InstantiationManager.getInstance().DEVICE_REPORTER_INSTALLEDSOLUTIONS_IDs.split(" ");
@@ -955,7 +977,13 @@ public class OntologyManager implements Serializable
         for(int tmpCnt=0; tmpCnt<tmpInstalledSolutionsIDs_Str.length; tmpCnt++)
         {
             int numberOfBooleanCommonTermsForScreenReadersSupported = 0;
+            String supportedCommonPrefs = "";
             String tmpInstalledSolutionID = tmpInstalledSolutionsIDs_Str[tmpCnt];
+            String tmpInstalledSolutionName = getNameBySolutionID(tmpInstalledSolutionID);
+            if(allAvailableScreenReaderNames.equals(""))
+                allAvailableScreenReaderNames = "<i>" + tmpInstalledSolutionName + "</i>";
+            else
+                allAvailableScreenReaderNames = allAvailableScreenReaderNames + ", <i>" + tmpInstalledSolutionName + "</i>";
             String tmpInstalledSolutionInstanceName = getInstanceNameBySolutionID(tmpInstalledSolutionID);
             String tmpInstalledSolutionType = getClassFromInstanceName(tmpInstalledSolutionInstanceName);
             if(tmpInstalledSolutionType.equals(InstantiationManager.NS + "ScreenReaderSoftware"))
@@ -977,6 +1005,10 @@ public class OntologyManager implements Serializable
                         if(preferredCommonTermForScreenReadersIsSupportedBySolution(tmpAppSpecificSettingsRelatedToCommonTerms, tmpCommonPref.commonTermID))
                         {
                             numberOfBooleanCommonTermsForScreenReadersSupported++;
+                            if(supportedCommonPrefs.equals(""))
+                                supportedCommonPrefs = "<br>&nbsp;&nbsp;&nbsp;&nbsp;<i>" + tmpCommonPref.commonTermID + "</i>";
+                            else
+                                supportedCommonPrefs = supportedCommonPrefs + "<br>&nbsp;&nbsp;&nbsp;&nbsp;<i>" + tmpCommonPref.commonTermID + "</i>";
                             PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[" + tmpInstalledSolutionID + " SUPPORTS " + tmpCommonPref.commonTermID;
                         }
                     }
@@ -987,11 +1019,26 @@ public class OntologyManager implements Serializable
                 if(maxNumberOfBooleanCommonTermsForScreenReadersSupported < numberOfBooleanCommonTermsForScreenReadersSupported)
                 {
                     maxNumberOfBooleanCommonTermsForScreenReadersSupported = numberOfBooleanCommonTermsForScreenReadersSupported;
+                    maxSupportedCommonPrefs = supportedCommonPrefs;
                     screenReaderID = tmpInstalledSolutionID;
                 }
             }
         }
         PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[SELECTED SCREENREADER: " + screenReaderID + ", NumberOfBooleanPrefsForScreenReadersSupported: " + Integer.toString(maxNumberOfBooleanCommonTermsForScreenReadersSupported) + "]\n\n\n";
+        
+        FeedbackManager.getInstance().feedback_EN = "The following screen readers are available: " + allAvailableScreenReaderNames + 
+                "<br><b>" + getNameBySolutionID(screenReaderID) + "</b> was selected as the most suitable according to user needs and preferences." + 
+                "<br>More specifically, the following common preferences are supported:" + maxSupportedCommonPrefs;
+        FeedbackManager.getInstance().feedback_DE = "<font color=\"red\">[To be translated in German]</font><br>The following screen readers are available: " + allAvailableScreenReaderNames + 
+                "<br><b>" + getNameBySolutionID(screenReaderID) + "</b> was selected as the most suitable according to user needs and preferences." + 
+                "<br>More specifically, the following common preferences are supported:" + maxSupportedCommonPrefs;
+        FeedbackManager.getInstance().feedback_GR = "Οι παρακάτω screen readers είναι διαθέσιμοι: " + allAvailableScreenReaderNames + 
+                "<br>Ο <b>" + getNameBySolutionID(screenReaderID) + "</b> επιλέχθηκε ως ο πιο κατάλληλος σύμφωνα με τις ανάγκες και προτιμήσεις του χρήστη." +
+                "<br>Πιο συγκεκριμένα, τα παρακάτω common preferences υποστηρίζονται:" + maxSupportedCommonPrefs;
+        FeedbackManager.getInstance().feedback_SP = "<font color=\"red\">[To be translated in Spanish]</font><br>The following screen readers are available: " + allAvailableScreenReaderNames + 
+                "<br><b>" + getNameBySolutionID(screenReaderID) + "</b> was selected as the most suitable according to user needs and preferences." +
+                "<br>More specifically, the following common preferences are supported:" + maxSupportedCommonPrefs;
+        
         return screenReaderID;
     }
     
