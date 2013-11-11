@@ -34,6 +34,7 @@ public class OntologyManager implements Serializable
     public static final int TempHandicapSituations_ID = -1002;
     public static final int TempPossibleSolutions_ID = -1003;
     public static final int TempSolutionsToBeLaunched_ID = -1004;
+    public static final int Registry_ID = -1005;
     
     public static final int DTVDevices_ID = 1;
     public static final int GamingConsoleDevices_ID = 2;
@@ -178,6 +179,7 @@ public class OntologyManager implements Serializable
     public ArrayList<TempPossibleSolution> allInstances_TempPossibleSolution;
     public ArrayList<TempSolutionsToBeLaunched> allInstances_TempSolutionsToBeLaunched;
     public ArrayList<Solution> allInstances_Solution;
+    public ArrayList<CommonTerm> allCommonTerms;
     
     public ArrayList<SolutionToBeLaunched> solutionsToBeLaunched;
     
@@ -198,6 +200,7 @@ public class OntologyManager implements Serializable
         classNamesAndIDs.put(TempHandicapSituations_ID, "TempHandicapSituations");
         classNamesAndIDs.put(TempPossibleSolutions_ID, "TempPossibleSolutions");
         classNamesAndIDs.put(TempSolutionsToBeLaunched_ID, "TempSolutionsToBeLaunched");
+        classNamesAndIDs.put(Registry_ID, "Registry");
         classNamesAndIDs.put(DTVDevices_ID, "DTVDevices");
         classNamesAndIDs.put(GamingConsoleDevices_ID, "GamingConsoleDevices");
         classNamesAndIDs.put(ATMDevices_ID, "ATMDevices");
@@ -330,6 +333,7 @@ public class OntologyManager implements Serializable
         allInstances_TempPossibleSolution = new ArrayList<TempPossibleSolution>();
         allInstances_TempSolutionsToBeLaunched = new ArrayList<TempSolutionsToBeLaunched>();
         allInstances_Solution = new ArrayList<Solution>();
+        allCommonTerms = new ArrayList<CommonTerm>();
         
         solutionsToBeLaunched = new ArrayList<SolutionToBeLaunched>();
         
@@ -439,7 +443,65 @@ public class OntologyManager implements Serializable
                         tmpSolution.hasCostCurrency = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasCostCurrency")).asLiteral().getValue().toString();
                         tmpSolution.hasSolutionVersion = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasSolutionVersion")).asLiteral().getValue().toString();
                         */
+                        
+                        //Shortcuts
+                        NodeIterator shortcutsInstances = tmpInstance.listPropertyValues(model.getProperty(InstantiationManager.NS, "hasShortcut"));
+                        while(shortcutsInstances.hasNext())
+                        {
+                            RDFNode tmpShortcutInstance = (RDFNode)shortcutsInstances.next();
+                            Shortcut tmpShortcut = new Shortcut();
+                            tmpShortcut.name_EN = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasName_EN")).getLiteral().getValue().toString();
+                            tmpShortcut.name_DE = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasName_DE")).getLiteral().getValue().toString();
+                            tmpShortcut.name_GR = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasName_GR")).getLiteral().getValue().toString();
+                            tmpShortcut.name_SP = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasName_SP")).getLiteral().getValue().toString();
+                            tmpShortcut.category = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasCategory")).getLiteral().getValue().toString();
+                            tmpShortcut.desktopLayout = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_DesktopLayout")).getLiteral().getValue().toString();
+                            tmpShortcut.laptopLayout = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_LaptopLayout")).getLiteral().getValue().toString();
+
+                            //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[SHORTCUT for " + tmpSolution.hasSolutionName + " -> " + tmpShortcut.toString() + "]";
+
+                            tmpSolution.shortcuts.add(tmpShortcut);
+                        }
+                        
+                        //Basic Info
+                        //Shortcuts
+                        NodeIterator basicInfoInstances = tmpInstance.listPropertyValues(model.getProperty(InstantiationManager.NS, "hasBasicInfo"));
+                        while(basicInfoInstances.hasNext())
+                        {
+                            RDFNode tmpBasicInfoInstance = (RDFNode)basicInfoInstances.next();
+                            tmpSolution.userManualURL = ((Resource)tmpBasicInfoInstance).getProperty(model.getProperty(InstantiationManager.NS, "BasicInfo_UserManual")).getLiteral().getValue().toString();
+                        }
+                        
                         allInstances_Solution.add(tmpSolution);
+                    }
+                }
+                else if(tmpClassID == Registry_ID)
+                {
+                    ExtendedIterator instances = tmpClass.listInstances();
+
+                    while(instances.hasNext())
+                    {
+                        Individual tmpInstance = (Individual)instances.next();
+
+                        CommonTerm tmpCommonTerm = new CommonTerm();
+
+                        tmpCommonTerm.instanceName = tmpInstance.getURI();
+                        if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasID")) != null)
+                            tmpCommonTerm.ID = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasID")).asLiteral().getValue().toString();
+                        if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasName")) != null)
+                            tmpCommonTerm.name = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasName")).asLiteral().getValue().toString();
+                        if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasDescription")) != null)
+                            tmpCommonTerm.description = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasDescription")).asLiteral().getValue().toString();
+                        if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasType")) != null)
+                            tmpCommonTerm.type = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasType")).asLiteral().getValue().toString();
+                        if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasDefaultValue")) != null)
+                            tmpCommonTerm.defaulValue = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasDefaultValue")).asLiteral().getValue().toString();
+                        if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasValueSpace")) != null)
+                            tmpCommonTerm.valueSpace = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasValueSpace")).asLiteral().getValue().toString();
+                        if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasNotes")) != null)
+                            tmpCommonTerm.notes = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasNotes")).asLiteral().getValue().toString();
+                        
+                        allCommonTerms.add(tmpCommonTerm);
                     }
                 }
             }
@@ -543,6 +605,17 @@ public class OntologyManager implements Serializable
             out.append(line);
         }
         return out.toString();
+    }
+    
+    public CommonTerm getCommonTermByID(String tmpID)
+    {
+        for(int i=0; i<allCommonTerms.size(); i++)
+        {
+            CommonTerm tmpCommonTerm = allCommonTerms.get(i);
+            if(tmpCommonTerm.ID.trim().toLowerCase().equals(tmpID.trim().toLowerCase()))
+                return tmpCommonTerm;
+        }
+        return null;
     }
     
     public int getClassIDByName(String tmpClassName)
@@ -827,6 +900,23 @@ public class OntologyManager implements Serializable
         }
     }
     
+    public Solution getSolutionByID(String tmpID)
+    {
+        if(allInstances_Solution != null)
+        {
+            for(int i=0; i<allInstances_Solution.size(); i++)
+            {
+                Solution tmpSolution = allInstances_Solution.get(i);
+                if(tmpSolution.id!=null && tmpSolution.id.length()>0
+                        && tmpSolution.id.toLowerCase().equals(tmpID.toLowerCase()))
+                {
+                    return tmpSolution;
+                }
+            }
+        }
+        return null;
+    }
+    
     public String getInstanceNameBySolutionID(String tmpID)
     {
         String res = "not found!";
@@ -889,7 +979,10 @@ public class OntologyManager implements Serializable
         String res = "";
         Individual tmpIndividual = model.getIndividual(tmpInstanceName);
         if(tmpIndividual!=null && tmpIndividual.getRDFType(true)!=null)
+        {
             res = tmpIndividual.getRDFType(true).toString();
+            //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n[getClassFromInstanceName(" + tmpInstanceName + "): " + res + "]\n\n";
+        }
         else
             PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n[EXCEPTION! - getClassFromInstanceName(" + tmpInstanceName + ")]\n\n";
         return res;
@@ -968,7 +1061,6 @@ public class OntologyManager implements Serializable
     
     public String findTheMostSuitableInstalledScreenReaderFromBooleanCommonPrefs()
     {
-        String allAvailableScreenReaderNames = "";
         String maxSupportedCommonPrefs = "";
         String screenReaderID = "";
         int maxNumberOfBooleanCommonTermsForScreenReadersSupported = 0;
@@ -980,14 +1072,13 @@ public class OntologyManager implements Serializable
             String supportedCommonPrefs = "";
             String tmpInstalledSolutionID = tmpInstalledSolutionsIDs_Str[tmpCnt];
             String tmpInstalledSolutionName = getNameBySolutionID(tmpInstalledSolutionID);
-            if(allAvailableScreenReaderNames.equals(""))
-                allAvailableScreenReaderNames = "<i>" + tmpInstalledSolutionName + "</i>";
-            else
-                allAvailableScreenReaderNames = allAvailableScreenReaderNames + ", <i>" + tmpInstalledSolutionName + "</i>";
+            
             String tmpInstalledSolutionInstanceName = getInstanceNameBySolutionID(tmpInstalledSolutionID);
             String tmpInstalledSolutionType = getClassFromInstanceName(tmpInstalledSolutionInstanceName);
             if(tmpInstalledSolutionType.equals(InstantiationManager.NS + "ScreenReaderSoftware"))
             {
+                FeedbackManager.getInstance().allAvailableSolutions.add(getSolutionByID(tmpInstalledSolutionID));
+                
                 ArrayList<AppSpecificSettingRelatedToCommonTerm> tmpAppSpecificSettingsRelatedToCommonTerms = getAppSpecificSettingRelatedToCommonTerm(tmpInstalledSolutionID);
                 
                 for(int k=0; k<InstantiationManager.getInstance().USER_CommonTermsIDs.size(); k++)
@@ -1005,10 +1096,11 @@ public class OntologyManager implements Serializable
                         if(preferredCommonTermForScreenReadersIsSupportedBySolution(tmpAppSpecificSettingsRelatedToCommonTerms, tmpCommonPref.commonTermID))
                         {
                             numberOfBooleanCommonTermsForScreenReadersSupported++;
+                            CommonTerm tempCommonTerm = getCommonTermByID(tmpCommonPref.commonTermID);
                             if(supportedCommonPrefs.equals(""))
-                                supportedCommonPrefs = "<br>&nbsp;&nbsp;&nbsp;&nbsp;<i>" + tmpCommonPref.commonTermID + "</i>";
+                                supportedCommonPrefs = "<br>&nbsp;&nbsp;&nbsp;&nbsp;<i>" + tempCommonTerm.name + "</i>";
                             else
-                                supportedCommonPrefs = supportedCommonPrefs + "<br>&nbsp;&nbsp;&nbsp;&nbsp;<i>" + tmpCommonPref.commonTermID + "</i>";
+                                supportedCommonPrefs = supportedCommonPrefs + "<br>&nbsp;&nbsp;&nbsp;&nbsp;<i>" + tempCommonTerm.name + "</i>";
                             PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[" + tmpInstalledSolutionID + " SUPPORTS " + tmpCommonPref.commonTermID;
                         }
                     }
@@ -1026,19 +1118,8 @@ public class OntologyManager implements Serializable
         }
         PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[SELECTED SCREENREADER: " + screenReaderID + ", NumberOfBooleanPrefsForScreenReadersSupported: " + Integer.toString(maxNumberOfBooleanCommonTermsForScreenReadersSupported) + "]\n\n\n";
         
-        FeedbackManager.getInstance().feedback_EN = "The following screen readers are available: " + allAvailableScreenReaderNames + 
-                "<br><b>" + getNameBySolutionID(screenReaderID) + "</b> was selected as the most suitable according to user needs and preferences." + 
-                "<br>More specifically, the following common preferences are supported:" + maxSupportedCommonPrefs;
-        FeedbackManager.getInstance().feedback_DE = "<font color=\"red\">[To be translated in German]</font><br>The following screen readers are available: " + allAvailableScreenReaderNames + 
-                "<br><b>" + getNameBySolutionID(screenReaderID) + "</b> was selected as the most suitable according to user needs and preferences." + 
-                "<br>More specifically, the following common preferences are supported:" + maxSupportedCommonPrefs;
-        FeedbackManager.getInstance().feedback_GR = "Οι παρακάτω screen readers είναι διαθέσιμοι: " + allAvailableScreenReaderNames + 
-                "<br>Ο <b>" + getNameBySolutionID(screenReaderID) + "</b> επιλέχθηκε ως ο πιο κατάλληλος σύμφωνα με τις ανάγκες και προτιμήσεις του χρήστη." +
-                "<br>Πιο συγκεκριμένα, τα παρακάτω common preferences υποστηρίζονται:" + maxSupportedCommonPrefs;
-        FeedbackManager.getInstance().feedback_SP = "<font color=\"red\">[To be translated in Spanish]</font><br>The following screen readers are available: " + allAvailableScreenReaderNames + 
-                "<br><b>" + getNameBySolutionID(screenReaderID) + "</b> was selected as the most suitable according to user needs and preferences." +
-                "<br>More specifically, the following common preferences are supported:" + maxSupportedCommonPrefs;
-        
+        FeedbackManager.getInstance().appliedCommonPrefs = maxSupportedCommonPrefs;
+        FeedbackManager.getInstance().solutionsToBeLaunched.add(getSolutionByID(screenReaderID));
         return screenReaderID;
     }
     

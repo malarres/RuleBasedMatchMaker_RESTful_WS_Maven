@@ -102,10 +102,13 @@ public class RBMM_WebService
         String finalUserPrefs = RulesManager.getInstance().executeMyCloudRulesForFindingHandicapSituations(false);
         
         if(FeedbackManager.getInstance().writeFeedbackToFile)
+        {
             FeedbackManager.getInstance().writeHTML();
+            finalUserPrefs = finalUserPrefs + " " + FeedbackManager.getInstance().englishURL + " " + FeedbackManager.getInstance().germanURL + " " + FeedbackManager.getInstance().greekURL + " " + FeedbackManager.getInstance().spanishURL;
+        }
         
         if(PrevaylerManager.getInstance().SHOW_DEBUG_INFO)
-            finalUserPrefs = finalUserPrefs + "- DEBUG: " + PrevaylerManager.getInstance().debug;
+            finalUserPrefs = finalUserPrefs + " - DEBUG: " + PrevaylerManager.getInstance().debug;
         
         return Response.status(200).entity(finalUserPrefs).build();
     }

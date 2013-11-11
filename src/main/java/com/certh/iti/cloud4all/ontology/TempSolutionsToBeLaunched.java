@@ -6,7 +6,7 @@ package com.certh.iti.cloud4all.ontology;
  */
 public class TempSolutionsToBeLaunched 
 {
-    String IDs;
+    public String IDs;
     
     public TempSolutionsToBeLaunched()
     {

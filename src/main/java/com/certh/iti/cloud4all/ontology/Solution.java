@@ -25,6 +25,8 @@ public class Solution
     //String hasCostCurrency;
     //String hasSolutionVersion;
     public ArrayList<AppSpecificSettingRelatedToCommonTerm> appSpecificSettingsRelatedToCommonTerms;
+    public ArrayList<Shortcut> shortcuts;
+    public String userManualURL;
 
     public Solution()
     {
@@ -45,6 +47,8 @@ public class Solution
         //hasCostCurrency = "";
         //hasSolutionVersion = "";
         appSpecificSettingsRelatedToCommonTerms = new ArrayList<AppSpecificSettingRelatedToCommonTerm>();
+        shortcuts = new ArrayList<Shortcut>();
+        userManualURL = "[unknown]";
     }
     
     public Solution(Solution tmpSolution)

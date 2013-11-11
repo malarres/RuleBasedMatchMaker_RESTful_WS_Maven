@@ -55,6 +55,9 @@
         </dependency>
   </dependencies>
   <build>
-    <finalName>CLOUD4All_RBMM_Restful_WS</finalName>
+      <finalName>CLOUD4All_RBMM_Restful_WS</finalName>
   </build>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>  
 </project>

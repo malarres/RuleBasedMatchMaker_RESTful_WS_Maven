@@ -4,6 +4,7 @@ package com.certh.iti.cloud4all.inference;
  * @author nkak
  */
 
+import com.certh.iti.cloud4all.feedback.FeedbackManager;
 import com.certh.iti.cloud4all.instantiation.InstantiationManager;
 import com.hp.hpl.jena.rdf.model.InfModel;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -11,6 +12,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.reasoner.rulesys.GenericRuleReasoner;
 import com.hp.hpl.jena.reasoner.rulesys.Rule;
 import com.certh.iti.cloud4all.ontology.*;
+import com.certh.iti.cloud4all.prevayler.PrevaylerManager;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -47,7 +49,7 @@ public class RulesManager
     public String executeMyCloudRulesForFindingHandicapSituations(boolean writeInfModelForDebug)
     {
         String resultForNodeJs = "";
-
+        
         //RULES EXECUTION - START
         List<Rule> rules = Rule.rulesFromURL(uri_MatchMaker_rules);
         GenericRuleReasoner r = new GenericRuleReasoner(rules);
@@ -78,15 +80,74 @@ public class RulesManager
             }
         }
         
+        FeedbackManager.getInstance().findSolutionsToBeExcluded();
+        
+        //solutions to be excluded
+        for(int j=0; j<FeedbackManager.getInstance().solutionsToBeExcluded.size(); j++)
+        {
+            Solution tempSolution = FeedbackManager.getInstance().solutionsToBeExcluded.get(j);
+            if(tempSolution.id.equals("org.gnome.desktop.a11y.magnifier"))
+                resultForNodeJs = resultForNodeJs + " EXCLUDE_GNOME_MAGNIFIER";
+            else if(tempSolution.id.equals("ISO24751.screenMagnifier"))
+                resultForNodeJs = resultForNodeJs + " EXCLUDE_ISO24751_MAGNIFIER";
+            else if(tempSolution.id.equals("com.microsoft.windows.magnifier"))
+                resultForNodeJs = resultForNodeJs + " EXCLUDE_WINDOWS_MAGNIFIER";
+            else if(tempSolution.id.equals("ZoomText.screenMagnifier"))
+                resultForNodeJs = resultForNodeJs + " EXCLUDE_ZOOMTEXT_MAGNIFIER";
+            else if(tempSolution.id.equals("ISO24751.screenReader"))
+                resultForNodeJs = resultForNodeJs + " EXCLUDE_ISO24751_SCREENREADER";
+            else if(tempSolution.id.equals("jaws.screenReader"))
+                resultForNodeJs = resultForNodeJs + " EXCLUDE_JAWS_SCREENREADER";
+            else if(tempSolution.id.equals("nvda.screenReader"))
+                resultForNodeJs = resultForNodeJs + " EXCLUDE_NVDA_SCREENREADER";
+            else if(tempSolution.id.equals("org.gnome.orca"))
+                resultForNodeJs = resultForNodeJs + " EXCLUDE_ORCA_SCREENREADER";
+            else if(tempSolution.id.equals("satogo.screenReader"))
+                resultForNodeJs = resultForNodeJs + " EXCLUDE_SATOGO_SCREENREADER";
+            else if(tempSolution.id.equals("com.android.talkback"))
+                resultForNodeJs = resultForNodeJs + " EXCLUDE_TALKBACK_SCREENREADER";
+            else if(tempSolution.id.equals("webinsight.webAnywhere.windows"))
+                resultForNodeJs = resultForNodeJs + " EXCLUDE_WEBANYWHERE_SCREENREADER";
+            else if(tempSolution.id.equals("Win7BuiltInNarrator.screenReader"))
+                resultForNodeJs = resultForNodeJs + " EXCLUDE_WIN7BUILTINNARRATOR_SCREENREADER";
+        }
+        
         //get TempSolutionsToBeLaunched
-        String tmpSolutionsToBeLaunchedIDs = "";
         if(OntologyManager.getInstance().allInstances_TempSolutionsToBeLaunched != null)
         {
             for(int i=0; i<OntologyManager.getInstance().allInstances_TempSolutionsToBeLaunched.size(); i++)
-                tmpSolutionsToBeLaunchedIDs = tmpSolutionsToBeLaunchedIDs + OntologyManager.getInstance().allInstances_TempSolutionsToBeLaunched.get(i).toString();
+            {
+                String[] tmpIDsToBeLaunched_Str = OntologyManager.getInstance().allInstances_TempSolutionsToBeLaunched.get(i).IDs.split(" ");
+                for(int tmpCnt=0; tmpCnt<tmpIDsToBeLaunched_Str.length; tmpCnt++)
+                {
+                    String tempID = tmpIDsToBeLaunched_Str[tmpCnt].trim();
+                    if(tempID.equals("org.gnome.desktop.a11y.magnifier"))
+                        resultForNodeJs = resultForNodeJs + " LAUNCH_GNOME_MAGNIFIER";
+                    else if(tempID.equals("ISO24751.screenMagnifier"))
+                        resultForNodeJs = resultForNodeJs + " LAUNCH_ISO24751_MAGNIFIER";
+                    else if(tempID.equals("com.microsoft.windows.magnifier"))
+                        resultForNodeJs = resultForNodeJs + " LAUNCH_WINDOWS_MAGNIFIER";
+                    else if(tempID.equals("ZoomText.screenMagnifier"))
+                        resultForNodeJs = resultForNodeJs + " LAUNCH_ZOOMTEXT_MAGNIFIER";
+                    else if(tempID.equals("ISO24751.screenReader"))
+                        resultForNodeJs = resultForNodeJs + " LAUNCH_ISO24751_SCREENREADER";
+                    else if(tempID.equals("jaws.screenReader"))
+                        resultForNodeJs = resultForNodeJs + " LAUNCH_JAWS_SCREENREADER";
+                    else if(tempID.equals("nvda.screenReader"))
+                        resultForNodeJs = resultForNodeJs + " LAUNCH_NVDA_SCREENREADER";
+                    else if(tempID.equals("org.gnome.orca"))
+                        resultForNodeJs = resultForNodeJs + " LAUNCH_ORCA_SCREENREADER";
+                    else if(tempID.equals("satogo.screenReader"))
+                        resultForNodeJs = resultForNodeJs + " LAUNCH_SATOGO_SCREENREADER";
+                    else if(tempID.equals("com.android.talkback"))
+                        resultForNodeJs = resultForNodeJs + " LAUNCH_TALKBACK_SCREENREADER";
+                    else if(tempID.equals("webinsight.webAnywhere.windows"))
+                        resultForNodeJs = resultForNodeJs + " LAUNCH_WEBANYWHERE_SCREENREADER";
+                    else if(tempID.equals("Win7BuiltInNarrator.screenReader"))
+                        resultForNodeJs = resultForNodeJs + " LAUNCH_WIN7BUILTINNARRATOR_SCREENREADER";
+                }
+            }
         }
-        
-        resultForNodeJs = resultForNodeJs + " - SolutionsToBeLaunched: " + tmpSolutionsToBeLaunchedIDs;
 
         //DEBUG
         if(writeInfModelForDebug)
