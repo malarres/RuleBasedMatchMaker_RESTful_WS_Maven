@@ -13,6 +13,7 @@ public class Solution
     public String instanceName;
     public String hasSolutionName;
     public String id;
+    public int numberOfRDFStatements;
     //String hasSolutionDescription;
     //int freeAllowedNrOfInvocations;
     //double hasCost;
@@ -35,6 +36,7 @@ public class Solution
         instanceName = "";
         hasSolutionName = "";
         id = "";
+        numberOfRDFStatements = 0;
         //hasSolutionDescription = "";
         //freeAllowedNrOfInvocations = 0;
         //hasCost = 0.0;
@@ -56,6 +58,7 @@ public class Solution
         instanceName = new String(tmpSolution.instanceName);
         hasSolutionName = new String(tmpSolution.hasSolutionName);
         id = new String(tmpSolution.id);
+        numberOfRDFStatements = tmpSolution.numberOfRDFStatements;
         //hasSolutionDescription = new String(tmpSolution.hasSolutionDescription);
         //freeAllowedNrOfInvocations = new Integer(tmpSolution.freeAllowedNrOfInvocations);
         //hasCost = new Double(tmpSolution.hasCost);
@@ -77,6 +80,8 @@ public class Solution
         result = result + "\n\tinstanceName: " + instanceName;
         result = result + "\n\thasSolutionName: " + hasSolutionName;
         result = result + "\n\tid: " + id;
+        result = result + "\n\tnumberOfRDFStatements: " + Integer.toString(numberOfRDFStatements);
+        
         //result = result + "\n\thasSolutionDescription: " + hasSolutionDescription;
         //result = result + "\n\tfreeAllowedNrOfInvocations: " + Integer.toString(freeAllowedNrOfInvocations);
         //result = result + "\n\thasCost: " + Double.toString(hasCost);

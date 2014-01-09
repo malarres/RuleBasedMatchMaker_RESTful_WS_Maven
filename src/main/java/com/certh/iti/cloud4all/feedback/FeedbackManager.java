@@ -16,6 +16,24 @@ import java.util.logging.Logger;
 
 public class FeedbackManager 
 {
+    public static final int TOMCAT_IS_INSTALLED_ON_THE_FINAL_WINDOWS_SERVER = 1;
+    public static final String TOMCAT_FINAL_DIR_FOR_RBMM_HTML_FEEDBACK = "C:/xampp/htdocs/RBMM/";
+    public static final String TOMCAT_FINAL_DELETE_OLD_FILES_DIR = "C://xampp//htdocs//RBMM";
+    public static final String TOMCAT_FINAL_IP = "160.40.50.183";
+    
+    public static final int TOMCAT_IS_INSTALLED_ON_OS_X_FOR_TESTING = 2;
+    public static final String TOMCAT_OSX_DIR_FOR_RBMM_HTML_FEEDBACK = "/Applications/XAMPP/htdocs/RBMM/";
+    public static final String TOMCAT_OSX_DELETE_OLD_FILES_DIR = "/Applications/XAMPP/htdocs/RBMM";
+    public static final String TOMCAT_OSX_IP = "192.168.1.19"; //DYNAMIC!
+    
+    public int current_tomcat_server;
+    public String current_tomcat_dir_for_rbmm_html_feedback;
+    public String current_tomcat_delete_old_files_dir;
+    public String current_tomcat_ip;
+    
+    public static final int GENERATE_DIFFERENT_HTML_FOR_EACH_USER = 0;
+    public static final int GENERATE_ONLY_ONE_HTML_THAT_IS_REPLACED_IN_EACH_RBMM_EXECUTION = 1;
+    public int current_HTML_mode;
     public static final int DELETE_FILES_OLDER_THAN_THESE_MINUTES = 5;
     
     private static FeedbackManager instance = null;
@@ -36,8 +54,31 @@ public class FeedbackManager
     
     Long curMilliseconds;
     
+    public boolean TEST_GENERATE_FEEDBACK_FOR_NVDA;
+    
     private FeedbackManager() 
     {
+        //current_tomcat_server = TOMCAT_IS_INSTALLED_ON_OS_X_FOR_TESTING;
+        current_tomcat_server = TOMCAT_IS_INSTALLED_ON_THE_FINAL_WINDOWS_SERVER;
+        
+        //current_HTML_mode = GENERATE_DIFFERENT_HTML_FOR_EACH_USER;
+        current_HTML_mode = GENERATE_ONLY_ONE_HTML_THAT_IS_REPLACED_IN_EACH_RBMM_EXECUTION;
+        
+        TEST_GENERATE_FEEDBACK_FOR_NVDA = false;
+        
+        if(current_tomcat_server == TOMCAT_IS_INSTALLED_ON_THE_FINAL_WINDOWS_SERVER)
+        {
+            current_tomcat_dir_for_rbmm_html_feedback = TOMCAT_FINAL_DIR_FOR_RBMM_HTML_FEEDBACK;
+            current_tomcat_delete_old_files_dir = TOMCAT_FINAL_DELETE_OLD_FILES_DIR;
+            current_tomcat_ip = TOMCAT_FINAL_IP;
+        }
+        else if(current_tomcat_server == TOMCAT_IS_INSTALLED_ON_OS_X_FOR_TESTING)
+        {
+            current_tomcat_dir_for_rbmm_html_feedback = TOMCAT_OSX_DIR_FOR_RBMM_HTML_FEEDBACK;
+            current_tomcat_delete_old_files_dir = TOMCAT_OSX_DELETE_OLD_FILES_DIR;
+            current_tomcat_ip = TOMCAT_OSX_IP;
+        }
+        
         solutionsToBeLaunched = new ArrayList<Solution>(); 
         allAvailableSolutions = new ArrayList<Solution>();
         solutionsToBeExcluded = new ArrayList<Solution>();
@@ -148,14 +189,109 @@ public class FeedbackManager
     
     public void findSolutionsToBeExcluded()
     {
-        if(solutionsToBeLaunched.size()>0 && solutionsToBeLaunched.get(0)!=null)
+        //solutionsToBeLaunched has max 3 items (1 screen reader, 1 magnifier, 1 screen reader[according to the number of RDF statements])
+        
+        if(solutionsToBeLaunched.size()>0 
+                /*&& (solutionsToBeLaunched.get(0)!=null || solutionsToBeLaunched.get(1)!=null)*/)
         {
             for(int i=0; i<allAvailableSolutions.size(); i++)
             {
                 Solution tempSolution = allAvailableSolutions.get(i);
-                if(tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(0).hasSolutionName.trim().toLowerCase()) == false)
+                if(solutionsToBeLaunched.size() == 2)
                 {
-                    solutionsToBeExcluded.add(tempSolution);
+                    if(solutionsToBeLaunched.get(0)!=null && solutionsToBeLaunched.get(1)==null)
+                    {
+                        if(tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(0).hasSolutionName.trim().toLowerCase()) == false)
+                        {
+                            solutionsToBeExcluded.add(tempSolution);
+                        }
+                    }
+                    else if(solutionsToBeLaunched.get(0)==null && solutionsToBeLaunched.get(1)!=null)
+                    {
+                        if(tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(1).hasSolutionName.trim().toLowerCase()) == false)
+                        {
+                            solutionsToBeExcluded.add(tempSolution);
+                        }
+                    }
+                    else if(solutionsToBeLaunched.get(0)!=null && solutionsToBeLaunched.get(1)!=null)
+                    {
+                        if(tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(0).hasSolutionName.trim().toLowerCase()) == false
+                                && tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(1).hasSolutionName.trim().toLowerCase()) == false)
+                        {
+                            solutionsToBeExcluded.add(tempSolution);
+                        }
+                    }
+                }
+                else if(solutionsToBeLaunched.size() == 3)
+                {
+                    if(solutionsToBeLaunched.get(0)!=null 
+                            && solutionsToBeLaunched.get(1)==null
+                            && solutionsToBeLaunched.get(2)==null)
+                    {
+                        if(tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(0).hasSolutionName.trim().toLowerCase()) == false)
+                        {
+                            solutionsToBeExcluded.add(tempSolution);
+                        }
+                    }
+                    else if(solutionsToBeLaunched.get(0)==null 
+                            && solutionsToBeLaunched.get(1)!=null
+                            && solutionsToBeLaunched.get(2)==null)
+                    {
+                        if(tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(1).hasSolutionName.trim().toLowerCase()) == false)
+                        {
+                            solutionsToBeExcluded.add(tempSolution);
+                        }
+                    }
+                    else if(solutionsToBeLaunched.get(0)==null 
+                            && solutionsToBeLaunched.get(1)==null
+                            && solutionsToBeLaunched.get(2)!=null)
+                    {
+                        if(tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(2).hasSolutionName.trim().toLowerCase()) == false)
+                        {
+                            solutionsToBeExcluded.add(tempSolution);
+                        }
+                    }
+                    else if(solutionsToBeLaunched.get(0)!=null 
+                            && solutionsToBeLaunched.get(1)!=null
+                            && solutionsToBeLaunched.get(2)==null)
+                    {
+                        if(tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(0).hasSolutionName.trim().toLowerCase()) == false
+                                && tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(1).hasSolutionName.trim().toLowerCase()) == false)
+                        {
+                            solutionsToBeExcluded.add(tempSolution);
+                        }
+                    }
+                    else if(solutionsToBeLaunched.get(0)==null 
+                            && solutionsToBeLaunched.get(1)!=null
+                            && solutionsToBeLaunched.get(2)!=null)
+                    {
+                        if(tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(1).hasSolutionName.trim().toLowerCase()) == false
+                                && tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(2).hasSolutionName.trim().toLowerCase()) == false)
+                        {
+                            solutionsToBeExcluded.add(tempSolution);
+                        }
+                    }
+                    else if(solutionsToBeLaunched.get(0)!=null 
+                            && solutionsToBeLaunched.get(1)==null
+                            && solutionsToBeLaunched.get(2)!=null)
+                    {
+                        if(tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(0).hasSolutionName.trim().toLowerCase()) == false
+                                && tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(2).hasSolutionName.trim().toLowerCase()) == false)
+                        {
+                            solutionsToBeExcluded.add(tempSolution);
+                        }
+                    }
+                    else if(solutionsToBeLaunched.get(0)!=null 
+                            && solutionsToBeLaunched.get(1)!=null
+                            && solutionsToBeLaunched.get(2)!=null)
+                    {
+                        if(tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(0).hasSolutionName.trim().toLowerCase()) == false
+                                && tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(1).hasSolutionName.trim().toLowerCase()) == false
+                                && tempSolution.hasSolutionName.trim().toLowerCase().equals(solutionsToBeLaunched.get(2).hasSolutionName.trim().toLowerCase()) == false)
+                        {
+                            solutionsToBeExcluded.add(tempSolution);
+                        }
+                    }
                 }
             }
         }
@@ -383,12 +519,20 @@ public class FeedbackManager
         contentsToWrite = prepareHTML(TranslationManager.ENGLISH);
         
         OutputStreamWriter writer_EN = null;
-        try {            
-            writer_EN=new OutputStreamWriter(new FileOutputStream("C:/xampp/htdocs/RBMM/RBMMFeedbackEnglish_" + Long.toString(curMilliseconds) + ".html"),"UTF-8");
+        try {     
+            if(current_HTML_mode == GENERATE_DIFFERENT_HTML_FOR_EACH_USER)
+            {    
+                writer_EN=new OutputStreamWriter(new FileOutputStream(current_tomcat_dir_for_rbmm_html_feedback + "RBMMFeedbackEnglish_" + Long.toString(curMilliseconds) + ".html"),"UTF-8");
+                englishURL = "http://" + current_tomcat_ip + "/RBMM/RBMMFeedbackEnglish_" + Long.toString(curMilliseconds) + ".html";
+            }
+            else if(current_HTML_mode == GENERATE_ONLY_ONE_HTML_THAT_IS_REPLACED_IN_EACH_RBMM_EXECUTION)
+            {    
+                writer_EN=new OutputStreamWriter(new FileOutputStream(current_tomcat_dir_for_rbmm_html_feedback + "RBMMFeedbackEnglish.html"),"UTF-8");
+                englishURL = "http://" + current_tomcat_ip + "/RBMM/RBMMFeedbackEnglish.html";
+            }
             writer_EN.write(contentsToWrite);
             writer_EN.close();
             
-            englishURL = "http://160.40.50.183/RBMM/RBMMFeedbackEnglish_" + Long.toString(curMilliseconds) + ".html";
             //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\nFEEDBACK URL (English): " + englishURL;
         } catch (IOException ex) {
             Logger.getLogger(FeedbackManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -404,11 +548,20 @@ public class FeedbackManager
         contentsToWrite = prepareHTML(TranslationManager.GERMAN);
         
         OutputStreamWriter writer_DE =null;
-        try {            
-            writer_DE = new OutputStreamWriter(new FileOutputStream("C:/xampp/htdocs/RBMM/RBMMFeedbackGerman_" + Long.toString(curMilliseconds) + ".html"),"UTF-8");
+        try {       
+            if(current_HTML_mode == GENERATE_DIFFERENT_HTML_FOR_EACH_USER)
+            {
+                writer_DE = new OutputStreamWriter(new FileOutputStream(current_tomcat_dir_for_rbmm_html_feedback + "RBMMFeedbackGerman_" + Long.toString(curMilliseconds) + ".html"),"UTF-8");
+                germanURL = "http://" + current_tomcat_ip + "/RBMM/RBMMFeedbackGerman_" + Long.toString(curMilliseconds) + ".html";
+            }
+            else if(current_HTML_mode == GENERATE_ONLY_ONE_HTML_THAT_IS_REPLACED_IN_EACH_RBMM_EXECUTION)
+            {
+                writer_DE = new OutputStreamWriter(new FileOutputStream(current_tomcat_dir_for_rbmm_html_feedback + "RBMMFeedbackGerman.html"),"UTF-8");
+                germanURL = "http://" + current_tomcat_ip + "/RBMM/RBMMFeedbackGerman.html";
+            }
             writer_DE.write(contentsToWrite);
             writer_DE.close();
-            germanURL = "http://160.40.50.183/RBMM/RBMMFeedbackGerman_" + Long.toString(curMilliseconds) + ".html";
+            
             //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nFEEDBACK URL (German): " + germanURL;
         } catch (IOException ex) {
             Logger.getLogger(FeedbackManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -424,12 +577,22 @@ public class FeedbackManager
         contentsToWrite = prepareHTML(TranslationManager.GREEK);
         
         FileWriter fileWriter_GR = null;
-        try {            
-            File newTextFile = new File("C:/xampp/htdocs/RBMM/RBMMFeedbackGreek_" + Long.toString(curMilliseconds) + ".html");
+        try {       
+            File newTextFile = null;
+            if(current_HTML_mode == GENERATE_DIFFERENT_HTML_FOR_EACH_USER)
+            {
+                newTextFile = new File(current_tomcat_dir_for_rbmm_html_feedback + "RBMMFeedbackGreek_" + Long.toString(curMilliseconds) + ".html");
+                greekURL = "http://" + current_tomcat_ip + "/RBMM/RBMMFeedbackGreek_" + Long.toString(curMilliseconds) + ".html";
+            }
+            else if(current_HTML_mode == GENERATE_ONLY_ONE_HTML_THAT_IS_REPLACED_IN_EACH_RBMM_EXECUTION)
+            {
+                newTextFile = new File(current_tomcat_dir_for_rbmm_html_feedback + "RBMMFeedbackGreek.html");
+                greekURL = "http://" + current_tomcat_ip + "/RBMM/RBMMFeedbackGreek.html";
+            }
             fileWriter_GR = new FileWriter(newTextFile);
             fileWriter_GR.write(contentsToWrite);
             fileWriter_GR.close();
-            greekURL = "http://160.40.50.183/RBMM/RBMMFeedbackGreek_" + Long.toString(curMilliseconds) + ".html";
+            
             //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nFEEDBACK URL (Greek): " + greekURL;
         } catch (IOException ex) {
             Logger.getLogger(FeedbackManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -446,11 +609,19 @@ public class FeedbackManager
         
         OutputStreamWriter writer_SP=null;
         try {            
-            writer_SP=new OutputStreamWriter(new FileOutputStream("C:/xampp/htdocs/RBMM/RBMMFeedbackSpanish_" + Long.toString(curMilliseconds) + ".html"),"UTF-8");
+            if(current_HTML_mode == GENERATE_DIFFERENT_HTML_FOR_EACH_USER)
+            {
+                writer_SP=new OutputStreamWriter(new FileOutputStream(current_tomcat_dir_for_rbmm_html_feedback + "RBMMFeedbackSpanish_" + Long.toString(curMilliseconds) + ".html"),"UTF-8");
+                spanishURL = "http://" + current_tomcat_ip + "/RBMM/RBMMFeedbackSpanish_" + Long.toString(curMilliseconds) + ".html";
+            }
+            else if(current_HTML_mode == GENERATE_ONLY_ONE_HTML_THAT_IS_REPLACED_IN_EACH_RBMM_EXECUTION)
+            {
+                writer_SP=new OutputStreamWriter(new FileOutputStream(current_tomcat_dir_for_rbmm_html_feedback + "RBMMFeedbackSpanish.html"),"UTF-8");
+                spanishURL = "http://" + current_tomcat_ip + "/RBMM/RBMMFeedbackSpanish.html";
+            }
             writer_SP.write(contentsToWrite);
             writer_SP.close();
             
-            spanishURL = "http://160.40.50.183/RBMM/RBMMFeedbackSpanish_" + Long.toString(curMilliseconds) + ".html";
             //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nFEEDBACK URL (Spanish): " + spanishURL;
             //        "\n   [These files will be deleted automatically after " + Long.toString(DELETE_FILES_OLDER_THAN_THESE_MINUTES) + " minutes]\n";
         } catch (IOException ex) {
@@ -466,7 +637,7 @@ public class FeedbackManager
     
     public void deleteOldFiles()
     {
-        File directory = new File("C://xampp//htdocs//RBMM");
+        File directory = new File(current_tomcat_delete_old_files_dir);
  
         //get all the files from a directory
         File[] fList = directory.listFiles();
@@ -475,15 +646,30 @@ public class FeedbackManager
             if (file.isFile())
             {
                 String tmpFilename = file.getName();
-                int underscoreIndex = tmpFilename.indexOf("_");
-                int dotIndex = tmpFilename.indexOf(".");
-                if(underscoreIndex!=-1 && dotIndex!=-1)
+                if(tmpFilename.equals(".DS_Store") == false)
                 {
-                    String timeOfCreationInMillisecondsStr = tmpFilename.substring(underscoreIndex+1, dotIndex);
-                    Long timeOfCreationInMilliseconds = Long.parseLong(timeOfCreationInMillisecondsStr);
-                    if( (curMilliseconds-timeOfCreationInMilliseconds) > (DELETE_FILES_OLDER_THAN_THESE_MINUTES*60*1000) )
+                    int underscoreIndex = tmpFilename.indexOf("_");
+                    int dotIndex = tmpFilename.indexOf(".");
+                    
+                    if(current_HTML_mode==GENERATE_DIFFERENT_HTML_FOR_EACH_USER && underscoreIndex!=-1 && dotIndex!=-1)
                     {
-                        File f = new File("C://xampp//htdocs//RBMM//" + tmpFilename);
+                        String timeOfCreationInMillisecondsStr = tmpFilename.substring(underscoreIndex+1, dotIndex);
+                        Long timeOfCreationInMilliseconds = Long.parseLong(timeOfCreationInMillisecondsStr);
+                        if( (curMilliseconds-timeOfCreationInMilliseconds) > (DELETE_FILES_OLDER_THAN_THESE_MINUTES*60*1000) )
+                        {
+                            File f = new File(current_tomcat_delete_old_files_dir + "//" + tmpFilename);
+                            try{
+                                f.delete();
+                                //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nOLD FILE " + tmpFilename + " DELETED!";
+                            }catch(Exception e){
+                                // if any error occurs
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    else if(current_HTML_mode == GENERATE_ONLY_ONE_HTML_THAT_IS_REPLACED_IN_EACH_RBMM_EXECUTION)
+                    {
+                        File f = new File(current_tomcat_delete_old_files_dir + "//" + tmpFilename);
                         try{
                             f.delete();
                             //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nOLD FILE " + tmpFilename + " DELETED!";

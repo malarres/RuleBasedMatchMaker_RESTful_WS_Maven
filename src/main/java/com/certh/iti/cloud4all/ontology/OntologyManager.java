@@ -554,8 +554,9 @@ public class OntologyManager implements Serializable
         for(int i=0; i<allInstances_Solution.size(); i++)
         {
             Solution tmpSolution = allInstances_Solution.get(i);
-            //screenreaders
-            if(getClassFromInstanceName(tmpSolution.instanceName).equals(InstantiationManager.NS + "ScreenReaderSoftware"))    
+            //screenreaders & magnifiers
+            if(getClassFromInstanceName(tmpSolution.instanceName).equals(InstantiationManager.NS + "ScreenReaderSoftware")
+                    || getClassFromInstanceName(tmpSolution.instanceName).equals(InstantiationManager.NS + "MagnifyingSoftware"))    
             {
                 PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n[" + tmpSolution.hasSolutionName + " hasType " + getClassFromInstanceName(tmpSolution.instanceName) + "]";
                 //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[" + tmpSolution.hasSolutionName + " hasSetting " + model.getIndividual(tmpSolution.instanceName).getProperty(model.getProperty(InstantiationManager.NS + "hasSolutionSpecificSettings")).getObject().toString() + "]";
@@ -565,12 +566,15 @@ public class OntologyManager implements Serializable
                 StmtIterator propertiesStatements = tmpScreenReader.listProperties();
                 while(propertiesStatements.hasNext())
                 {
+                    tmpSolution.numberOfRDFStatements++;
                     Statement tmpPropertyStatement = (Statement)propertiesStatements.next();
                     if(tmpPropertyStatement.getPredicate().toString().endsWith("isMappedToRegTerm"))
                     {
                         String settingPrefix = tmpPropertyStatement.getPredicate().toString().substring(0, tmpPropertyStatement.getPredicate().toString().lastIndexOf("_"));
                         AppSpecificSettingRelatedToCommonTerm tmpAppSpecificSettingRelatedToCommonTerm = new AppSpecificSettingRelatedToCommonTerm();
                         tmpAppSpecificSettingRelatedToCommonTerm.appSpecificSettingValue = tmpScreenReader.getPropertyValue(model.getProperty(settingPrefix)).toString();
+                        if(tmpScreenReader.hasProperty(model.getProperty(settingPrefix + "_hasValueSpace")))
+                            tmpAppSpecificSettingRelatedToCommonTerm.appSpecificSettingValueSpace = tmpScreenReader.getPropertyValue(model.getProperty(settingPrefix + "_hasValueSpace")).toString();
                         if(tmpScreenReader.hasProperty(model.getProperty(settingPrefix + "_hasID")))
                             tmpAppSpecificSettingRelatedToCommonTerm.appSpecificSettingID = tmpScreenReader.getPropertyValue(model.getProperty(settingPrefix + "_hasID")).toString();
                         else
@@ -919,7 +923,7 @@ public class OntologyManager implements Serializable
     
     public String getInstanceNameBySolutionID(String tmpID)
     {
-        String res = "not found!";
+        String res = "instance name not found for ID: " + tmpID;
         
         if(allInstances_Solution != null)
         {
@@ -938,7 +942,7 @@ public class OntologyManager implements Serializable
     
     public String getNameBySolutionID(String tmpID)
     {
-        String res = "not found!";
+        String res = "name not found for ID: " + tmpID;
         
         if(allInstances_Solution != null)
         {
@@ -957,7 +961,7 @@ public class OntologyManager implements Serializable
     
     public String getSolutionIDFromInstanceName(String tmpInstanceName)
     {
-        String res = "not found!";
+        String res = "ID not found for instance name: " + tmpInstanceName;
         
         if(allInstances_Solution != null)
         {
@@ -1010,6 +1014,18 @@ public class OntologyManager implements Serializable
         return null;
     }
     
+    public boolean solutionIsInstalled(String tmpSolutionID)
+    {
+        String[] tmpInstalledSolutionsIDs_Str = InstantiationManager.getInstance().DEVICE_REPORTER_INSTALLEDSOLUTIONS_IDs.split(" ");
+        for(int tmpCnt=0; tmpCnt<tmpInstalledSolutionsIDs_Str.length; tmpCnt++)
+        {
+            String tmpInstalledSolutionID = tmpInstalledSolutionsIDs_Str[tmpCnt];
+            if(tmpInstalledSolutionID.equals(tmpSolutionID))
+                return true;
+        }
+        return false;
+    }
+    
     public String findTheMostSuitableInstalledScreenReaderFromCommonSpeechRate(int preferredSpeechRate)
     {
         String screenReaderID = "";
@@ -1045,15 +1061,23 @@ public class OntologyManager implements Serializable
         return screenReaderID;
     }
     
-    public boolean preferredCommonTermForScreenReadersIsSupportedBySolution(ArrayList<AppSpecificSettingRelatedToCommonTerm> tempAppSpecificSettingsRelatedToCommonTerms, String tempCommonTermID)
+    public boolean preferredCommonTermIsSupportedBySolution(ArrayList<AppSpecificSettingRelatedToCommonTerm> tempAppSpecificSettingsRelatedToCommonTerms, CommonPref tempCommonPref)
     {
         if(tempAppSpecificSettingsRelatedToCommonTerms != null)
         {
             for(int i=0; i<tempAppSpecificSettingsRelatedToCommonTerms.size(); i++)
             {
                 AppSpecificSettingRelatedToCommonTerm tmpAppSpecificSettingRelatedToCommonTerm = tempAppSpecificSettingsRelatedToCommonTerms.get(i);
-                if(tmpAppSpecificSettingRelatedToCommonTerm.mappedCommonTermID.equals(tempCommonTermID))
-                    return true;
+                if(tmpAppSpecificSettingRelatedToCommonTerm.mappedCommonTermID.equals(tempCommonPref.commonTermID))
+                {
+                    if(tempCommonPref.commonTermID.equals("display.screenEnhancement.-provisional-magnifierPosition"))
+                    {
+                        if(tmpAppSpecificSettingRelatedToCommonTerm.appSpecificSettingValueSpace.toLowerCase().indexOf(tempCommonPref.value.toLowerCase()) != -1)
+                            return true;
+                    }
+                    else 
+                        return true;
+                }
             }
         }
         return false;
@@ -1091,9 +1115,11 @@ public class OntologyManager implements Serializable
                             || tmpCommonPref.commonTermID.equals("display.screenReader.-provisional-wordEcho")
                             || tmpCommonPref.commonTermID.equals("display.screenReader.-provisional-announceCapitals")
                             || tmpCommonPref.commonTermID.equals("display.screenReader.-provisional-screenReaderBrailleOutput")
-                            || tmpCommonPref.commonTermID.equals("display.screenReader.-provisional-screenReaderTTSEnabled") )
+                            || tmpCommonPref.commonTermID.equals("display.screenReader.-provisional-screenReaderTTSEnabled") 
+                            || tmpCommonPref.commonTermID.equals("display.screenEnhancement.-provisional-highContrastTheme")
+                            || tmpCommonPref.commonTermID.equals("display.screenEnhancement.-provisional-highContrastEnabled"))
                     {
-                        if(preferredCommonTermForScreenReadersIsSupportedBySolution(tmpAppSpecificSettingsRelatedToCommonTerms, tmpCommonPref.commonTermID))
+                        if(preferredCommonTermIsSupportedBySolution(tmpAppSpecificSettingsRelatedToCommonTerms, tmpCommonPref))
                         {
                             numberOfBooleanCommonTermsForScreenReadersSupported++;
                             CommonTerm tempCommonTerm = getCommonTermByID(tmpCommonPref.commonTermID);
@@ -1110,9 +1136,13 @@ public class OntologyManager implements Serializable
                 
                 if(maxNumberOfBooleanCommonTermsForScreenReadersSupported < numberOfBooleanCommonTermsForScreenReadersSupported)
                 {
-                    maxNumberOfBooleanCommonTermsForScreenReadersSupported = numberOfBooleanCommonTermsForScreenReadersSupported;
-                    maxSupportedCommonPrefs = supportedCommonPrefs;
-                    screenReaderID = tmpInstalledSolutionID;
+                    if(tmpInstalledSolutionID.equals("org.chrome.cloud4chrome") == false
+                            || (tmpInstalledSolutionID.equals("org.chrome.cloud4chrome") == true && InstantiationManager.getInstance().USER_fontSize == 18))
+                    {
+                        maxNumberOfBooleanCommonTermsForScreenReadersSupported = numberOfBooleanCommonTermsForScreenReadersSupported;
+                        maxSupportedCommonPrefs = supportedCommonPrefs;
+                        screenReaderID = tmpInstalledSolutionID;
+                    }
                 }
             }
         }
@@ -1121,6 +1151,103 @@ public class OntologyManager implements Serializable
         FeedbackManager.getInstance().appliedCommonPrefs = maxSupportedCommonPrefs;
         FeedbackManager.getInstance().solutionsToBeLaunched.add(getSolutionByID(screenReaderID));
         return screenReaderID;
+    }
+    
+    public String findTheMostSuitableInstalledScreenReaderFromNumberOfRDFStatements()
+    {
+        String screenReaderID = "";
+        int maxNumberOfRDFStatementsForScreenReadersSupported = 0;
+        String[] tmpInstalledSolutionsIDs_Str = InstantiationManager.getInstance().DEVICE_REPORTER_INSTALLEDSOLUTIONS_IDs.split(" ");
+        //examine all installed solutions
+        for(int tmpCnt=0; tmpCnt<tmpInstalledSolutionsIDs_Str.length; tmpCnt++)
+        {
+            int numberOfRDFStatementsForScreenReadersSupported = 0;
+            String tmpInstalledSolutionID = tmpInstalledSolutionsIDs_Str[tmpCnt];
+            //String tmpInstalledSolutionName = getNameBySolutionID(tmpInstalledSolutionID);
+            
+            String tmpInstalledSolutionInstanceName = getInstanceNameBySolutionID(tmpInstalledSolutionID);
+            String tmpInstalledSolutionType = getClassFromInstanceName(tmpInstalledSolutionInstanceName);
+            if(tmpInstalledSolutionType.equals(InstantiationManager.NS + "ScreenReaderSoftware"))
+            {
+                Solution tmpSolution = getSolutionByID(tmpInstalledSolutionID);
+                numberOfRDFStatementsForScreenReadersSupported = tmpSolution.numberOfRDFStatements;
+                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n  [" + tmpInstalledSolutionID + " supports " + Integer.toString(tmpSolution.numberOfRDFStatements) + " RDF statements]";
+                
+                if(maxNumberOfRDFStatementsForScreenReadersSupported < numberOfRDFStatementsForScreenReadersSupported)
+                {
+                    maxNumberOfRDFStatementsForScreenReadersSupported = numberOfRDFStatementsForScreenReadersSupported;
+                    screenReaderID = tmpInstalledSolutionID;
+                }
+            }
+        }
+        PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[SELECTED SCREENREADER: " + screenReaderID + ", numberOfRDFStatements: " + Integer.toString(maxNumberOfRDFStatementsForScreenReadersSupported) + "]\n\n\n";
+        
+        FeedbackManager.getInstance().solutionsToBeLaunched.add(getSolutionByID(screenReaderID));
+        return screenReaderID;
+    }
+    
+    public String findTheMostSuitableInstalledMagnifierFromCommonPrefs()
+    {
+        String maxSupportedCommonPrefs = "";
+        String magnifierID = "";
+        int maxNumberOfCommonTermsForMagnifiersSupported = 0;
+        String[] tmpInstalledSolutionsIDs_Str = InstantiationManager.getInstance().DEVICE_REPORTER_INSTALLEDSOLUTIONS_IDs.split(" ");
+        //examine all installed solutions
+        for(int tmpCnt=0; tmpCnt<tmpInstalledSolutionsIDs_Str.length; tmpCnt++)
+        {
+            int numberOfCommonTermsForMagnifiersSupported = 0;
+            String supportedCommonPrefs = "";
+            String tmpInstalledSolutionID = tmpInstalledSolutionsIDs_Str[tmpCnt];
+            String tmpInstalledSolutionName = getNameBySolutionID(tmpInstalledSolutionID);
+            
+            String tmpInstalledSolutionInstanceName = getInstanceNameBySolutionID(tmpInstalledSolutionID);
+            String tmpInstalledSolutionType = getClassFromInstanceName(tmpInstalledSolutionInstanceName);
+            if(tmpInstalledSolutionType.equals(InstantiationManager.NS + "MagnifyingSoftware"))
+            {
+                FeedbackManager.getInstance().allAvailableSolutions.add(getSolutionByID(tmpInstalledSolutionID));
+                
+                ArrayList<AppSpecificSettingRelatedToCommonTerm> tmpAppSpecificSettingsRelatedToCommonTerms = getAppSpecificSettingRelatedToCommonTerm(tmpInstalledSolutionID);
+                
+                for(int k=0; k<InstantiationManager.getInstance().USER_CommonTermsIDs.size(); k++)
+                {
+                    CommonPref tmpCommonPref = InstantiationManager.getInstance().USER_CommonTermsIDs.get(k);
+                    //examine only common preferences related to screen readers
+                    //reference: https://docs.google.com/spreadsheet/ccc?key=0AppduB_JZh5EdGltZnF3dVpKdXcxSVhEZ0VjZGY1U3c&usp=drive_web#gid=0
+                    if(tmpCommonPref.commonTermID.equals("display.screenEnhancement.-provisional-magnifierEnabled")
+                            || tmpCommonPref.commonTermID.equals("display.screenEnhancement.magnification")
+                            || tmpCommonPref.commonTermID.equals("display.screenEnhancement.tracking")
+                            || tmpCommonPref.commonTermID.equals("display.screenEnhancement.-provisional-magnifierPosition")
+                            || tmpCommonPref.commonTermID.equals("display.screenEnhancement.-provisional-invertColours")
+                            || tmpCommonPref.commonTermID.equals("display.screenEnhancement.-provisional-showCrosshairs") )
+                    {
+                        if(preferredCommonTermIsSupportedBySolution(tmpAppSpecificSettingsRelatedToCommonTerms, tmpCommonPref))
+                        {
+                            numberOfCommonTermsForMagnifiersSupported++;
+                            CommonTerm tempCommonTerm = getCommonTermByID(tmpCommonPref.commonTermID);
+                            if(supportedCommonPrefs.equals(""))
+                                supportedCommonPrefs = "<br>&nbsp;&nbsp;&nbsp;&nbsp;<i>" + tempCommonTerm.name + "</i>";
+                            else
+                                supportedCommonPrefs = supportedCommonPrefs + "<br>&nbsp;&nbsp;&nbsp;&nbsp;<i>" + tempCommonTerm.name + "</i>";
+                            PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[" + tmpInstalledSolutionID + " SUPPORTS " + tmpCommonPref.commonTermID;
+                        }
+                    }
+                }
+                
+                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n  [" + tmpInstalledSolutionID + " supports " + Integer.toString(numberOfCommonTermsForMagnifiersSupported) + " common prefs related to magnifiers]";
+                
+                if(maxNumberOfCommonTermsForMagnifiersSupported < numberOfCommonTermsForMagnifiersSupported)
+                {
+                    maxNumberOfCommonTermsForMagnifiersSupported = numberOfCommonTermsForMagnifiersSupported;
+                    maxSupportedCommonPrefs = supportedCommonPrefs;
+                    magnifierID = tmpInstalledSolutionID;
+                }
+            }
+        }
+        PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[SELECTED MAGNIFIER: " + magnifierID + ", NumberOfPrefsForMagnifiersSupported: " + Integer.toString(maxNumberOfCommonTermsForMagnifiersSupported) + "]\n\n\n";
+        
+        FeedbackManager.getInstance().appliedCommonPrefs = maxSupportedCommonPrefs;
+        FeedbackManager.getInstance().solutionsToBeLaunched.add(getSolutionByID(magnifierID));
+        return magnifierID;
     }
     
     public String getSolutionsToBeLaunched(int mode)
@@ -1172,7 +1299,19 @@ public class OntologyManager implements Serializable
             else
                 PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n\n\n\n[A screen reader has been selected from app-specific preferences]\n\n\n";
             
-            res = res + mostSuitableScreenReader_ID;
+            //if no magnifier is going to be launched, which means that we have no app-specific preferences for a magnifier,
+            //examine common terms (Note: app-specific terms have priority against common terms)
+            String mostSuitableMagnifier_ID = "";
+            if(aSolutionOfThisTypeIsGoingToBeLaunched(InstantiationManager.NS+"MagnifyingSoftware") == false)
+            {
+                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n\n\n\n[Trying to find the most suitable magnifier]";
+                
+                mostSuitableMagnifier_ID = findTheMostSuitableInstalledMagnifierFromCommonPrefs();
+            }  
+            else
+                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n\n\n\n[A magnifier has been selected from app-specific preferences]\n\n\n";
+            
+            res = res + mostSuitableScreenReader_ID + mostSuitableMagnifier_ID;
         }
         else if(mode == RulesManager.GET_RANDOM_INSTANCE_BEWTWEEN_SOLUTIONS_OF_THE_SAME_TYPE)
         {
@@ -1189,9 +1328,12 @@ public class OntologyManager implements Serializable
         for(int i=0; i<tmpSpecificPreferencesForSolutions_Str.length; i++)
         {
             if(tmpSolutionID.equals(tmpSpecificPreferencesForSolutions_Str[i]))
+            {
+                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n * USER HAS APP-SPECIFIC PREFS FOR " + tmpSolutionID;
                 return i;
+            }
         }
-        
+        //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\nUser doesn't have APP-SPECIFIC PREFS FOR " + tmpSolutionID;
         return res;
     }
     
