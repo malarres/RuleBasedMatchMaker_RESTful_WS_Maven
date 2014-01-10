@@ -16,6 +16,7 @@ public class AppSpecificSettingRelatedToCommonTerm
     public String appSpecificSettingID;
     public int appSpecificSettingType;
     public String appSpecificSettingValue;
+    public String appSpecificSettingValueSpace;
     public String mappedCommonTermID;
     public String mappedCommonTermTypeStr;
     public int mappedCommonTermType;
@@ -25,6 +26,7 @@ public class AppSpecificSettingRelatedToCommonTerm
         appSpecificSettingID = "";
         appSpecificSettingType = -1;
         appSpecificSettingValue = "";
+        appSpecificSettingValueSpace = "";
         mappedCommonTermID = "";
         mappedCommonTermTypeStr = "";
         mappedCommonTermType = -1;
@@ -59,6 +61,8 @@ public class AppSpecificSettingRelatedToCommonTerm
             
         if(appSpecificSettingValue.indexOf("^^http://") != -1)
             appSpecificSettingValue = appSpecificSettingValue.substring(0, appSpecificSettingValue.indexOf("^^http://"));
+        if(appSpecificSettingValueSpace.indexOf("^^http://") != -1)
+            appSpecificSettingValueSpace = appSpecificSettingValueSpace.substring(0, appSpecificSettingValueSpace.indexOf("^^http://"));
         if(mappedCommonTermID.indexOf("^^http://") != -1)
             mappedCommonTermID = mappedCommonTermID.substring(0, mappedCommonTermID.indexOf("^^http://"));
         mappedCommonTermTypeStr = "";
@@ -101,9 +105,9 @@ public class AppSpecificSettingRelatedToCommonTerm
             || mappedCommonTermID.equals("display.screenReader.-provisional-announceCapitals")
             || mappedCommonTermID.equals("display.screenReader.-provisional-screenReaderBrailleOutput")
             || mappedCommonTermID.equals("display.screenReader.-provisional-screenReaderTTSEnabled") )
-            res = "\n    [INTERESTING :) -> ID:" + appSpecificSettingID + " TYPE:" + typeStr + " DEFAULT_VALUE:" + appSpecificSettingValue + " mappedTo " + mappedCommonTermID + " TYPE:" + commonTermTypeStr + "]";
+            res = "\n    [INTERESTING :) -> ID:" + appSpecificSettingID + " TYPE:" + typeStr + " DEFAULT_VALUE:" + appSpecificSettingValue + " valueSpace:" + appSpecificSettingValueSpace + " mappedTo " + mappedCommonTermID + " TYPE:" + commonTermTypeStr + "]";
         else
-            res = "\n    [ID:" + appSpecificSettingID + " TYPE:" + typeStr + " DEFAULT_VALUE:" + appSpecificSettingValue + " mappedTo " + mappedCommonTermID + " TYPE:" + commonTermTypeStr + "]";
+            res = "\n    [ID:" + appSpecificSettingID + " TYPE:" + typeStr + " DEFAULT_VALUE:" + appSpecificSettingValue + " valueSpace:" + appSpecificSettingValueSpace + " mappedTo " + mappedCommonTermID + " TYPE:" + commonTermTypeStr + "]";
         return res;
     }
 }

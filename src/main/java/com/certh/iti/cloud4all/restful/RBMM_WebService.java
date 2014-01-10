@@ -58,6 +58,9 @@ public class RBMM_WebService
         InstantiationManager.getInstance().USER_highContrast = Boolean.parseBoolean(highContrast);
         InstantiationManager.getInstance().USER_magnifierFullScreen = Boolean.parseBoolean(magnifierFullScreen);
         InstantiationManager.getInstance().USER_SpecificPreferencesForSolutions_IDs = specificPreferencesForSolutions_IDs;
+        
+        PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nInstantiationManager.getInstance().USER_SpecificPreferencesForSolutions_IDs: " + InstantiationManager.getInstance().USER_SpecificPreferencesForSolutions_IDs;
+        
         String[] commonTermsAndValues = commonTermsAndValues_oneString.split("\\*");
         for(int i=0; i<commonTermsAndValues.length; i=i+2)
         {
@@ -83,7 +86,9 @@ public class RBMM_WebService
             os_version = "6.1";
         InstantiationManager.getInstance().DEVICE_REPORTER_OS_version = os_version;
         InstantiationManager.getInstance().DEVICE_REPORTER_INSTALLEDSOLUTIONS_IDs = installed_solutions_ids;
-        InstantiationManager.getInstance().DEVICE_REPORTER_AVAILABLESOLUTIONS_IDs = available_solutions_ids;
+        InstantiationManager.getInstance().DEVICE_REPORTER_AVAILABLESOLUTIONS_IDs = InstantiationManager.getInstance().DEVICE_REPORTER_INSTALLEDSOLUTIONS_IDs; //available_solutions_ids;
+    
+        PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\nDEVICE_REPORTER_OS_id: " + InstantiationManager.getInstance().DEVICE_REPORTER_OS_id + ", DEVICE_REPORTER_OS_version: " + InstantiationManager.getInstance().DEVICE_REPORTER_OS_version + "\n\n";
     }
     
     @GET
