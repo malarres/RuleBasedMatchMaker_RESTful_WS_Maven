@@ -217,7 +217,17 @@ public class RulesManager
             //(it means that is supports more adjustments)
             if(aScreenReaderHasBeenSelectedForLaunching == false)
             {
-                String tempSelectedScrReaderID = "webinsight.webAnywhere.linux"; //OntologyManager.getInstance().findTheMostSuitableInstalledScreenReaderFromNumberOfRDFStatements();
+                String tempSelectedScrReaderID = "no pre-selected ID";
+                //user wants NVDA and NVDA is installed
+                if(OntologyManager.getInstance().getIndexInUserPrefs("org.nvda-project")!=-1 
+                        && OntologyManager.getInstance().solutionIsInstalled("org.nvda-project")==true)
+                {
+                    tempSelectedScrReaderID = "org.nvda-project";
+                }
+                else
+                {
+                    tempSelectedScrReaderID = "webinsight.webAnywhere.windows"; //OntologyManager.getInstance().findTheMostSuitableInstalledScreenReaderFromNumberOfRDFStatements();
+                }
                 FeedbackManager.getInstance().solutionsToBeLaunched.add(OntologyManager.getInstance().getSolutionByID(tempSelectedScrReaderID));
 
 
