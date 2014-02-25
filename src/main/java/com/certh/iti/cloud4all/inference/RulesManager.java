@@ -24,6 +24,12 @@ public class RulesManager
     public static final int GET_FIRST_INSTANCE_BETWEEN_SOLUTIONS_OF_THE_SAME_TYPE = 0;
     public static final int GET_RANDOM_INSTANCE_BEWTWEEN_SOLUTIONS_OF_THE_SAME_TYPE = 1;
     
+    public static final int RUN_ALL_RULES = 0;
+    public static final int RUN_ADVANCED_TRANSFORMATION_RULES_ONLY = 1;
+    public static final int RUN_SOLUTION_SELECTION_RULES_ONLY = 2;
+    
+    private int typeOfRulesToBeExecuted;
+    
     public Model m;
     public BufferedReader br;
     
@@ -35,8 +41,9 @@ public class RulesManager
     {
         m = ModelFactory.createDefaultModel();
         
-        String currentDir = System.getProperty("user.dir");
-        uri_MatchMaker_rules = currentDir + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/MatchMakerRules.rules";
+        settypeOfRulesToBeExecuted(RUN_ALL_RULES);
+        //settypeOfRulesToBeExecuted(RUN_ADVANCED_TRANSFORMATION_RULES_ONLY);
+        //settypeOfRulesToBeExecuted(RUN_SOLUTION_SELECTION_RULES_ONLY);
     }
     
     public static RulesManager getInstance() 
@@ -44,6 +51,25 @@ public class RulesManager
         if(instance == null) 
             instance = new RulesManager();
         return instance;
+    }
+    
+    public void settypeOfRulesToBeExecuted(int tmpTypeOfRulesToBeExecuted)
+    {
+        String currentDir = System.getProperty("user.dir");
+        
+        if(tmpTypeOfRulesToBeExecuted == RUN_ALL_RULES)
+            uri_MatchMaker_rules = currentDir + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/MatchMakerRules.rules";
+        else if(tmpTypeOfRulesToBeExecuted == RUN_ADVANCED_TRANSFORMATION_RULES_ONLY)
+            uri_MatchMaker_rules = currentDir + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/AdvancedTransformationRules.rules";
+        else if(tmpTypeOfRulesToBeExecuted == RUN_SOLUTION_SELECTION_RULES_ONLY)
+            uri_MatchMaker_rules = currentDir + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/SolutionSelectionRules.rules";
+        
+        typeOfRulesToBeExecuted = tmpTypeOfRulesToBeExecuted;
+    }
+    
+    public int getTypeOfRulesToBeExecuted()
+    {
+        return typeOfRulesToBeExecuted;
     }
     
     public String executeMyCloudRulesForFindingHandicapSituations(boolean writeInfModelForDebug)
