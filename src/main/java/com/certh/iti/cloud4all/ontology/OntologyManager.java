@@ -21,12 +21,157 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+
+
+
+
+
+
+
+
+
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+//import java.nio.file.Path;
+//import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.lang.PipedRDFIterator;
+
+import com.github.jsonldjava.utils.*;
+import com.github.jsonldjava.jena.*;
+import com.github.jsonldjava.core.*;
+import com.github.jsonldjava.impl.*;
+
+
+import com.hp.hpl.jena.rdf.model.InfModel;
+import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.reasoner.rulesys.GenericRuleReasoner;
+import com.hp.hpl.jena.reasoner.rulesys.Rule;
+import com.hp.hpl.jena.shared.DoesNotExistException;
+import com.hp.hpl.jena.query.*;
+
 /**
  *
  * @author nkak
  */
 public class OntologyManager implements Serializable
 {
+    /** <p>The RDF model that holds the vocabulary terms</p> */
+    private static Model m_model = ModelFactory.createDefaultModel();
+    
+    /** <p>The namespace of the vocabulary as a string</p> */
+    public static final String NS = "http://gpii.org/schemas/accessibility#";
+    
+    /** <p>The namespace of the vocabulary as a string</p>
+     *  @see #NS */
+    public static String getURI() {return NS;}
+    
+    /** <p>The namespace of the vocabulary as a resource</p> */
+    public static final Resource NAMESPACE = m_model.createResource( NS );
+    
+    /** <p>Datatype of a preference .</p> */
+    public static final Property PrefDatatype = m_model.createProperty( "http://gpii.org/schemas/accessibility#PrefDatatype" );
+    
+    /** <p>Name of a preference .</p> */
+    public static final Property PrefName = m_model.createProperty( "http://gpii.org/schemas/accessibility#PrefName" );
+    
+    /** <p>Value of a preference .</p> */
+    public static final Property PrefValue = m_model.createProperty( "http://gpii.org/schemas/accessibility#PrefValue" );
+    
+    /** <p>Value range of a preference .</p> */
+    public static final Property PrefValueRange = m_model.createProperty( "http://gpii.org/schemas/accessibility#PrefValueRange" );
+    
+    /** <p>A user has accessibility.</p> */
+    public static final Property hasPrefs = m_model.createProperty( "http://gpii.org/schemas/accessibility#hasPrefs" );
+    
+    /** <p>Application specific accessibility preferences of a person .</p> */
+    public static final Resource Appspecific = m_model.createResource( "http://gpii.org/schemas/accessibility#Appspecific" );
+    
+    /** <p>Common accessibility preferences of a person.</p> */
+    public static final Resource Common = m_model.createResource( "http://gpii.org/schemas/accessibility#Common" );
+    
+    /** <p>Preferences of a person.</p> */
+    public static final Resource Preference = m_model.createResource( "http://gpii.org/schemas/accessibility#Preference" );
+    
+    // effectively used; to be stored permanently
+    
+    /** <p>User requires specific accessibility settings.</p> */
+    public static final Resource User = m_model.createResource( "http://gpii.org/schemas/accessibility#User" );
+    
+    public static final Property requiresAT = m_model.createProperty( "http://gpii.org/schemas/accessibility#requiresAT" );
+    
+    // to distinguish between preferred AT (explicitly though user voting) and used AT (implicitly through app-specific prefs)
+    public static final Property prefersAT = m_model.createProperty( "http://gpii.org/schemas/accessibility#prefersAT" );
+    
+    public static final Resource Environment = m_model.createResource( "http://gpii.org/schemas/accessibility#Environment" );
+    
+    public static final Resource MultipleSolutionsConflict = m_model.createResource( "http://gpii.org/schemas/accessibility#MultipleSolutionsConflict" );
+    
+    // class to describe accessibility conflicts
+    public static final Property accessibilityConflict = m_model.createProperty( "http://gpii.org/schemas/accessibility#accessibilityConflict" );
+    
+    // class to describe certain assistive technology classes  
+    public static final Resource ATType = m_model.createResource( "http://gpii.org/schemas/accessibility#ATType" );
+    
+    public static final Property applyATType = m_model.createProperty( "http://gpii.org/schemas/accessibility#applyATType" );
+    
+    public static final Property applyATProduct = m_model.createProperty( "http://gpii.org/schemas/accessibility#applyATProduct" );
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    // default model automatically initialized with data from JSON-LD  	
+    public static Model m;
+
+    //	accessibilityConflictModel
+    public static Model acm;
+
+    public static final boolean newJsonLDVersion = true;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     boolean printDebugInfo;
         
     public static final int TempUsers_ID = -1000;
@@ -190,327 +335,339 @@ public class OntologyManager implements Serializable
     
     private OntologyManager() 
     {
-        PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + " [OntologyManager constructor called] ";
         printDebugInfo = false;
         
-        classNamesAndIDs = new HashMap<Integer, String>();
-        
-        classNamesAndIDs.put(TempUsers_ID, "TempUsers");
-        classNamesAndIDs.put(TempEnvironment_ID, "TempEnvironment");
-        classNamesAndIDs.put(TempHandicapSituations_ID, "TempHandicapSituations");
-        classNamesAndIDs.put(TempPossibleSolutions_ID, "TempPossibleSolutions");
-        classNamesAndIDs.put(TempSolutionsToBeLaunched_ID, "TempSolutionsToBeLaunched");
-        classNamesAndIDs.put(Registry_ID, "Registry");
-        classNamesAndIDs.put(DTVDevices_ID, "DTVDevices");
-        classNamesAndIDs.put(GamingConsoleDevices_ID, "GamingConsoleDevices");
-        classNamesAndIDs.put(ATMDevices_ID, "ATMDevices");
-        classNamesAndIDs.put(InfokioskDevices_ID, "InfokioskDevices");
-        classNamesAndIDs.put(SmartHomeDevices_ID, "SmartHomeDevices");
-        classNamesAndIDs.put(MSSurfaceDevices_ID, "MSSurfaceDevices");
-        classNamesAndIDs.put(SimpleMobilePhoneDevices_ID, "SimpleMobilePhoneDevices");
-        classNamesAndIDs.put(SmartMobilePhoneDevices_ID, "SmartMobilePhoneDevices");
-        classNamesAndIDs.put(PDADevices_ID, "PDADevices");
-        classNamesAndIDs.put(AtDriving_ID, "AtDriving");
-        classNamesAndIDs.put(AtEntertainment_ID, "AtEntertainment");
-        classNamesAndIDs.put(AtHome_ID, "AtHome");
-        classNamesAndIDs.put(AtWork_ID, "AtWork");
-        classNamesAndIDs.put(HoursOfTheDay_ID, "HoursOfTheDay");
-        classNamesAndIDs.put(LinuxOSPlatforms_ID, "LinuxOSPlatforms");
-        classNamesAndIDs.put(SUNOSOSPlatforms_ID, "SUNOSOSPlatforms");
-        classNamesAndIDs.put(Windows7OSPlatforms_ID, "Windows7OSPlatforms");
-        classNamesAndIDs.put(WES2007_ID, "WES2007");
-        classNamesAndIDs.put(WES2009_ID, "WES2009");
-        classNamesAndIDs.put(WindowsVistaOSPlatform_ID, "WindowsVistaOSPlatform");
-        classNamesAndIDs.put(WindowsXPOSPlatform_ID, "WindowsXPOSPlatform");
-        classNamesAndIDs.put(BrowserWithJava_ID, "BrowserWithJava");
-        classNamesAndIDs.put(Services_ID, "Services");
-        classNamesAndIDs.put(AccessSettings_ID, "AccessSettings");
-        classNamesAndIDs.put(AudioNotificationsGeneralSettings_ID, "AudioNotificationsGeneralSettings");
-        classNamesAndIDs.put(AudioNotificationsLinkSettings_ID, "AudioNotificationsLinkSettings");
-        classNamesAndIDs.put(AudioVolumeSettings_ID, "AudioVolumeSettings");
-        classNamesAndIDs.put(SpeechRecognitionSettings_ID, "SpeechRecognitionSettings");
-        classNamesAndIDs.put(EchoOptionsSettings_ID, "EchoOptionsSettings");
-        classNamesAndIDs.put(TextToSpeechEngineSettings_ID, "TextToSpeechEngineSettings");
-        classNamesAndIDs.put(TextToSpeechLanguageSettings_ID, "TextToSpeechLanguageSettings");
-        classNamesAndIDs.put(PunctuationSettings_ID, "PunctuationSettings");
-        classNamesAndIDs.put(ReadingCapitalsSettings_ID, "ReadingCapitalsSettings");
-        classNamesAndIDs.put(SpeakingRateSettings_ID, "SpeakingRateSettings");
-        classNamesAndIDs.put(SpeekingPitchSettings_ID, "SpeekingPitchSettings");
-        classNamesAndIDs.put(VoiceSettings_ID, "VoiceSettings");
-        classNamesAndIDs.put(VoiceVolume_ID, "VoiceVolume");
-        classNamesAndIDs.put(EasyOneCommunicatorSeetings_ID, "EasyOneCommunicatorSeetings");
-        classNamesAndIDs.put(LanguageSettings_ID, "LanguageSettings");
-        classNamesAndIDs.put(MsSurfaceSettings_ID, "MsSurfaceSettings");
-        classNamesAndIDs.put(SAToGoSettings_ID, "SAToGoSettings");
-        classNamesAndIDs.put(SmartHouseSettings_ID, "SmartHouseSettings");
-        classNamesAndIDs.put(BrailleDisplaySettings_ID, "BrailleDisplaySettings");
-        classNamesAndIDs.put(GestureSettings_ID, "GestureSettings");
-        classNamesAndIDs.put(UsersAssistantsIDSettings_ID, "UsersAssistantsIDSettings");
-        classNamesAndIDs.put(UsersContactsSettings_ID, "UsersContactsSettings");
-        classNamesAndIDs.put(Gmail_ID, "Gmail");
-        classNamesAndIDs.put(UsersIDSettings_ID, "UsersIDSettings");
-        classNamesAndIDs.put(UsersLanguageSettings_ID, "UsersLanguageSettings");
-        classNamesAndIDs.put(UsersXMPPChatIDSettings_ID, "UsersXMPPChatIDSettings");
-        classNamesAndIDs.put(UsersXMPPPasswordSettings_ID, "UsersXMPPPasswordSettings");
-        classNamesAndIDs.put(ColorSettings_ID, "ColorSettings");
-        classNamesAndIDs.put(ButtonSettings_ID, "ButtonSettings");
-        classNamesAndIDs.put(InterfaceSettings_ID, "InterfaceSettings");
-        classNamesAndIDs.put(KeyboardLayoutSettings_ID, "KeyboardLayoutSettings");
-        classNamesAndIDs.put(MagnifierSettings_ID, "MagnifierSettings");
-        classNamesAndIDs.put(SubtitleSettings_ID, "SubtitleSettings");
-        classNamesAndIDs.put(TextSizeSettings_ID, "TextSizeSettings");
-        classNamesAndIDs.put(TextStyleSettings_ID, "TextStyleSettings");
-        classNamesAndIDs.put(VisualNotificationsSettings_ID, "VisualNotificationsSettings");
-        classNamesAndIDs.put(VisualResponseSettings_ID, "VisualResponseSettings");
-        classNamesAndIDs.put(WebAnywhereSettings_ID, "WebAnywhereSettings");
-        classNamesAndIDs.put(SystemsToTransformImagesIntoSoundOrVoice_ID, "SystemsToTransformImagesIntoSoundOrVoice");
-        classNamesAndIDs.put(SatelliteNavigationSystem_ID, "SatelliteNavigationSystem");
-        classNamesAndIDs.put(WordProcessingSoftware_ID, "WordProcessingSoftware");
-        classNamesAndIDs.put(EasyOneCommunicator_ID, "EasyOneCommunicator");
-        classNamesAndIDs.put(SocialNetworkApp_ID, "SocialNetworkApp");
-        classNamesAndIDs.put(SoftwareForSoundOrSpeechAmplification_ID, "SoftwareForSoundOrSpeechAmplification");
-        classNamesAndIDs.put(PaperDocumentsReadingSystemOCR_ID, "PaperDocumentsReadingSystemOCR");
-        classNamesAndIDs.put(SAToGo_ID, "SAToGo");
-        classNamesAndIDs.put(SpeechStreamTextHelp_ID, "SpeechStreamTextHelp");
-        classNamesAndIDs.put(WebAnywhere_ID, "WebAnywhere");
-        classNamesAndIDs.put(VideoMagnifier_ID, "VideoMagnifier");
-        classNamesAndIDs.put(DelayedCaptioningSystem_ID, "DelayedCaptioningSystem");
-        classNamesAndIDs.put(RealTimeCaptioningSystem_ID, "RealTimeCaptioningSystem");
-        classNamesAndIDs.put(SoftwareInterfaceForComputer_ID, "SoftwareInterfaceForComputer");
-        classNamesAndIDs.put(eKiosk_ID, "eKiosk");
-        classNamesAndIDs.put(AlternativeInputDeviceForComputer_ID, "AlternativeInputDeviceForComputer");
-        classNamesAndIDs.put(EyegazeSystem_ID, "EyegazeSystem");
-        classNamesAndIDs.put(MsSurface_ID, "MsSurface");
-        classNamesAndIDs.put(VoiceRecognitionSystem_ID, "VoiceRecognitionSystem");
-        classNamesAndIDs.put(PointingDevice_ID, "PointingDevice");
-        classNamesAndIDs.put(SwitchInterface_ID, "SwitchInterface");
-        classNamesAndIDs.put(MouseControlSoftware_ID, "MouseControlSoftware");
-        classNamesAndIDs.put(OnScreenKeyboard_ID, "OnScreenKeyboard");
-        classNamesAndIDs.put(SoftwareForAdjustingInoutDevicesResponse_ID, "SoftwareForAdjustingInoutDevicesResponse");
-        classNamesAndIDs.put(WordPredictionSoftware_ID, "WordPredictionSoftware");
-        classNamesAndIDs.put(SpeechSynthesis_ID, "SpeechSynthesis");
-        classNamesAndIDs.put(MagnifyingSoftware_ID, "MagnifyingSoftware");
-        classNamesAndIDs.put(ScreenReader_ID, "ScreenReaderSoftware");
-        classNamesAndIDs.put(SoftwareForAdjustingColorCombinationAndTextSize_ID, "SoftwareForAdjustingColorCombinationAndTextSize");
-        classNamesAndIDs.put(SoftwareToModifyThePointerAppearance_ID, "SoftwareToModifyThePointerAppearance");
-        classNamesAndIDs.put(SmartHouse_ID, "SmartHouse");
-        classNamesAndIDs.put(DeviceVendors_ID, "DeviceVendors");
-        classNamesAndIDs.put(PlatformVendors_ID, "PlatformVendors");
-        classNamesAndIDs.put(SolutionVendors_ID, "SolutionVendors");
-        classNamesAndIDs.put(PlatformSettings_AndroidPhoneInteractionSettings_ID, "AndroidPhoneInteractionSettings");
-        classNamesAndIDs.put(PlatformSettings_AndroidPhoneSettings_ID, "AndroidPhoneSettings");
-        classNamesAndIDs.put(PlatformSettings_DesktopSettings_ID, "DesktopSettings");
-        classNamesAndIDs.put(PlatformSettings_DigitalTV_ID, "DigitalTV");
-        classNamesAndIDs.put(PlatformSettings_IOSPhoneSettings_ID, "IOSPhoneSettings");
-        classNamesAndIDs.put(PlatformSettings_SimplePhoneSettings_ID, "SimplePhoneSettings");
-        classNamesAndIDs.put(PlatformSettings_WindowsPhoneSettings_ID, "WindowsPhoneSettings");
-        classNamesAndIDs.put(ApplicationSettings_EasyOneCommunicatorSettings_ID, "EasyOneCommunicatorSettings");
-        classNamesAndIDs.put(ApplicationSettings_EKioskSettings_ID, "EKioskSettings");
-        classNamesAndIDs.put(ApplicationSettings_Maavis_ID, "Maavis");
-        classNamesAndIDs.put(ApplicationSettings_MSSurfaceSettings_ID, "MSSurfaceSettings");
-        classNamesAndIDs.put(ApplicationSettings_ReadWriteGold_TextHelp_ID, "ReadWriteGold_TextHelp");
-        classNamesAndIDs.put(ApplicationSettings_SAToGoSettings_ID, "SAToGoSettings");
-        classNamesAndIDs.put(ApplicationSettings_SocialNetworkAppSettings_ID, "SocialNetworkAppSettings");
-        classNamesAndIDs.put(ApplicationSettings_SpeechStream_TextHelp_ID, "SpeechStream_TextHelp");
-        classNamesAndIDs.put(ApplicationSettings_WebAnywhereSettings_ID, "WebAnywhereSettings");
-        classNamesAndIDs.put(GNOMEDesktopAccessibilitySettings_ID, "GNOMEDesktopAccessibilitySettings");
-        classNamesAndIDs.put(BrowserSettings_Firefox10_0_1Settings_ID, "Firefox10_0_1Settings");
-        classNamesAndIDs.put(BrowserSettings_IE8Settings_ID, "IE8Settings");
-        classNamesAndIDs.put(ScreenMagnifierSettings_ISO24751ScreenMagnifierSettings_ID, "ISO24751ScreenMagnifierSettings");
-        classNamesAndIDs.put(ScreenMagnifierSettings_LinuxBuiltInScreenMagnifierSettings_ID, "LinuxBuiltInScreenMagnifierSettings");
-        classNamesAndIDs.put(ScreenMagnifierSettings_WindowsBuiltInScreenMagnifierSettings_ID, "WindowsBuiltInScreenMagnifierSettings");
-        classNamesAndIDs.put(ScreenMagnifierSettings_ZoomTextSettings_ID, "ZoomTextSettings");
-        classNamesAndIDs.put(ScreenReaderSettings_ISO24751ScreenReaderSettings_ID, "ISO24751ScreenReaderSettings");
-        classNamesAndIDs.put(ScreenReaderSettings_JAWSSettings_ID, "JAWSSettings");
-        classNamesAndIDs.put(ScreenReaderSettings_NVDASettings_ID, "NVDASettings");
-        classNamesAndIDs.put(ScreenReaderSettings_OrcaSettings_ID, "OrcaSettings");
-        classNamesAndIDs.put(ScreenReaderSettings_WinSevenBuiltInNarratorSettings_ID, "WinSevenBuiltInNarratorSettings");
-        
-        
-        allInstances_TempUser = new ArrayList<TempUser>();
-        allInstances_TempEnvironment = new ArrayList<TempEnvironment>();
-        allInstances_TempHandicapSituation = new ArrayList<TempHandicapSituation>();
-        allInstances_TempPossibleSolution = new ArrayList<TempPossibleSolution>();
-        allInstances_TempSolutionsToBeLaunched = new ArrayList<TempSolutionsToBeLaunched>();
-        allInstances_Solution = new ArrayList<Solution>();
-        allCommonTerms = new ArrayList<CommonTerm>();
-        
-        solutionsToBeLaunched = new ArrayList<SolutionToBeLaunched>();
-        
-        // create an empty model
-        model = ModelFactory.createOntologyModel();
-        loadOntology();
-        
-        if(PrevaylerManager.getInstance().USE_PREVAYLER==true && PrevaylerManager.getInstance().isThereAnyOntModelStored())
+        if(newJsonLDVersion) //new JSON-LD version
         {
-            PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "[MODEL FOUND]";
-            
-            ArrayList<String> allInstances_Solution_Str = PrevaylerManager.getInstance().getLastSolutionsArray();
-            Solution tmpSol = null;
-            int solCounter = 0;
-            for(int i=0; i<allInstances_Solution_Str.size(); i++)
-            {
-                if(i%3 == 0)
-                {
-                    tmpSol = new Solution();
-                    tmpSol.instanceName = allInstances_Solution_Str.get(i);
-                }
-                else if(i%3 == 1)
-                    tmpSol.hasSolutionName = allInstances_Solution_Str.get(i);
-                else if(i%3 == 2)
-                {
-                    solCounter++;
-                    tmpSol.id = allInstances_Solution_Str.get(i);
-                    allInstances_Solution.add(tmpSol);
-                    //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n[solution " + Integer.toString(solCounter) + "]" + tmpSol.toString();
-                }
-            }
-            
-            //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "[MODEL FOUND][allInstances_Solution_Str size: " + Integer.toString(allInstances_Solution_Str.size()) + "]";
+            // JenaJSONLD must be initialized so that the readers and writers are registered with Jena.
+            JenaJSONLD.init();
+            m = ModelFactory.createDefaultModel();
         }
-        else
+        else //old version
         {
-            ExtendedIterator classes = model.listClasses();
-        
-            while(classes.hasNext())
+            PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + " [OntologyManager constructor called] ";
+
+
+
+            classNamesAndIDs = new HashMap<Integer, String>();
+
+            classNamesAndIDs.put(TempUsers_ID, "TempUsers");
+            classNamesAndIDs.put(TempEnvironment_ID, "TempEnvironment");
+            classNamesAndIDs.put(TempHandicapSituations_ID, "TempHandicapSituations");
+            classNamesAndIDs.put(TempPossibleSolutions_ID, "TempPossibleSolutions");
+            classNamesAndIDs.put(TempSolutionsToBeLaunched_ID, "TempSolutionsToBeLaunched");
+            classNamesAndIDs.put(Registry_ID, "Registry");
+            classNamesAndIDs.put(DTVDevices_ID, "DTVDevices");
+            classNamesAndIDs.put(GamingConsoleDevices_ID, "GamingConsoleDevices");
+            classNamesAndIDs.put(ATMDevices_ID, "ATMDevices");
+            classNamesAndIDs.put(InfokioskDevices_ID, "InfokioskDevices");
+            classNamesAndIDs.put(SmartHomeDevices_ID, "SmartHomeDevices");
+            classNamesAndIDs.put(MSSurfaceDevices_ID, "MSSurfaceDevices");
+            classNamesAndIDs.put(SimpleMobilePhoneDevices_ID, "SimpleMobilePhoneDevices");
+            classNamesAndIDs.put(SmartMobilePhoneDevices_ID, "SmartMobilePhoneDevices");
+            classNamesAndIDs.put(PDADevices_ID, "PDADevices");
+            classNamesAndIDs.put(AtDriving_ID, "AtDriving");
+            classNamesAndIDs.put(AtEntertainment_ID, "AtEntertainment");
+            classNamesAndIDs.put(AtHome_ID, "AtHome");
+            classNamesAndIDs.put(AtWork_ID, "AtWork");
+            classNamesAndIDs.put(HoursOfTheDay_ID, "HoursOfTheDay");
+            classNamesAndIDs.put(LinuxOSPlatforms_ID, "LinuxOSPlatforms");
+            classNamesAndIDs.put(SUNOSOSPlatforms_ID, "SUNOSOSPlatforms");
+            classNamesAndIDs.put(Windows7OSPlatforms_ID, "Windows7OSPlatforms");
+            classNamesAndIDs.put(WES2007_ID, "WES2007");
+            classNamesAndIDs.put(WES2009_ID, "WES2009");
+            classNamesAndIDs.put(WindowsVistaOSPlatform_ID, "WindowsVistaOSPlatform");
+            classNamesAndIDs.put(WindowsXPOSPlatform_ID, "WindowsXPOSPlatform");
+            classNamesAndIDs.put(BrowserWithJava_ID, "BrowserWithJava");
+            classNamesAndIDs.put(Services_ID, "Services");
+            classNamesAndIDs.put(AccessSettings_ID, "AccessSettings");
+            classNamesAndIDs.put(AudioNotificationsGeneralSettings_ID, "AudioNotificationsGeneralSettings");
+            classNamesAndIDs.put(AudioNotificationsLinkSettings_ID, "AudioNotificationsLinkSettings");
+            classNamesAndIDs.put(AudioVolumeSettings_ID, "AudioVolumeSettings");
+            classNamesAndIDs.put(SpeechRecognitionSettings_ID, "SpeechRecognitionSettings");
+            classNamesAndIDs.put(EchoOptionsSettings_ID, "EchoOptionsSettings");
+            classNamesAndIDs.put(TextToSpeechEngineSettings_ID, "TextToSpeechEngineSettings");
+            classNamesAndIDs.put(TextToSpeechLanguageSettings_ID, "TextToSpeechLanguageSettings");
+            classNamesAndIDs.put(PunctuationSettings_ID, "PunctuationSettings");
+            classNamesAndIDs.put(ReadingCapitalsSettings_ID, "ReadingCapitalsSettings");
+            classNamesAndIDs.put(SpeakingRateSettings_ID, "SpeakingRateSettings");
+            classNamesAndIDs.put(SpeekingPitchSettings_ID, "SpeekingPitchSettings");
+            classNamesAndIDs.put(VoiceSettings_ID, "VoiceSettings");
+            classNamesAndIDs.put(VoiceVolume_ID, "VoiceVolume");
+            classNamesAndIDs.put(EasyOneCommunicatorSeetings_ID, "EasyOneCommunicatorSeetings");
+            classNamesAndIDs.put(LanguageSettings_ID, "LanguageSettings");
+            classNamesAndIDs.put(MsSurfaceSettings_ID, "MsSurfaceSettings");
+            classNamesAndIDs.put(SAToGoSettings_ID, "SAToGoSettings");
+            classNamesAndIDs.put(SmartHouseSettings_ID, "SmartHouseSettings");
+            classNamesAndIDs.put(BrailleDisplaySettings_ID, "BrailleDisplaySettings");
+            classNamesAndIDs.put(GestureSettings_ID, "GestureSettings");
+            classNamesAndIDs.put(UsersAssistantsIDSettings_ID, "UsersAssistantsIDSettings");
+            classNamesAndIDs.put(UsersContactsSettings_ID, "UsersContactsSettings");
+            classNamesAndIDs.put(Gmail_ID, "Gmail");
+            classNamesAndIDs.put(UsersIDSettings_ID, "UsersIDSettings");
+            classNamesAndIDs.put(UsersLanguageSettings_ID, "UsersLanguageSettings");
+            classNamesAndIDs.put(UsersXMPPChatIDSettings_ID, "UsersXMPPChatIDSettings");
+            classNamesAndIDs.put(UsersXMPPPasswordSettings_ID, "UsersXMPPPasswordSettings");
+            classNamesAndIDs.put(ColorSettings_ID, "ColorSettings");
+            classNamesAndIDs.put(ButtonSettings_ID, "ButtonSettings");
+            classNamesAndIDs.put(InterfaceSettings_ID, "InterfaceSettings");
+            classNamesAndIDs.put(KeyboardLayoutSettings_ID, "KeyboardLayoutSettings");
+            classNamesAndIDs.put(MagnifierSettings_ID, "MagnifierSettings");
+            classNamesAndIDs.put(SubtitleSettings_ID, "SubtitleSettings");
+            classNamesAndIDs.put(TextSizeSettings_ID, "TextSizeSettings");
+            classNamesAndIDs.put(TextStyleSettings_ID, "TextStyleSettings");
+            classNamesAndIDs.put(VisualNotificationsSettings_ID, "VisualNotificationsSettings");
+            classNamesAndIDs.put(VisualResponseSettings_ID, "VisualResponseSettings");
+            classNamesAndIDs.put(WebAnywhereSettings_ID, "WebAnywhereSettings");
+            classNamesAndIDs.put(SystemsToTransformImagesIntoSoundOrVoice_ID, "SystemsToTransformImagesIntoSoundOrVoice");
+            classNamesAndIDs.put(SatelliteNavigationSystem_ID, "SatelliteNavigationSystem");
+            classNamesAndIDs.put(WordProcessingSoftware_ID, "WordProcessingSoftware");
+            classNamesAndIDs.put(EasyOneCommunicator_ID, "EasyOneCommunicator");
+            classNamesAndIDs.put(SocialNetworkApp_ID, "SocialNetworkApp");
+            classNamesAndIDs.put(SoftwareForSoundOrSpeechAmplification_ID, "SoftwareForSoundOrSpeechAmplification");
+            classNamesAndIDs.put(PaperDocumentsReadingSystemOCR_ID, "PaperDocumentsReadingSystemOCR");
+            classNamesAndIDs.put(SAToGo_ID, "SAToGo");
+            classNamesAndIDs.put(SpeechStreamTextHelp_ID, "SpeechStreamTextHelp");
+            classNamesAndIDs.put(WebAnywhere_ID, "WebAnywhere");
+            classNamesAndIDs.put(VideoMagnifier_ID, "VideoMagnifier");
+            classNamesAndIDs.put(DelayedCaptioningSystem_ID, "DelayedCaptioningSystem");
+            classNamesAndIDs.put(RealTimeCaptioningSystem_ID, "RealTimeCaptioningSystem");
+            classNamesAndIDs.put(SoftwareInterfaceForComputer_ID, "SoftwareInterfaceForComputer");
+            classNamesAndIDs.put(eKiosk_ID, "eKiosk");
+            classNamesAndIDs.put(AlternativeInputDeviceForComputer_ID, "AlternativeInputDeviceForComputer");
+            classNamesAndIDs.put(EyegazeSystem_ID, "EyegazeSystem");
+            classNamesAndIDs.put(MsSurface_ID, "MsSurface");
+            classNamesAndIDs.put(VoiceRecognitionSystem_ID, "VoiceRecognitionSystem");
+            classNamesAndIDs.put(PointingDevice_ID, "PointingDevice");
+            classNamesAndIDs.put(SwitchInterface_ID, "SwitchInterface");
+            classNamesAndIDs.put(MouseControlSoftware_ID, "MouseControlSoftware");
+            classNamesAndIDs.put(OnScreenKeyboard_ID, "OnScreenKeyboard");
+            classNamesAndIDs.put(SoftwareForAdjustingInoutDevicesResponse_ID, "SoftwareForAdjustingInoutDevicesResponse");
+            classNamesAndIDs.put(WordPredictionSoftware_ID, "WordPredictionSoftware");
+            classNamesAndIDs.put(SpeechSynthesis_ID, "SpeechSynthesis");
+            classNamesAndIDs.put(MagnifyingSoftware_ID, "MagnifyingSoftware");
+            classNamesAndIDs.put(ScreenReader_ID, "ScreenReaderSoftware");
+            classNamesAndIDs.put(SoftwareForAdjustingColorCombinationAndTextSize_ID, "SoftwareForAdjustingColorCombinationAndTextSize");
+            classNamesAndIDs.put(SoftwareToModifyThePointerAppearance_ID, "SoftwareToModifyThePointerAppearance");
+            classNamesAndIDs.put(SmartHouse_ID, "SmartHouse");
+            classNamesAndIDs.put(DeviceVendors_ID, "DeviceVendors");
+            classNamesAndIDs.put(PlatformVendors_ID, "PlatformVendors");
+            classNamesAndIDs.put(SolutionVendors_ID, "SolutionVendors");
+            classNamesAndIDs.put(PlatformSettings_AndroidPhoneInteractionSettings_ID, "AndroidPhoneInteractionSettings");
+            classNamesAndIDs.put(PlatformSettings_AndroidPhoneSettings_ID, "AndroidPhoneSettings");
+            classNamesAndIDs.put(PlatformSettings_DesktopSettings_ID, "DesktopSettings");
+            classNamesAndIDs.put(PlatformSettings_DigitalTV_ID, "DigitalTV");
+            classNamesAndIDs.put(PlatformSettings_IOSPhoneSettings_ID, "IOSPhoneSettings");
+            classNamesAndIDs.put(PlatformSettings_SimplePhoneSettings_ID, "SimplePhoneSettings");
+            classNamesAndIDs.put(PlatformSettings_WindowsPhoneSettings_ID, "WindowsPhoneSettings");
+            classNamesAndIDs.put(ApplicationSettings_EasyOneCommunicatorSettings_ID, "EasyOneCommunicatorSettings");
+            classNamesAndIDs.put(ApplicationSettings_EKioskSettings_ID, "EKioskSettings");
+            classNamesAndIDs.put(ApplicationSettings_Maavis_ID, "Maavis");
+            classNamesAndIDs.put(ApplicationSettings_MSSurfaceSettings_ID, "MSSurfaceSettings");
+            classNamesAndIDs.put(ApplicationSettings_ReadWriteGold_TextHelp_ID, "ReadWriteGold_TextHelp");
+            classNamesAndIDs.put(ApplicationSettings_SAToGoSettings_ID, "SAToGoSettings");
+            classNamesAndIDs.put(ApplicationSettings_SocialNetworkAppSettings_ID, "SocialNetworkAppSettings");
+            classNamesAndIDs.put(ApplicationSettings_SpeechStream_TextHelp_ID, "SpeechStream_TextHelp");
+            classNamesAndIDs.put(ApplicationSettings_WebAnywhereSettings_ID, "WebAnywhereSettings");
+            classNamesAndIDs.put(GNOMEDesktopAccessibilitySettings_ID, "GNOMEDesktopAccessibilitySettings");
+            classNamesAndIDs.put(BrowserSettings_Firefox10_0_1Settings_ID, "Firefox10_0_1Settings");
+            classNamesAndIDs.put(BrowserSettings_IE8Settings_ID, "IE8Settings");
+            classNamesAndIDs.put(ScreenMagnifierSettings_ISO24751ScreenMagnifierSettings_ID, "ISO24751ScreenMagnifierSettings");
+            classNamesAndIDs.put(ScreenMagnifierSettings_LinuxBuiltInScreenMagnifierSettings_ID, "LinuxBuiltInScreenMagnifierSettings");
+            classNamesAndIDs.put(ScreenMagnifierSettings_WindowsBuiltInScreenMagnifierSettings_ID, "WindowsBuiltInScreenMagnifierSettings");
+            classNamesAndIDs.put(ScreenMagnifierSettings_ZoomTextSettings_ID, "ZoomTextSettings");
+            classNamesAndIDs.put(ScreenReaderSettings_ISO24751ScreenReaderSettings_ID, "ISO24751ScreenReaderSettings");
+            classNamesAndIDs.put(ScreenReaderSettings_JAWSSettings_ID, "JAWSSettings");
+            classNamesAndIDs.put(ScreenReaderSettings_NVDASettings_ID, "NVDASettings");
+            classNamesAndIDs.put(ScreenReaderSettings_OrcaSettings_ID, "OrcaSettings");
+            classNamesAndIDs.put(ScreenReaderSettings_WinSevenBuiltInNarratorSettings_ID, "WinSevenBuiltInNarratorSettings");
+
+
+            allInstances_TempUser = new ArrayList<TempUser>();
+            allInstances_TempEnvironment = new ArrayList<TempEnvironment>();
+            allInstances_TempHandicapSituation = new ArrayList<TempHandicapSituation>();
+            allInstances_TempPossibleSolution = new ArrayList<TempPossibleSolution>();
+            allInstances_TempSolutionsToBeLaunched = new ArrayList<TempSolutionsToBeLaunched>();
+            allInstances_Solution = new ArrayList<Solution>();
+            allCommonTerms = new ArrayList<CommonTerm>();
+
+            solutionsToBeLaunched = new ArrayList<SolutionToBeLaunched>();
+
+            // create an empty model
+            model = ModelFactory.createOntologyModel();
+            loadOntology();
+
+            if(PrevaylerManager.getInstance().USE_PREVAYLER==true && PrevaylerManager.getInstance().isThereAnyOntModelStored())
             {
-                OntClass tmpClass = (OntClass)classes.next();
+                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "[MODEL FOUND]";
 
-                int tmpClassID = -1;
-                if(tmpClass != null)
-                    tmpClassID = getClassIDByName(tmpClass.getLocalName());
-
-                //---------
-                //Solutions
-                //---------
-                if(tmpClassID == SystemsToTransformImagesIntoSoundOrVoice_ID
-                        || tmpClassID == SatelliteNavigationSystem_ID
-                        || tmpClassID == WordProcessingSoftware_ID
-                        || tmpClassID == EasyOneCommunicator_ID
-                        || tmpClassID == SocialNetworkApp_ID
-                        || tmpClassID == SoftwareForSoundOrSpeechAmplification_ID
-                        || tmpClassID == PaperDocumentsReadingSystemOCR_ID
-                        || tmpClassID == SAToGo_ID
-                        || tmpClassID == SpeechStreamTextHelp_ID
-                        || tmpClassID == WebAnywhere_ID
-                        || tmpClassID == VideoMagnifier_ID
-                        || tmpClassID == DelayedCaptioningSystem_ID
-                        || tmpClassID == RealTimeCaptioningSystem_ID
-                        || tmpClassID == SoftwareInterfaceForComputer_ID
-                        || tmpClassID == eKiosk_ID
-                        || tmpClassID == AlternativeInputDeviceForComputer_ID
-                        || tmpClassID == EyegazeSystem_ID
-                        || tmpClassID == MsSurface_ID
-                        || tmpClassID == VoiceRecognitionSystem_ID
-                        || tmpClassID == PointingDevice_ID
-                        || tmpClassID == SwitchInterface_ID
-                        || tmpClassID == MouseControlSoftware_ID
-                        || tmpClassID == OnScreenKeyboard_ID
-                        || tmpClassID == SoftwareForAdjustingInoutDevicesResponse_ID
-                        || tmpClassID == WordPredictionSoftware_ID
-                        || tmpClassID == SpeechSynthesis_ID
-                        || tmpClassID == MagnifyingSoftware_ID
-                        || tmpClassID == ScreenReader_ID
-                        || tmpClassID == SoftwareForAdjustingColorCombinationAndTextSize_ID
-                        || tmpClassID == SoftwareToModifyThePointerAppearance_ID
-                        || tmpClassID == SmartHouse_ID)
+                ArrayList<String> allInstances_Solution_Str = PrevaylerManager.getInstance().getLastSolutionsArray();
+                Solution tmpSol = null;
+                int solCounter = 0;
+                for(int i=0; i<allInstances_Solution_Str.size(); i++)
                 {
-                    ExtendedIterator instances = tmpClass.listInstances();
-
-                    while(instances.hasNext())
+                    if(i%3 == 0)
                     {
-                        Individual tmpInstance = (Individual)instances.next();
-
-                        Solution tmpSolution = new Solution();
-
-                        //tmpSolution.classID = tmpClassID;
-                        tmpSolution.instanceName = tmpInstance.getURI();
-                        tmpSolution.id = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "id")).asLiteral().getValue().toString();
-                        tmpSolution.hasSolutionName = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasSolutionName")).asLiteral().getValue().toString();
-                        /*tmpSolution.hasSolutionDescription = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasSolutionDescription")).asLiteral().getValue().toString();
-                        String tmpFreeAllowedNrOfInvocations = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "freeAllowedNrOfInvocations")).asLiteral().getValue().toString();
-                        if(tmpFreeAllowedNrOfInvocations.length() > 0)
-                            tmpSolution.freeAllowedNrOfInvocations = Integer.parseInt(tmpFreeAllowedNrOfInvocations);
-                        String tmpHasCost = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasCost")).asLiteral().getValue().toString();
-                        if(tmpHasCost.length() > 0)
-                            tmpSolution.hasCost = Double.parseDouble(tmpHasCost);
-                        tmpSolution.preferredLang = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "preferredLang")).asLiteral().getValue().toString();
-                        tmpSolution.speechRate = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "speechRate")).asLiteral().getValue().toString();
-                        tmpSolution.hasSolutionSpecificSetting = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasSolutionSpecificSetting")).asLiteral().getValue().toString();
-                        tmpSolution.hasSolutionVendor = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasSolutionVendor")).asLiteral().getValue().toString();
-                        tmpSolution.runsOnDevice = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "runsOnDevice")).asLiteral().getValue().toString();
-                        tmpSolution.runsOnPlatform = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "runsOnPlatform")).asLiteral().getValue().toString();
-                        tmpSolution.hasCostCurrency = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasCostCurrency")).asLiteral().getValue().toString();
-                        tmpSolution.hasSolutionVersion = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasSolutionVersion")).asLiteral().getValue().toString();
-                        */
-                        
-                        //Shortcuts
-                        NodeIterator shortcutsInstances = tmpInstance.listPropertyValues(model.getProperty(InstantiationManager.NS, "hasShortcut"));
-                        while(shortcutsInstances.hasNext())
-                        {
-                            RDFNode tmpShortcutInstance = (RDFNode)shortcutsInstances.next();
-                            Shortcut tmpShortcut = new Shortcut();
-                            tmpShortcut.name_EN = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasName_EN")).getLiteral().getValue().toString();
-                            tmpShortcut.name_DE = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasName_DE")).getLiteral().getValue().toString();
-                            tmpShortcut.name_GR = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasName_GR")).getLiteral().getValue().toString();
-                            tmpShortcut.name_SP = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasName_SP")).getLiteral().getValue().toString();
-                            tmpShortcut.category = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasCategory")).getLiteral().getValue().toString();
-                            tmpShortcut.desktopLayout = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_DesktopLayout")).getLiteral().getValue().toString();
-                            tmpShortcut.laptopLayout = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_LaptopLayout")).getLiteral().getValue().toString();
-
-                            //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[SHORTCUT for " + tmpSolution.hasSolutionName + " -> " + tmpShortcut.toString() + "]";
-
-                            tmpSolution.shortcuts.add(tmpShortcut);
-                        }
-                        
-                        //Basic Info
-                        //Shortcuts
-                        NodeIterator basicInfoInstances = tmpInstance.listPropertyValues(model.getProperty(InstantiationManager.NS, "hasBasicInfo"));
-                        while(basicInfoInstances.hasNext())
-                        {
-                            RDFNode tmpBasicInfoInstance = (RDFNode)basicInfoInstances.next();
-                            tmpSolution.userManualURL = ((Resource)tmpBasicInfoInstance).getProperty(model.getProperty(InstantiationManager.NS, "BasicInfo_UserManual")).getLiteral().getValue().toString();
-                        }
-                        
-                        allInstances_Solution.add(tmpSolution);
+                        tmpSol = new Solution();
+                        tmpSol.instanceName = allInstances_Solution_Str.get(i);
+                    }
+                    else if(i%3 == 1)
+                        tmpSol.hasSolutionName = allInstances_Solution_Str.get(i);
+                    else if(i%3 == 2)
+                    {
+                        solCounter++;
+                        tmpSol.id = allInstances_Solution_Str.get(i);
+                        allInstances_Solution.add(tmpSol);
+                        //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n\n[solution " + Integer.toString(solCounter) + "]" + tmpSol.toString();
                     }
                 }
-                else if(tmpClassID == Registry_ID)
-                {
-                    ExtendedIterator instances = tmpClass.listInstances();
 
-                    while(instances.hasNext())
-                    {
-                        Individual tmpInstance = (Individual)instances.next();
-
-                        CommonTerm tmpCommonTerm = new CommonTerm();
-
-                        tmpCommonTerm.instanceName = tmpInstance.getURI();
-                        if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasID")) != null)
-                            tmpCommonTerm.ID = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasID")).asLiteral().getValue().toString();
-                        if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasName")) != null)
-                            tmpCommonTerm.name = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasName")).asLiteral().getValue().toString();
-                        if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasDescription")) != null)
-                            tmpCommonTerm.description = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasDescription")).asLiteral().getValue().toString();
-                        if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasType")) != null)
-                            tmpCommonTerm.type = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasType")).asLiteral().getValue().toString();
-                        if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasDefaultValue")) != null)
-                            tmpCommonTerm.defaulValue = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasDefaultValue")).asLiteral().getValue().toString();
-                        if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasValueSpace")) != null)
-                            tmpCommonTerm.valueSpace = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasValueSpace")).asLiteral().getValue().toString();
-                        if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasNotes")) != null)
-                            tmpCommonTerm.notes = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasNotes")).asLiteral().getValue().toString();
-                        
-                        allCommonTerms.add(tmpCommonTerm);
-                    }
-                }
+                //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "[MODEL FOUND][allInstances_Solution_Str size: " + Integer.toString(allInstances_Solution_Str.size()) + "]";
             }
-            fillAppSpecificSettingsMappedToCommonTerms();
-            
-            if(PrevaylerManager.getInstance().USE_PREVAYLER == true)
+            else
             {
-                PrevaylerManager.getInstance().updatePrevayler(allInstances_Solution);
-                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "[MODEL NOT FOUND]";
+                ExtendedIterator classes = model.listClasses();
+
+                while(classes.hasNext())
+                {
+                    OntClass tmpClass = (OntClass)classes.next();
+
+                    int tmpClassID = -1;
+                    if(tmpClass != null)
+                        tmpClassID = getClassIDByName(tmpClass.getLocalName());
+
+                    //---------
+                    //Solutions
+                    //---------
+                    if(tmpClassID == SystemsToTransformImagesIntoSoundOrVoice_ID
+                            || tmpClassID == SatelliteNavigationSystem_ID
+                            || tmpClassID == WordProcessingSoftware_ID
+                            || tmpClassID == EasyOneCommunicator_ID
+                            || tmpClassID == SocialNetworkApp_ID
+                            || tmpClassID == SoftwareForSoundOrSpeechAmplification_ID
+                            || tmpClassID == PaperDocumentsReadingSystemOCR_ID
+                            || tmpClassID == SAToGo_ID
+                            || tmpClassID == SpeechStreamTextHelp_ID
+                            || tmpClassID == WebAnywhere_ID
+                            || tmpClassID == VideoMagnifier_ID
+                            || tmpClassID == DelayedCaptioningSystem_ID
+                            || tmpClassID == RealTimeCaptioningSystem_ID
+                            || tmpClassID == SoftwareInterfaceForComputer_ID
+                            || tmpClassID == eKiosk_ID
+                            || tmpClassID == AlternativeInputDeviceForComputer_ID
+                            || tmpClassID == EyegazeSystem_ID
+                            || tmpClassID == MsSurface_ID
+                            || tmpClassID == VoiceRecognitionSystem_ID
+                            || tmpClassID == PointingDevice_ID
+                            || tmpClassID == SwitchInterface_ID
+                            || tmpClassID == MouseControlSoftware_ID
+                            || tmpClassID == OnScreenKeyboard_ID
+                            || tmpClassID == SoftwareForAdjustingInoutDevicesResponse_ID
+                            || tmpClassID == WordPredictionSoftware_ID
+                            || tmpClassID == SpeechSynthesis_ID
+                            || tmpClassID == MagnifyingSoftware_ID
+                            || tmpClassID == ScreenReader_ID
+                            || tmpClassID == SoftwareForAdjustingColorCombinationAndTextSize_ID
+                            || tmpClassID == SoftwareToModifyThePointerAppearance_ID
+                            || tmpClassID == SmartHouse_ID)
+                    {
+                        ExtendedIterator instances = tmpClass.listInstances();
+
+                        while(instances.hasNext())
+                        {
+                            Individual tmpInstance = (Individual)instances.next();
+
+                            Solution tmpSolution = new Solution();
+
+                            //tmpSolution.classID = tmpClassID;
+                            tmpSolution.instanceName = tmpInstance.getURI();
+                            tmpSolution.id = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "id")).asLiteral().getValue().toString();
+                            tmpSolution.hasSolutionName = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasSolutionName")).asLiteral().getValue().toString();
+                            /*tmpSolution.hasSolutionDescription = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasSolutionDescription")).asLiteral().getValue().toString();
+                            String tmpFreeAllowedNrOfInvocations = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "freeAllowedNrOfInvocations")).asLiteral().getValue().toString();
+                            if(tmpFreeAllowedNrOfInvocations.length() > 0)
+                                tmpSolution.freeAllowedNrOfInvocations = Integer.parseInt(tmpFreeAllowedNrOfInvocations);
+                            String tmpHasCost = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasCost")).asLiteral().getValue().toString();
+                            if(tmpHasCost.length() > 0)
+                                tmpSolution.hasCost = Double.parseDouble(tmpHasCost);
+                            tmpSolution.preferredLang = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "preferredLang")).asLiteral().getValue().toString();
+                            tmpSolution.speechRate = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "speechRate")).asLiteral().getValue().toString();
+                            tmpSolution.hasSolutionSpecificSetting = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasSolutionSpecificSetting")).asLiteral().getValue().toString();
+                            tmpSolution.hasSolutionVendor = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasSolutionVendor")).asLiteral().getValue().toString();
+                            tmpSolution.runsOnDevice = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "runsOnDevice")).asLiteral().getValue().toString();
+                            tmpSolution.runsOnPlatform = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "runsOnPlatform")).asLiteral().getValue().toString();
+                            tmpSolution.hasCostCurrency = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasCostCurrency")).asLiteral().getValue().toString();
+                            tmpSolution.hasSolutionVersion = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "hasSolutionVersion")).asLiteral().getValue().toString();
+                            */
+
+                            //Shortcuts
+                            NodeIterator shortcutsInstances = tmpInstance.listPropertyValues(model.getProperty(InstantiationManager.NS, "hasShortcut"));
+                            while(shortcutsInstances.hasNext())
+                            {
+                                RDFNode tmpShortcutInstance = (RDFNode)shortcutsInstances.next();
+                                Shortcut tmpShortcut = new Shortcut();
+                                tmpShortcut.name_EN = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasName_EN")).getLiteral().getValue().toString();
+                                tmpShortcut.name_DE = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasName_DE")).getLiteral().getValue().toString();
+                                tmpShortcut.name_GR = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasName_GR")).getLiteral().getValue().toString();
+                                tmpShortcut.name_SP = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasName_SP")).getLiteral().getValue().toString();
+                                tmpShortcut.category = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_hasCategory")).getLiteral().getValue().toString();
+                                tmpShortcut.desktopLayout = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_DesktopLayout")).getLiteral().getValue().toString();
+                                tmpShortcut.laptopLayout = ((Resource)tmpShortcutInstance).getProperty(model.getProperty(InstantiationManager.NS, "Shortcut_LaptopLayout")).getLiteral().getValue().toString();
+
+                                //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n[SHORTCUT for " + tmpSolution.hasSolutionName + " -> " + tmpShortcut.toString() + "]";
+
+                                tmpSolution.shortcuts.add(tmpShortcut);
+                            }
+
+                            //Basic Info
+                            //Shortcuts
+                            NodeIterator basicInfoInstances = tmpInstance.listPropertyValues(model.getProperty(InstantiationManager.NS, "hasBasicInfo"));
+                            while(basicInfoInstances.hasNext())
+                            {
+                                RDFNode tmpBasicInfoInstance = (RDFNode)basicInfoInstances.next();
+                                tmpSolution.userManualURL = ((Resource)tmpBasicInfoInstance).getProperty(model.getProperty(InstantiationManager.NS, "BasicInfo_UserManual")).getLiteral().getValue().toString();
+                            }
+
+                            allInstances_Solution.add(tmpSolution);
+                        }
+                    }
+                    else if(tmpClassID == Registry_ID)
+                    {
+                        ExtendedIterator instances = tmpClass.listInstances();
+
+                        while(instances.hasNext())
+                        {
+                            Individual tmpInstance = (Individual)instances.next();
+
+                            CommonTerm tmpCommonTerm = new CommonTerm();
+
+                            tmpCommonTerm.instanceName = tmpInstance.getURI();
+                            if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasID")) != null)
+                                tmpCommonTerm.ID = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasID")).asLiteral().getValue().toString();
+                            if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasName")) != null)
+                                tmpCommonTerm.name = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasName")).asLiteral().getValue().toString();
+                            if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasDescription")) != null)
+                                tmpCommonTerm.description = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasDescription")).asLiteral().getValue().toString();
+                            if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasType")) != null)
+                                tmpCommonTerm.type = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasType")).asLiteral().getValue().toString();
+                            if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasDefaultValue")) != null)
+                                tmpCommonTerm.defaulValue = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasDefaultValue")).asLiteral().getValue().toString();
+                            if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasValueSpace")) != null)
+                                tmpCommonTerm.valueSpace = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasValueSpace")).asLiteral().getValue().toString();
+                            if(tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasNotes")) != null)
+                                tmpCommonTerm.notes = tmpInstance.getPropertyValue(model.getProperty(InstantiationManager.NS, "RegistryTerm_hasNotes")).asLiteral().getValue().toString();
+
+                            allCommonTerms.add(tmpCommonTerm);
+                        }
+                    }
+                }
+                fillAppSpecificSettingsMappedToCommonTerms();
+
+                if(PrevaylerManager.getInstance().USE_PREVAYLER == true)
+                {
+                    PrevaylerManager.getInstance().updatePrevayler(allInstances_Solution);
+                    PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "[MODEL NOT FOUND]";
+                }
             }
         }
     }
@@ -520,6 +677,167 @@ public class OntologyManager implements Serializable
         if(instance == null) 
             instance = new OntologyManager();
         return instance;
+    }
+    
+    public static void runJSONLDTests(InputStream incomingData) throws IOException 
+    {
+        PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "Load preferences (JSONLD) and device characteristics (JSONLD)";
+
+        // both input shall be either fetched from GPII or arguments in a match request
+//        String prefs = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/t1Common.jsonld";
+//        String device = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/t1Device.jsonld";
+//        String inputJSONLD = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/allInOneInput.jsonld";
+        
+
+        // load accessibility namespace
+        m.setNsPrefix("ax", NS);
+        //m = ModelFactory.createDefaultModel().read(incomingData, "JSON-LD");
+        RDFDataMgr.read(m, incomingData, null, JenaJSONLD.JSONLD);
+//        Model solutions = ModelFactory.createDefaultModel().read(device, "JSON-LD");
+//        m = m.union(solutions);
+        //m.write(System.out);
+
+        // TODO: use ModelFactors or RDFDataMrg ? 
+        //alternative to read preferences from JSONLD			
+        //RDFDataMgr.read(m, inputURL.toUri().toString(), null, JenaJSONLD.JSONLD);
+
+        PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nLoad other semantic data source (registry and solutions)";
+        /** 
+            * TODO this are static input source used in the RBMM Web Service.
+            * These input sources should be exchangeable with any other semantic representations of preference terms or solutions
+            */
+//        String reg = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/registry.jsonld";
+//        String sol = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/solutions.jsonld";
+
+//        Model registry = ModelFactory.createDefaultModel().read(reg, "JSON-LD");
+//        Model uListing = ModelFactory.createDefaultModel().read(sol, "JSON-LD");
+
+        // merge the Models
+//        m = m.union(registry);
+//        m = m.union(uListing);
+
+        // print the Model as RDF/XML
+        //m.write(System.out);
+
+        PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nRun JENA rules to infer knowledge used for conflict resolution";
+                /** 
+                    * TODO make this mapping more general to achieve the goal that we are not limited to GPII input sources
+                    * This step is used for any kind of mappings from an abritary input source (here preferences from GPII) 
+                    * to infer required knowledge for the RBMM reasoning and vocabulary. 
+                    * 
+                    */
+        String mappingRules = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/mappingRules.rules";
+
+        File f = new File(mappingRules);
+            if (f.exists()) {
+                    List<Rule> rules = Rule.rulesFromURL("file:" + mappingRules);
+                    GenericRuleReasoner r = new GenericRuleReasoner(rules);
+                    InfModel infModel = ModelFactory.createInfModel(r, m);
+                    // starting the rule execution
+                    infModel.prepare();					
+                    // write down the results in RDF/XML form
+                    infModel.write(System.out);			
+
+                // TODO why am I doing this here?  
+                    m.add(infModel.getDeductionsModel());
+            } else
+                    PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nThat rules file does not exist.";
+
+        PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nSPARQL Query: detect conflicts";
+            /**
+            * TODO 
+            * Fix: ?y is not constructed in the RDF model.
+            * SPARQL query not in source code 
+            */
+
+        String constructString = "CONSTRUCT";
+            constructString += "{ ";
+            constructString += " <http://gpii.org/schemas/accessibility#Environment> <http://gpii.org/schemas/accessibility#accessibilityConflict> <http://gpii.org/schemas/accessibility#MultipleSolutionsConflict> .";
+            constructString += " <http://gpii.org/schemas/accessibility#MultipleSolutionsConflict> <http://gpii.org/schemas/accessibility#applyATType> ?x .";
+            constructString += " <http://gpii.org/schemas/accessibility#MultipleSolutionsConflict> <http://gpii.org/schemas/accessibility#applyATProduct> ?y .";
+            constructString += " } ";
+            constructString += "WHERE { ";
+            constructString += " SELECT ?x (COUNT(?y) AS ?count) ";
+            constructString += "{ ";
+            constructString += "<http://gpii.org/schemas/accessibility#User> <http://gpii.org/schemas/accessibility#requiresAT> ?x . ";
+            constructString += "?y <http://registry.gpii.org/applications/type> ?x . ";	
+            constructString += "} GROUP BY ?x";
+            constructString += " HAVING (?count > 1)";
+            constructString += " }";
+
+
+        Query query = QueryFactory.create(constructString) ;
+        QueryExecution qexec = QueryExecutionFactory.create(query, m) ;
+        acm = qexec.execConstruct() ;
+        StmtIterator si = acm.listStatements();
+        Statement s = null;
+        while (si.hasNext()) 
+        {
+            s = si.next();
+            //PrevaylerManager.getInstance().debug = "\n" + PrevaylerManager.getInstance().debug + s.getPredicate().toString();
+        }
+        
+        qexec.close();		
+
+        //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nResolve confilcts => not implemented";
+        /**
+            * TODO implement conflict resolution
+            */
+        //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nstill not implemented";
+
+        PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nOutput: Results as JSONLD object:\n";
+        
+        // list the statements in the Model
+        StmtIterator iter = m.listStatements();
+
+        // print out the predicate, subject and object of each statement
+        while (iter.hasNext()) 
+        {
+            PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\n";
+            Statement stmt      = iter.nextStatement();  // get next statement
+            Resource  subject   = stmt.getSubject();     // get the subject
+            Property  predicate = stmt.getPredicate();   // get the predicate
+            RDFNode   object    = stmt.getObject();      // get the object
+
+            PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + subject.toString();
+            PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + " " + predicate.toString() + " ";
+            if (object instanceof Resource) 
+                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + object.toString();
+            else // object is a literal                
+                PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + " \"" + object.toString() + "\"";
+        } 
+        
+        /**
+            * TODO implement output as JSONLD
+            */
+        //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nstill not implemented";
+
+        // Test 1 - use RDFDataMrg 
+        // RDFDataMgr.write(System.out, (Model) m, JenaJSONLD.JSONLD);
+        // m.write(System.out, "JSON-LD");
+
+        // TEST 2 - use JSONLdProcessor
+        /*JsonLdOptions options = new JsonLdOptions(); 
+        options.format = "application/ld+json";		    
+        Object json;
+            try {
+                    json = JsonLdProcessor.fromRDF(m, options);
+                String jsonStr = JSONUtils.toPrettyString(json);
+                System.out.println(jsonStr);				
+            } catch (JsonLdError e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+            }*/
+
+                
+        si = m.listStatements();
+        s = null;
+        while (si.hasNext()) 
+        {
+            s = si.next();
+            //PrevaylerManager.getInstance().debug =  "\n" + PrevaylerManager.getInstance().debug + s.toString();
+        }
+        //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + Long.toString(m.size());
     }
     
     public void loadOntology()

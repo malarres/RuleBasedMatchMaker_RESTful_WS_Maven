@@ -1,0 +1,191 @@
+{
+    "@context": {
+        "token": "http://registry.gpii.org/user",
+        "preferences": "http://registry.gpii.org/preference",
+        "name": "http://registry.gpii.org/preference/name",
+        "type": "http://registry.gpii.org/preference/type",
+        "value": {
+            "@id": "http://registry.gpii.org/preference/value",
+            "@type": "http://registry.gpii.org/preference/datatype"
+        },
+        "condition": "http://registry.gpii.org/preference/condition",
+		
+		"solutions": "http://registry.gpii.org/applications",
+		
+		"terms": "http://registry.gpii.org/preference/terms",
+        "datatype": "http://registry.gpii.org/preference/datatype",
+        "valueRange": "http://registry.gpii.org/preference/valuerange",
+        "default": "http://registry.gpii.org/preference/defaultValue",
+		
+		"applications": "http://registry.gpii.org/applications"
+    },
+    "token": "lars",
+    "preferences": [
+        {
+            "@id": "http://registry.gpii.org/common/fontSize",
+            "type": "common",
+            "name": "fontSize",
+            "value": "24",
+            "condition": "null"
+        },
+        {
+            "@id": "http://registry.gpii.org/common/foregroundColor",
+            "type": "common",
+            "name": "foregroundColor",
+            "value": "white",
+            "condition": "null"
+        },
+        {
+            "@id": "http://registry.gpii.org/applications/com.microsoft.windows.highContrast.HighContrastOn",
+            "type": "applications",
+            "name": "com.microsoft.windows.highContrast.HighContrastOn",
+            "value": "true",
+            "condition": "null"
+        },
+        {
+            "@id": "http://registry.gpii.org/applications/org.nvda-project",
+            "type": "applications",
+            "name": "org.nvda-project",
+            "value": {
+                "speech.synth": "espeak",
+                "speech.outputDevice": "Microsoft Sound Mapper",
+                "speech.symbolLevel": "300",
+                "speech.espeak.rate": 17.20430107526882,
+                "speech.espeak.voice": "en\\en-wi",
+                "speech.espeak.pitch": 60,
+                "speech.espeak.volume": 80,
+                "reviewCursor.followFocus": false,
+                "reviewCursor.followCaret": true,
+                "reviewCursor.followMouse": true,
+                "keyboard.speakTypedWords": true,
+                "speech.espeak.rateBoost": true,
+                "keyboard.speakTypedCharacters": false,
+                "presentation.reportHelpBalloons": false,
+                "speech.espeak.sayCapForCapitals": true,
+                "virtualBuffers.autoSayAllOnPageLoad": false
+            },
+            "condition": "null"
+        },
+        {
+            "@id": "http://registry.gpii.org/common/magnifierPosition",
+            "type": "common",
+            "name": "magnifierPosition",
+            "value": "Lens",
+            "condition": "null"
+        },
+        {
+            "@id": "http://registry.gpii.org/common/magnification",
+            "type": "common",
+            "name": "magnification",
+            "value": "1.5",
+            "condition": "null"
+        },
+        {
+            "@id": "http://registry.gpii.org/common/tracking",
+            "type": "common",
+            "name": "tracking",
+            "value": [
+                "mouse",
+                "caret"
+            ],
+            "condition": "null"
+        },
+        {
+            "@id": "http://registry.gpii.org/common/invertColours",
+            "type": "common",
+            "name": "invertColours",
+            "value": "true",
+            "condition": "null"
+        },
+        {
+            "@id": "http://registry.gpii.org/common/cursorSize",
+            "type": "common",
+            "name": "cursorSize",
+            "value": "0.9",
+            "condition": "null"
+        },
+        {
+            "@id": "http://registry.gpii.org/common/mouseTrailing",
+            "type": "common",
+            "name": "mouseTrailing",
+            "value": "10",
+            "condition": "null"
+        },
+        {
+            "@id": "http://registry.gpii.org/common/highContrastEnabled",
+            "type": "common",
+            "name": "highContrastEnabled",
+            "value": "true",
+            "condition": "null"
+        },
+        {
+            "@id": "http://registry.gpii.org/common/magnifierEnabled",
+            "type": "common",
+            "name": "magnifierEnabled",
+            "value": "true",
+            "condition": "null"
+        },
+        {
+            "@id": "http://registry.gpii.org/common/screenReaderTTSEnabled",
+            "type": "common",
+            "name": "screenReaderTTSEnabled",
+            "value": "true",
+            "condition": "null"
+        }
+    ],
+	"solutions": 
+        [
+            "com.microsoft.windows.magnifier",
+            "com.microsoft.windows.onscreenKeyboard",
+            "org.nvda-project",
+			"com.yourdolphin.supernova-as",
+            "webinsight.webAnywhere.windows",
+            "com.texthelp.readWriteGold",
+            "net.opendirective.maavis",
+            "com.microsoft.windows.highContrast",
+            "com.microsoft.windows.mouseTracking",
+            "com.microsoft.windows.cursors"
+        ],
+	"terms": [
+        {
+            "@id": "http://registry.gpii.org/common/fontSize",
+            "datatype": "Integer",
+            "valueRange": "0-*",
+            "default": "8"
+        },
+        {
+            "@id": "http://registry.gpii.org/common/foregroundColor",
+            "datatype": "Integer",
+            "valueRange": "0-*",
+            "default": "8"
+        }, 
+        {
+            "@id": "http://registry.gpii.org/common/onScreenKeyboardEnabled",
+            "datatype": "Integer",
+            "valueRange": "0-*",
+            "default": "8"
+        }
+    ],
+	"applications": [
+        {
+            "@id": "http://registry.gpii.org/applications/com.microsoft.windows.magnifier",
+            "type": "Magnifier"
+        },
+        {
+            "@id": "http://registry.gpii.org/applications/com.yourdolphin.supernova-as",
+            "type": "Magnifier"
+        },
+        {
+            "@id": "http://registry.gpii.org/applications/org.nvda-projec",
+            "type": "Screen Reader"
+        },
+        {
+            "@id": "http://registry.gpii.org/applications/com.microsoft.windows.onscreenKeyboard",
+            "type": "Screen Keyboard"
+        },
+        {
+            "@id": "http://registry.gpii.org/applications/com.microsoft.windows.highContrast",
+            "type": "High Contrast"
+        }   
+    ]
+}

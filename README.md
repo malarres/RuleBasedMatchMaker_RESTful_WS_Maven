@@ -9,6 +9,10 @@ To build the RuleBasedMatchMaker web-service:
 
 2) Run "mvn clean install" in the root directory of the source code
 
+Usage example using [curl](http://curl.haxx.se/):
+
+	curl -X POST -H "Content-Type: application/json" http://localhost:8080/CLOUD4All_RBMM_Restful_WS/RBMM/runJSONLDRules -d @testData\allInOneInput.jsonld
+
 ### Funding Acknowledgement
 
 The research leading to these results has received funding from the European

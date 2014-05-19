@@ -6,11 +6,14 @@ import com.certh.iti.cloud4all.instantiation.InstantiationManager;
 import com.certh.iti.cloud4all.ontology.CommonPref;
 import com.certh.iti.cloud4all.ontology.OntologyManager;
 import com.certh.iti.cloud4all.prevayler.PrevaylerManager;
+import com.google.gson.Gson;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Scanner;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import sun.nio.cs.StandardCharsets;
 
@@ -116,5 +119,25 @@ public class RBMM_WebService
             finalUserPrefs = finalUserPrefs + " - DEBUG: " + PrevaylerManager.getInstance().debug;
         
         return Response.status(200).entity(finalUserPrefs).build();
+    }
+    
+    
+    //http://localhost:8080/CLOUD4All_RBMM_Restful_WS/RBMM/runJSONLDRules
+    //
+    @POST
+    @Path("/runJSONLDRules")
+    @Consumes("application/json")
+    public Response runJSONLDRules(InputStream incomingData)
+    {
+        PrevaylerManager.getInstance().debug = "";
+        
+        //Json-LD test
+        try {
+            OntologyManager.getInstance().runJSONLDTests(incomingData);
+        } catch (IOException ex) {
+            PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "runJSONLDTests EXCEPTION! -> " + ex.toString();
+        }
+        
+        return Response.status(200).entity(PrevaylerManager.getInstance().debug).build();
     }
 }
