@@ -34,4 +34,14 @@ public class RBMM_WebService
         
         return Response.status(200).entity(OntologyManager.getInstance().debug).build();
     }
+    
+    //http://localhost:8080/CLOUD4All_RBMM_Restful_WS/RBMM/testWebService
+    @GET
+    @Path("/testWebService")
+    public Response testWebService()
+    {
+        return Response.status(200).entity("This is a successful integration test!").build();
+    }
+    
+    
 }

@@ -257,4 +257,9 @@ public class OntologyManager implements Serializable
         }
     }
     
+    public String testHello(String tmpName)
+    {
+        return "Hello " + tmpName + "!";
+    }
+    
 }
