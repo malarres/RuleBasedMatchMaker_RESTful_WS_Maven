@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import sun.nio.cs.StandardCharsets;
+//import sun.nio.cs.StandardCharsets;
 
 
 
@@ -20,28 +20,14 @@ public class RBMM_WebService
     //http://localhost:8080/CLOUD4All_RBMM_Restful_WS/RBMM/runJSONLDRules
     @POST
     @Path("/runJSONLDRules")
-    @Consumes("application/json")
-    public Response runJSONLDRules(InputStream incomingData)
+    public Response runJSONLDRules()
     {
         OntologyManager.getInstance().debug = "";
         
         //Json-LD test
-        try {
-            OntologyManager.getInstance().runJSONLDTests(incomingData);
-        } catch (IOException ex) {
-            OntologyManager.getInstance().debug = OntologyManager.getInstance().debug + "runJSONLDTests EXCEPTION! -> " + ex.toString();
-        }
+        OntologyManager.getInstance().runJSONLDTests();
         
         return Response.status(200).entity(OntologyManager.getInstance().debug).build();
     }
-    
-    //http://localhost:8080/CLOUD4All_RBMM_Restful_WS/RBMM/testWebService
-    @GET
-    @Path("/testWebService")
-    public Response testWebService()
-    {
-        return Response.status(200).entity("This is a successful integration test!").build();
-    }
-    
     
 }

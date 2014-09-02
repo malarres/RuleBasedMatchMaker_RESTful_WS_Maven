@@ -1,110 +1,89 @@
 package com.gpii.ontology;
 
 
-import java.io.*;
-import java.util.HashMap;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+
+import org.json.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.jena.riot.Lang;
+import org.apache.jena.atlas.lib.Bytes;
 import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.lang.PipedRDFIterator;
 
-import com.github.jsonldjava.utils.*;
-import com.github.jsonldjava.jena.*;
-import com.github.jsonldjava.core.*;
-import com.github.jsonldjava.impl.*;
+import com.github.jsonldjava.core.JsonLdError;
+import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.jena.JenaJSONLD;
+import com.github.jsonldjava.utils.JSONUtils;
 
-
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.rdf.model.InfModel;
-import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.reasoner.rulesys.GenericRuleReasoner;
 import com.hp.hpl.jena.reasoner.rulesys.Rule;
 import com.hp.hpl.jena.shared.DoesNotExistException;
-import com.hp.hpl.jena.query.*;
 
 /**
  *
  * @author nkak
  */
-public class OntologyManager implements Serializable
+public class OntologyManager
 {
-    /** <p>The RDF model that holds the vocabulary terms</p> */
-    private static Model m_model = ModelFactory.createDefaultModel();
-    
-    /** <p>The namespace of the vocabulary as a string</p> */
-    public static final String NS = "http://gpii.org/schemas/accessibility#";
-    
-    /** <p>The namespace of the vocabulary as a string</p>
-     *  @see #NS */
-    public static String getURI() {return NS;}
-    
-    /** <p>The namespace of the vocabulary as a resource</p> */
-    public static final Resource NAMESPACE = m_model.createResource( NS );
-    
-    /** <p>Datatype of a preference .</p> */
-    public static final Property PrefDatatype = m_model.createProperty( "http://gpii.org/schemas/accessibility#PrefDatatype" );
-    
-    /** <p>Name of a preference .</p> */
-    public static final Property PrefName = m_model.createProperty( "http://gpii.org/schemas/accessibility#PrefName" );
-    
-    /** <p>Value of a preference .</p> */
-    public static final Property PrefValue = m_model.createProperty( "http://gpii.org/schemas/accessibility#PrefValue" );
-    
-    /** <p>Value range of a preference .</p> */
-    public static final Property PrefValueRange = m_model.createProperty( "http://gpii.org/schemas/accessibility#PrefValueRange" );
-    
-    /** <p>A user has accessibility.</p> */
-    public static final Property hasPrefs = m_model.createProperty( "http://gpii.org/schemas/accessibility#hasPrefs" );
-    
-    /** <p>Application specific accessibility preferences of a person .</p> */
-    public static final Resource Appspecific = m_model.createResource( "http://gpii.org/schemas/accessibility#Appspecific" );
-    
-    /** <p>Common accessibility preferences of a person.</p> */
-    public static final Resource Common = m_model.createResource( "http://gpii.org/schemas/accessibility#Common" );
-    
-    /** <p>Preferences of a person.</p> */
-    public static final Resource Preference = m_model.createResource( "http://gpii.org/schemas/accessibility#Preference" );
-    
-    // effectively used; to be stored permanently
-    
-    /** <p>User requires specific accessibility settings.</p> */
-    public static final Resource User = m_model.createResource( "http://gpii.org/schemas/accessibility#User" );
-    
-    public static final Property requiresAT = m_model.createProperty( "http://gpii.org/schemas/accessibility#requiresAT" );
-    
-    // to distinguish between preferred AT (explicitly though user voting) and used AT (implicitly through app-specific prefs)
-    public static final Property prefersAT = m_model.createProperty( "http://gpii.org/schemas/accessibility#prefersAT" );
-    
-    public static final Resource Environment = m_model.createResource( "http://gpii.org/schemas/accessibility#Environment" );
-    
-    public static final Resource MultipleSolutionsConflict = m_model.createResource( "http://gpii.org/schemas/accessibility#MultipleSolutionsConflict" );
-    
-    // class to describe accessibility conflicts
-    public static final Property accessibilityConflict = m_model.createProperty( "http://gpii.org/schemas/accessibility#accessibilityConflict" );
-    
-    // class to describe certain assistive technology classes  
-    public static final Resource ATType = m_model.createResource( "http://gpii.org/schemas/accessibility#ATType" );
-    
-    public static final Property applyATType = m_model.createProperty( "http://gpii.org/schemas/accessibility#applyATType" );
-    
-    public static final Property applyATProduct = m_model.createProperty( "http://gpii.org/schemas/accessibility#applyATProduct" );
-    
-    
+	
     // default model automatically initialized with data from JSON-LD  	
     public static Model m;
 
     //	accessibilityConflictModel
     public static Model acm;
+
+    public static BufferedReader br;
+
+    
+    /** 
+     * TODO this are static input source used in the RBMM Web Service.
+     * These input sources should be exchangeable with any other semantic representations of preference terms or solutions
+     */
+    
+    // Define semantic representations: 
+    // String reg = "C:\\eclipse\\workspace\\PrototypeRBMM_Maven\\RBMMPlayground\\src\\main\\java\\gpii\\semantics\\registry.jsonld";
+    String semanticsSolutions;
+    String explodePrefTerms;
+
+    // Final input format for the reasoning process. Created in [0].  
+    String preferenceInput;
+    String solutionsInput;
+    
+    // solution test file for multiple solutions conflict:
+    String deviceFile;
+    String preferenceFile;
+    String mappingRules;
 
     
     boolean printDebugInfo;
@@ -113,6 +92,29 @@ public class OntologyManager implements Serializable
     
     private OntologyManager() 
     {
+        File f = new File(System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/semanticsSolutions.jsonld");
+ 
+        if(f.exists())  //deployment mode
+        {
+            semanticsSolutions = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/semanticsSolutions.jsonld";
+            explodePrefTerms = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/explodePreferenceTerms.jsonld";
+            preferenceInput = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/input/preferences.jsonld";
+            solutionsInput = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/input/solutions.jsonld";
+            deviceFile = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/installedSolutions/multipleMagnifierScreenreader.json";
+            preferenceFile = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INFtestData/preferences/pointerControllEnhancement.json";
+            mappingRules = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/mappingRules.rules";
+        }
+        else            //Jetty integration tests
+        {
+            semanticsSolutions = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions.jsonld";
+            explodePrefTerms = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/explodePreferenceTerms.jsonld";
+            preferenceInput = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/input/preferences.jsonld";
+            solutionsInput = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/input/solutions.jsonld";
+            deviceFile = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/installedSolutions/multipleMagnifierScreenreader.json";
+            preferenceFile = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/preferences/pointerControllEnhancement.json";
+            mappingRules = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/mappingRules.rules";
+        }
+        
         debug = "";
         printDebugInfo = false;
         
@@ -128,132 +130,191 @@ public class OntologyManager implements Serializable
         return instance;
     }
     
-    public static void runJSONLDTests(InputStream incomingData) throws IOException 
+    public void runJSONLDTests() 
     {
-        OntologyManager.getInstance().debug = OntologyManager.getInstance().debug + "Load preferences (JSONLD) and device characteristics (JSONLD)";
-
-        // load accessibility namespace
-        m.setNsPrefix("ax", NS);
-        RDFDataMgr.read(m, incomingData, null, JenaJSONLD.JSONLD);
-
-        OntologyManager.getInstance().debug = OntologyManager.getInstance().debug + "\nLoad other semantic data source (registry and solutions)";
-
-        OntologyManager.getInstance().debug = OntologyManager.getInstance().debug + "\nRun JENA rules to infer knowledge used for conflict resolution";
-                /** 
-                    * TODO make this mapping more general to achieve the goal that we are not limited to GPII input sources
-                    * This step is used for any kind of mappings from an abritary input source (here preferences from GPII) 
-                    * to infer required knowledge for the RBMM reasoning and vocabulary. 
-                    * 
-                    */
-        String mappingRules = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/mappingRules.rules";
-
-        File f = new File(mappingRules);
-            if (f.exists()) {
-                    List<Rule> rules = Rule.rulesFromURL("file:" + mappingRules);
-                    GenericRuleReasoner r = new GenericRuleReasoner(rules);
-                    InfModel infModel = ModelFactory.createInfModel(r, m);
-                    // starting the rule execution
-                    infModel.prepare();					
-                    // write down the results in RDF/XML form
-                    infModel.write(System.out);			
-
-                // TODO why am I doing this here?  
-                    m.add(infModel.getDeductionsModel());
-            } else
-                    OntologyManager.getInstance().debug = OntologyManager.getInstance().debug + "\nThat rules file does not exist.";
-
-        OntologyManager.getInstance().debug = OntologyManager.getInstance().debug + "\nSPARQL Query: detect conflicts";
-            /**
-            * TODO 
-            * Fix: ?y is not constructed in the RDF model.
-            * SPARQL query not in source code 
-            */
-
-        String constructString = "CONSTRUCT";
-            constructString += "{ ";
-            constructString += " <http://gpii.org/schemas/accessibility#Environment> <http://gpii.org/schemas/accessibility#accessibilityConflict> <http://gpii.org/schemas/accessibility#MultipleSolutionsConflict> .";
-            constructString += " <http://gpii.org/schemas/accessibility#MultipleSolutionsConflict> <http://gpii.org/schemas/accessibility#applyATType> ?x .";
-            constructString += " <http://gpii.org/schemas/accessibility#MultipleSolutionsConflict> <http://gpii.org/schemas/accessibility#applyATProduct> ?y .";
-            constructString += " } ";
-            constructString += "WHERE { ";
-            constructString += " SELECT ?x (COUNT(?y) AS ?count) ";
-            constructString += "{ ";
-            constructString += "<http://gpii.org/schemas/accessibility#User> <http://gpii.org/schemas/accessibility#requiresAT> ?x . ";
-            constructString += "?y <http://registry.gpii.org/applications/type> ?x . ";	
-            constructString += "} GROUP BY ?x";
-            constructString += " HAVING (?count > 1)";
-            constructString += " }";
-
-
-        Query query = QueryFactory.create(constructString) ;
-        QueryExecution qexec = QueryExecutionFactory.create(query, m) ;
-        acm = qexec.execConstruct() ;
-        StmtIterator si = acm.listStatements();
-        Statement s = null;
-        while (si.hasNext()) 
+        try
         {
-            s = si.next();
-            //PrevaylerManager.getInstance().debug = "\n" + PrevaylerManager.getInstance().debug + s.getPredicate().toString();
+            //Load preferences (JSONLD) and device characteristics (JSONLD)
+            //Pre-processing - add context to preferences and device characteristics and store as JSONLD
+
+            // Transforming preferences: 
+            String preferenceString = readFile(preferenceFile, StandardCharsets.UTF_8);
+            JSONTokener preferencesTokener = new JSONTokener(preferenceString);
+            JSONObject preferences = new JSONObject(preferencesTokener);		
+
+            JSONObject outerPrefsObject = new JSONObject();
+            JSONArray prefsArray = new JSONArray();
+
+            Iterator<?> keys = preferences.keys();
+            while( keys.hasNext() )
+            {
+                String key = (String)keys.next();
+                /**
+                    * create a new inner JSONobject and put: 
+                    * @id = URI
+                    * gpii:type = common or application
+                    * gpii:name = preference name
+                    * gpii:value = either the value (common) or an JSONObject of values (app-specific)   
+                    */ 
+                JSONObject innerPrefsObject = new JSONObject();
+                innerPrefsObject.put("@id", key);
+                if (key.contains("common")) 
+                    innerPrefsObject.put(UPREFS.type.toString(), "common"); 
+                if (key.contains("applications")) 
+                    innerPrefsObject.put(UPREFS.type.toString(), "applications");
+                URI uri = new URI(key);
+                String path = uri.getPath();
+                String idStr = path.substring(path.lastIndexOf('/') + 1);
+                innerPrefsObject.put(UPREFS.name.toString(), idStr);
+                // transform values to gpii:value: 
+                if( preferences.get(key) instanceof JSONArray )
+                {
+                    // outer value array	        
+                    JSONArray values = new JSONArray(preferences.get(key).toString());
+                    for (int i = 0, size = (values.length()); i < size; i++)
+                    {	
+                        // inner value object
+                        innerPrefsObject = getPreferenceValues(innerPrefsObject, values.get(i), key);
+                    }
+                }
+                prefsArray.put(innerPrefsObject);	            
+            }
+            
+            outerPrefsObject.put(UPREFS.preference.toString(), prefsArray);
+            byte dataToWrite[] = outerPrefsObject.toString().getBytes(StandardCharsets.US_ASCII);
+            writeFile(preferenceInput, dataToWrite);
+
+            // Transforming solutions: 
+            JSONObject solutions = new JSONObject(); 
+            String deviceString = readFile(deviceFile, StandardCharsets.UTF_8);
+            JSONTokener deviceTokener = new JSONTokener(deviceString);
+            JSONArray device = new JSONArray(deviceTokener);			
+
+            JSONArray sol = new JSONArray(); 
+            for (int i = 0, size = device.length(); i < size; i++)
+            {
+                JSONObject objectInArray = device.getJSONObject(i);
+                String[] elementNames = JSONObject.getNames(objectInArray);
+                for (String elementName : elementNames)
+                {
+                    String value = objectInArray.getString(elementName);
+                    sol.put(value); 
+                }
+            }
+            solutions.put(UPREFS.installedSolutions.toString(), sol);
+            byte cDataToWrite[] = solutions.toString().getBytes(StandardCharsets.US_ASCII);
+            writeFile(solutionsInput, cDataToWrite);
+
+            //Load preferences (JSONLD) and device characteristics (JSONLD)
+
+            // load accessibility namespace
+            m.setNsPrefix("ax", UPREFS.NS);
+            // create RDF Model from preferences and solutions
+            m = ModelFactory.createDefaultModel().read(preferenceInput, "JSON-LD");
+            Model d = ModelFactory.createDefaultModel().read(solutionsInput, "JSON-LD");
+            m.add(d);
+            //m.write(System.out);
+
+            // TODO: use ModelFactors or RDFDataMrg ? 
+            //alternative to read preferences from JSONLD			
+            //RDFDataMgr.read(m, inputURL.toUri().toString(), null, JenaJSONLD.JSONLD);
+
+            //Load other semantic data source (registry and solutions)
+
+            //Model registry = ModelFactory.createDefaultModel().read(reg, "JSON-LD");
+            Model uListing = ModelFactory.createDefaultModel().read(semanticsSolutions, "JSON-LD");
+            Model exTerms = ModelFactory.createDefaultModel().read(explodePrefTerms, "JSON-LD");
+
+            // merge the Models
+            m = m.union(exTerms);
+            //m = m.union(uListing);	        
+            // print the Model as RDF/XML
+            //m.write(System.out);
+
+            //Run JENA rules to infer knowledge used for conflict resolution
+            /** 
+                * TODO make this mapping more general to achieve the goal that we are not limited to GPII input sources
+                * This step is used for any kind of mappings from an abritary input source (here preferences from GPII) 
+                * to infer required knowledge for the RBMM reasoning and vocabulary. 
+                * 
+                */            
+
+            File f = new File(mappingRules);
+            if (f.exists()) 
+            {
+                List<Rule> rules = Rule.rulesFromURL("file:" + mappingRules);
+                GenericRuleReasoner r = new GenericRuleReasoner(rules);
+                InfModel infModel = ModelFactory.createInfModel(r, m);
+                // starting the rule execution
+                infModel.prepare();					
+                // TODO why am I doing this here?
+                Model deducedModel = infModel.getDeductionsModel();  
+                m.add(deducedModel);
+                //deducedModel.write(System.out);
+                //m.write(System.out);
+            } 
+            else
+                System.out.println("That rules file does not exist.\n\n");
+
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private static JSONObject getPreferenceValues(JSONObject outerValues, Object innerValues, String solutionID) throws JSONException 
+    {
+        if(innerValues instanceof JSONObject)
+        {
+            JSONObject inValues = new JSONObject(innerValues.toString());
+            Iterator<?> inKeys = inValues.keys();
+            while( inKeys.hasNext() ){
+                String inKey = (String)inKeys.next();
+                // value  as inner object 
+                if (inValues.get(inKey) instanceof JSONObject){
+                    JSONObject newInnerValues = new JSONObject();
+                    newInnerValues = getPreferenceValues(newInnerValues, inValues.get(inKey), solutionID);
+                    outerValues.put(UPREFS.value.toString(), newInnerValues);
+                }else {
+                    // value flat
+                    if(inKey.equals("value")) {
+                            outerValues.put(UPREFS.value.toString(), inValues.get(inKey));
+                    }
+                    else outerValues.put(solutionID+"/"+inKey, inValues.get(inKey));
+
+                }
+            }	        	        		
+        }
+        return outerValues;
+    }
+
+    String readFile(String path, Charset encoding) throws IOException 
+    {
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        return new String(encoded, encoding);
+    }
+
+    void writeFile(String path, byte[] dataToWrite)
+    {
+        FileOutputStream out = null;
+        try 
+        {
+            out = new FileOutputStream(path);
+        } 
+        catch (FileNotFoundException e) 
+        {
+            e.printStackTrace();
         }
         
-        qexec.close();		
-
-        //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nResolve confilcts => not implemented";
-        /**
-            * TODO implement conflict resolution
-            */
-        //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nstill not implemented";
-
-        OntologyManager.getInstance().debug = OntologyManager.getInstance().debug + "\nOutput: Results as JSONLD object:\n";
-        
-        // list the statements in the Model
-        StmtIterator iter = m.listStatements();
-
-        // print out the predicate, subject and object of each statement
-        while (iter.hasNext()) 
+        try 
         {
-            OntologyManager.getInstance().debug = OntologyManager.getInstance().debug + "\n";
-            Statement stmt      = iter.nextStatement();  // get next statement
-            Resource  subject   = stmt.getSubject();     // get the subject
-            Property  predicate = stmt.getPredicate();   // get the predicate
-            RDFNode   object    = stmt.getObject();      // get the object
-
-            OntologyManager.getInstance().debug = OntologyManager.getInstance().debug + subject.toString();
-            OntologyManager.getInstance().debug = OntologyManager.getInstance().debug + " " + predicate.toString() + " ";
-            if (object instanceof Resource) 
-                OntologyManager.getInstance().debug = OntologyManager.getInstance().debug + object.toString();
-            else // object is a literal                
-                OntologyManager.getInstance().debug = OntologyManager.getInstance().debug + " \"" + object.toString() + "\"";
+            out.write(dataToWrite);
+            out.close();
         } 
-        
-        /**
-            * TODO implement output as JSONLD
-            */
-        //PrevaylerManager.getInstance().debug = PrevaylerManager.getInstance().debug + "\nstill not implemented";
-
-        // Test 1 - use RDFDataMrg 
-        // RDFDataMgr.write(System.out, (Model) m, JenaJSONLD.JSONLD);
-        // m.write(System.out, "JSON-LD");
-
-        // TEST 2 - use JSONLdProcessor
-        /*JsonLdOptions options = new JsonLdOptions(); 
-        options.format = "application/ld+json";		    
-        Object json;
-            try {
-                    json = JsonLdProcessor.fromRDF(m, options);
-                String jsonStr = JSONUtils.toPrettyString(json);
-                System.out.println(jsonStr);				
-            } catch (JsonLdError e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-            }*/
-
-                
-        si = m.listStatements();
-        s = null;
-        while (si.hasNext()) 
+        catch (IOException e) 
         {
-            s = si.next();
+            e.printStackTrace();
         }
     }
     
