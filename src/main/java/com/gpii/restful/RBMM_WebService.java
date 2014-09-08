@@ -1,15 +1,17 @@
 package com.gpii.restful;
 
+import com.gpii.jsonld.JsonLDManager;
+import com.gpii.jsonld.RBMMInput;
+import com.gpii.jsonld.RBMMInputItem;
 import com.gpii.ontology.OntologyManager;
-import com.google.gson.Gson;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
+import org.codehaus.jackson.map.ObjectMapper;
 //import sun.nio.cs.StandardCharsets;
 
 
@@ -20,14 +22,46 @@ public class RBMM_WebService
     //http://localhost:8080/CLOUD4All_RBMM_Restful_WS/RBMM/runJSONLDRules
     @POST
     @Path("/runJSONLDRules")
-    public Response runJSONLDRules()
+    @Consumes("application/json")
+    public Response runJSONLDRules(RBMMInput tmpInput)
     {
         OntologyManager.getInstance().debug = "";
+        String finalResultStr = "";
+
+        for(int i=0; i<tmpInput.getInput().size(); i++)
+        {
+            RBMMInputItem tmpRBMMInputItem = tmpInput.getInput().get(i);
+            String tmpRBMMInputItem_name = tmpRBMMInputItem.getInputName();
+            Object tmpRBMMInputItem_body = tmpRBMMInputItem.getInputBody();
+            
+            //pretty print
+            String tmpRBMMInputItem_body_prettyPrint_string = "";
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                tmpRBMMInputItem_body_prettyPrint_string = mapper.defaultPrettyPrintingWriter().writeValueAsString(tmpRBMMInputItem_body);
+            } catch (IOException ex) {
+                Logger.getLogger(RBMM_WebService.class.getName()).log(Level.SEVERE, null, ex);
+            }   
+            
+            finalResultStr = finalResultStr + "name: " + tmpRBMMInputItem_name + ",\nbody:\n" + tmpRBMMInputItem_body_prettyPrint_string + "\n\n\n";
+            
+            if(tmpRBMMInputItem_name.equals("semanticsSolutions"))
+                JsonLDManager.getInstance().semanticsSolutionsString = tmpRBMMInputItem_body_prettyPrint_string;
+            else if(tmpRBMMInputItem_name.equals("explodePreferenceTerms"))
+                JsonLDManager.getInstance().explodePrefTermsString = tmpRBMMInputItem_body_prettyPrint_string;
+            else if(tmpRBMMInputItem_name.equals("solutions"))
+                JsonLDManager.getInstance().solutionsString = tmpRBMMInputItem_body_prettyPrint_string;
+            else if(tmpRBMMInputItem_name.equals("preferenceInputString"))
+                JsonLDManager.getInstance().preferenceInputString = tmpRBMMInputItem_body_prettyPrint_string;
+            else if(tmpRBMMInputItem_name.equals("current_device_manager_payload"))
+                JsonLDManager.getInstance().currentDeviceManagerPayload = tmpRBMMInputItem_body_prettyPrint_string;
+            else if(tmpRBMMInputItem_name.equals("current_np_set"))
+                JsonLDManager.getInstance().currentNPSet = tmpRBMMInputItem_body_prettyPrint_string;
+        }        
         
-        //Json-LD test
-        OntologyManager.getInstance().runJSONLDTests();
+        JsonLDManager.getInstance().runJSONLDTests();
         
-        return Response.status(200).entity(OntologyManager.getInstance().debug).build();
+        return Response.status(200).entity(finalResultStr).build();
     }
     
 }

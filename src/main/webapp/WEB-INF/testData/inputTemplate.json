@@ -1,0 +1,177 @@
+{
+	"input":[
+		{
+			"inputName":"semanticsSolutions",
+			"inputBody":{
+				"@context": {
+					"applications": "http://rbmm.org/schemas/accessibility/solutions",
+					"name": "http://rbmm.org/schemas/accessibility/solutions/id",
+					"type": "http://rbmm.org/schemas/accessibility/solutions/ATtype"
+				},
+				"applications": [
+					{
+						"@id": "http://registry.gpii.org/applications/com.microsoft.windows.magnifier",
+						"name": "com.microsoft.windows.magnifier",
+						"type": "Magnifier"
+					},
+					{
+						"@id": "http://registry.gpii.org/applications/com.yourdolphin.supernova-as",
+						"name": "com.yourdolphin.supernova-as",
+						"type": [
+							"Magnifier",
+							"Screen Reader"
+						]
+					},
+					{
+						"@id": "http://registry.gpii.org/applications/org.nvda-project",
+						"name": "org.nvda-project",
+						"type": "Screen Reader"
+					},
+					{
+						"@id": "http://registry.gpii.org/applications/webinsight.webAnywhere.windows",
+						"name": "webinsight.webAnywhere.windows",
+						"type": "Screen Reader"
+					},        
+					{
+						"@id": "http://registry.gpii.org/applications/com.microsoft.windows.onscreenKeyboard",
+						"name": "com.microsoft.windows.onscreenKeyboard",
+						"type": "Screen Keyboard"
+					},
+					{
+						"@id": "http://registry.gpii.org/applications/com.microsoft.windows.highContrast",
+						"name": "com.microsoft.windows.highContrast",
+						"type": "High Contrast"
+					}
+				]
+			}
+		},
+		{
+			"inputName":"explodePreferenceTerms",
+			"inputBody":{
+				"@context": {
+					"terms": "http://rbmm.org/schemas/accessibility/terms/abstract",
+					"value": "http://rbmm.org/schemas/accessibility/terms/abstract/value",
+					"rating": "http://rbmm.org/schemas/accessibility/terms/abstract/rating",
+					"recommended": "http://rbmm.org/schemas/accessibility/terms/abstract/recomendations"
+				},
+				"terms": [
+					{
+					  "http://registry.gpii.org/common/pointerControllEnhancement" : {
+						"value": true,
+						"rating": 9,
+						"recommended": {
+							"http://registry.gpii.org/common/cursorSize": 0.5,
+							"http://registry.gpii.org/common/cursorColour": "red"
+						}
+					  }
+					},
+					{
+					  "http://registry.gpii.org/common/pointerControllEnhancement" : {
+						"value": true,
+						"rating": 5,
+						"recommended": {
+							"http://registry.gpii.org/common/cursorTrails": true,
+							"http://registry.gpii.org/common/cursorTrailsLength": 0.2
+						}
+					  }
+					},
+					{
+					  "http://registry.gpii.org/common/pointerControllEnhancement" : {
+						"value": "visibility",
+						"rating": 9,
+						"recommended": {
+							"http://registry.gpii.org/common/cursorSize": 0.5,
+							"http://registry.gpii.org/common/cursorColour": "red"
+						}
+					  }
+					},
+					{
+					  "http://registry.gpii.org/common/pointerControllEnhancement" : {
+						"value": "visibility",
+						"rating": 5,
+						"recommended": {
+							"http://registry.gpii.org/common/cursorTrails": true,
+							"http://registry.gpii.org/common/cursorTrailsLength": 0.2
+						}
+					  }
+					}
+				]		
+			}
+		},
+		{
+			"inputName":"solutions",
+			"inputBody":{
+				"http://rbmm.org/schemas/accessibility/installedSolutions": [
+					"webinsight.webAnywhere.windows",
+					"com.microsoft.windows.magnifier",
+					"com.microsoft.windows.onscreenKeyboard",
+					"com.yourdolphin.supernova-as",
+					"org.nvda-project",
+					"com.texthelp.readWriteGold",
+					"net.opendirective.maavis",
+					"com.microsoft.windows.highContrast",
+					"com.microsoft.windows.mouseTracking",
+					"com.microsoft.windows.cursors"
+				]
+			}
+		},
+		{
+			"inputName":"preferenceInputString",
+			"inputBody":{
+				"http://rbmm.org/schemas/accessibility/preference": [
+					{
+						"http://rbmm.org/schemas/accessibility/preference/value": "visibility",
+						"http://rbmm.org/schemas/accessibility/preference/type": "common",
+						"@id": "http://registry.gpii.org/common/pointerControllEnhancement",
+						"http://rbmm.org/schemas/accessibility/preference/name": "pointerControllEnhancement"
+					}
+				]
+			}
+		},
+		{
+			"inputName":"current_device_manager_payload",
+			"inputBody":[
+				{
+					"id": "webinsight.webAnywhere.windows"
+				},
+				{
+					"id": "com.microsoft.windows.magnifier"
+				},
+				{
+					"id": "com.microsoft.windows.onscreenKeyboard"
+				},
+				{
+					"id": "com.yourdolphin.supernova-as"
+				},
+				{
+					"id": "org.nvda-project"
+				},
+				{
+					"id": "com.texthelp.readWriteGold"
+				},
+				{
+					"id": "net.opendirective.maavis"
+				},
+				{
+					"id": "com.microsoft.windows.highContrast"
+				},
+				{
+					"id": "com.microsoft.windows.mouseTracking"
+				},
+				{
+					"id": "com.microsoft.windows.cursors"
+				}
+			]
+		},
+		{
+			"inputName":"current_np_set",
+			"inputBody":{
+				"http://registry.gpii.org/common/pointerControllEnhancement": [
+					{
+						"value": "visibility"
+					}
+				]
+			}
+		}
+	]
+}
