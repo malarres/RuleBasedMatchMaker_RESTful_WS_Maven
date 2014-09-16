@@ -24,28 +24,18 @@ import org.json.JSONTokener;
  */
 public class JsonLDManager 
 {
-    public String semanticsSolutionsFilePath;
-    public String semanticsSolutionsString;
-
-    public String explodePreferenceTermsFilePath;
-    public String explodePrefTermsString;
-
-    public String preferenceTempFilePath;
-    public String preferenceInputString;
-
-    public String solutionseTempFilePath;
-    public String solutionsString;
-    
-    public String currentDeviceManagerPayload;
-    public String currentDeviceManagerPayloadTempFilePath;
+    //input
     public String currentNPSet;
-    public String currentNPSetTempFilePath;
-    
-    public String rdfXMLTempFilePath1;
-    public String rdfXMLTempFilePath2;
-    public String deducedModelTemplFilePath;
-    
-    public String mappingRules;
+    public String currentDeviceManagerPayload;
+  
+    //static input files
+    public String semanticsSolutionsFilePath;
+    public String explodePrefTermsFilePath;
+    public String mappingRulesFilePath;
+
+    //temp preprocessing output files
+    public String preprocessingTempFilePath_device;
+    public String preprocessingTempFilePath_preferences;
     
     public Gson gson;
     
@@ -57,33 +47,26 @@ public class JsonLDManager
  
         if(f.exists())  //deployment mode
         {
-            preferenceTempFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/preferences.jsonld";
-            solutionseTempFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/solutions.jsonld";
-            semanticsSolutionsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/semanticsSolutions.jsonld";
-            explodePreferenceTermsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/explodePreferenceTermsFilePath.jsonld";
-            mappingRules = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/mappingRules.rules";
-            currentNPSetTempFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/currentNPSet.jsonld";
-            currentDeviceManagerPayloadTempFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/currentDeviceManagerPayload.jsonld";
-            rdfXMLTempFilePath1 = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/rdfXML1.rdf";
-            rdfXMLTempFilePath2 = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/rdfXML2.rdf";
-            deducedModelTemplFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/deducedModel.rdf";
+            //static input files
+            semanticsSolutionsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/semanticsSolutions.jsonld";
+            explodePrefTermsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/explodePreferenceTerms.jsonld";
+            mappingRulesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/mappingRules.rules";
+            
+            //temp preprocessing output files
+            preprocessingTempFilePath_preferences = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/preprocessingPreferences.jsonld";
+            preprocessingTempFilePath_device = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/preprocessingDevice.jsonld";
         }
         else            //Jetty integration tests
         {
-            preferenceTempFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/preferences.jsonld";
-            solutionseTempFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/solutions.jsonld";
-            semanticsSolutionsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/semanticsSolutions.jsonld";
-            explodePreferenceTermsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/explodePreferenceTermsFilePath.jsonld";
-            mappingRules = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/mappingRules.rules";
-            currentNPSetTempFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/currentNPSet.jsonld";
-            currentDeviceManagerPayloadTempFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/currentDeviceManagerPayload.jsonld";
-            rdfXMLTempFilePath1 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/rdfXML1.rdf";
-            rdfXMLTempFilePath2 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/rdfXML2.rdf";
-            deducedModelTemplFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/deducedModel.rdf";
+            //static input files
+            semanticsSolutionsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions.jsonld";
+            explodePrefTermsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/explodePreferenceTerms.jsonld";
+            mappingRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/mappingRules.rules";
+            
+            //temp preprocessing output files
+            preprocessingTempFilePath_preferences = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/preprocessingPreferences.jsonld";
+            preprocessingTempFilePath_device = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/preprocessingDevice.jsonld";
         }
-        semanticsSolutionsString = "";
-        explodePrefTermsString = "";
-        solutionsString = "";
         currentNPSet = "";
         currentDeviceManagerPayload = "";
         
@@ -99,40 +82,59 @@ public class JsonLDManager
     
     public void runJSONLDTests() 
     {
+        //[0] Pre-processing - add context to preferences and device characteristics and store as JSONLD
+        preprocessing();
+ 
+        //[1] Load preferences (JSONLD) and device characteristics (JSONLD)
+        loadPreferencesAndDevicePayload();
+        
+        //[2] Load other semantic data source (registry and solutions)
+        loadSemanticData();
+        
+        //[3] Run JENA rules to infer knowledge used for conflict resolution
+        runJenaRules();
+    }
+    
+    //[0] Pre-processing - add context to preferences and device characteristics and store as JSONLD
+    private void preprocessing()
+    {
         try
         {
-            JSONTokener currentNPSetTokener = new JSONTokener(JsonLDManager.getInstance().currentNPSet);
-            JSONObject currentNP = new JSONObject(currentNPSetTokener);		
+            System.out.println("\n**********************************************************************************************");
+            System.out.println("* Pre-processing - add context to preferences and device characteristics and store as JSONLD *");
+            System.out.println("**********************************************************************************************");
 
+            // Transforming preferences: 
+            JSONTokener preferencesTokener = new JSONTokener(currentNPSet);
+            JSONObject preferences = new JSONObject(preferencesTokener);		
             JSONObject outerPrefsObject = new JSONObject();
             JSONArray prefsArray = new JSONArray();
-
-            Iterator<?> keys = currentNP.keys();
+            Iterator<?> keys = preferences.keys();
             while( keys.hasNext() )
             {
                 String key = (String)keys.next();
                 /**
-                    * create a new inner JSONobject and put: 
-                    * @id = URI
-                    * gpii:type = common or application
-                    * gpii:name = preference name
-                    * gpii:value = either the value (common) or an JSONObject of values (app-specific)   
-                    */ 
+                * create a new inner JSONobject and put: 
+                * @id = URI
+                * gpii:type = common or application
+                * gpii:name = preference name
+                * gpii:value = either the value (common) or an JSONObject of values (app-specific)   
+                */ 
                 JSONObject innerPrefsObject = new JSONObject();
                 innerPrefsObject.put("@id", key);
-                if (key.contains("common")) 
+                if(key.contains("common")) 
                     innerPrefsObject.put(UPREFS.type.toString(), "common"); 
-                if (key.contains("applications")) 
+                if(key.contains("applications")) 
                     innerPrefsObject.put(UPREFS.type.toString(), "applications");
                 URI uri = new URI(key);
                 String path = uri.getPath();
                 String idStr = path.substring(path.lastIndexOf('/') + 1);
                 innerPrefsObject.put(UPREFS.name.toString(), idStr);
                 // transform values to gpii:value: 
-                if( currentNP.get(key) instanceof JSONArray )
+                if( preferences.get(key) instanceof JSONArray )
                 {
                     // outer value array	        
-                    JSONArray values = new JSONArray(currentNP.get(key).toString());
+                    JSONArray values = new JSONArray(preferences.get(key).toString());
                     for (int i = 0, size = (values.length()); i < size; i++)
                     {	
                         // inner value object
@@ -141,15 +143,15 @@ public class JsonLDManager
                 }
                 prefsArray.put(innerPrefsObject);	            
             }
-            
+            //System.out.println(prefsArray);
             outerPrefsObject.put(UPREFS.preference.toString(), prefsArray);
             byte dataToWrite[] = outerPrefsObject.toString().getBytes(StandardCharsets.US_ASCII);
-            writeFile(JsonLDManager.getInstance().currentNPSetTempFilePath, dataToWrite);
+            writeFile(preprocessingTempFilePath_preferences, dataToWrite);
+            System.out.println("File created: " + preprocessingTempFilePath_preferences);
 
             // Transforming solutions: 
             JSONObject solutions = new JSONObject(); 
-            //String deviceString = readFile(deviceFile, StandardCharsets.UTF_8);
-            JSONTokener deviceTokener = new JSONTokener(new String(JsonLDManager.getInstance().currentDeviceManagerPayload.getBytes(), StandardCharsets.UTF_8));
+            JSONTokener deviceTokener = new JSONTokener(currentDeviceManagerPayload);
             JSONArray device = new JSONArray(deviceTokener);			
 
             JSONArray sol = new JSONArray(); 
@@ -165,122 +167,82 @@ public class JsonLDManager
             }
             solutions.put(UPREFS.installedSolutions.toString(), sol);
             byte cDataToWrite[] = solutions.toString().getBytes(StandardCharsets.US_ASCII);
-            writeFile(JsonLDManager.getInstance().currentDeviceManagerPayloadTempFilePath, cDataToWrite);
-
-            //Load preferences (JSONLD) and device characteristics (JSONLD)
-
-            // load accessibility namespace
-            OntologyManager.getInstance().m.setNsPrefix("ax", UPREFS.NS);
-            // create RDF Model from preferences and solutions
-            
-            File tempFile = new File(JsonLDManager.getInstance().preferenceTempFilePath);
-            FileWriter tempFileWriter = new FileWriter(tempFile);
-            tempFileWriter.write(JsonLDManager.getInstance().preferenceInputString);
-            tempFileWriter.close();
-            
-            OntologyManager.getInstance().m = ModelFactory.createDefaultModel().read(JsonLDManager.getInstance().preferenceTempFilePath, "JSON-LD");
-            
-            tempFile = new File(JsonLDManager.getInstance().solutionseTempFilePath);
-            tempFileWriter = new FileWriter(tempFile);
-            tempFileWriter.write(JsonLDManager.getInstance().solutionsString);
-            tempFileWriter.close();
-            
-            Model d = ModelFactory.createDefaultModel().read(JsonLDManager.getInstance().solutionseTempFilePath, "JSON-LD");
-            OntologyManager.getInstance().m.add(d);
-            //m.write(System.out);
-
-            
-            // TODO: use ModelFactors or RDFDataMrg ? 
-            //alternative to read preferences from JSONLD			
-            //RDFDataMgr.read(m, inputURL.toUri().toString(), null, JenaJSONLD.JSONLD);
-
-            //Load other semantic data source (registry and solutions)
-
-            //Model registry = ModelFactory.createDefaultModel().read(reg, "JSON-LD");
-            
-            tempFile = new File(JsonLDManager.getInstance().semanticsSolutionsFilePath);
-            tempFileWriter = new FileWriter(tempFile);
-            tempFileWriter.write(JsonLDManager.getInstance().semanticsSolutionsString);
-            tempFileWriter.close();
-            
-            Model uListing = ModelFactory.createDefaultModel().read(JsonLDManager.getInstance().semanticsSolutionsFilePath, "JSON-LD");
-            
-            tempFile = new File(JsonLDManager.getInstance().explodePreferenceTermsFilePath);
-            tempFileWriter = new FileWriter(tempFile);
-            tempFileWriter.write(JsonLDManager.getInstance().explodePrefTermsString);
-            tempFileWriter.close();
-            
-            Model exTerms = ModelFactory.createDefaultModel().read(JsonLDManager.getInstance().explodePreferenceTermsFilePath, "JSON-LD");
-
-            // merge the Models
-            OntologyManager.getInstance().m = OntologyManager.getInstance().m.union(exTerms);
-            //m = m.union(uListing);	        
-            // print the Model as RDF/XML
-            //m.write(System.out);
-            
-            Writer writer = null;
-            try {
-                writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(JsonLDManager.getInstance().rdfXMLTempFilePath1), "utf-8"));
-                OntologyManager.getInstance().m.write(writer);
-            } catch (IOException ex) {
-            // report
-            } finally {
-            try {writer.close();} catch (Exception ex) {}
-            }
-
-            //Run JENA rules to infer knowledge used for conflict resolution
-            /** 
-                * TODO make this mapping more general to achieve the goal that we are not limited to GPII input sources
-                * This step is used for any kind of mappings from an abritary input source (here preferences from GPII) 
-                * to infer required knowledge for the RBMM reasoning and vocabulary. 
-                * 
-                */            
-
-            File f = new File(JsonLDManager.getInstance().mappingRules);
-            if (f.exists()) 
-            {
-                List<Rule> rules = Rule.rulesFromURL("file:" + JsonLDManager.getInstance().mappingRules);
-                GenericRuleReasoner r = new GenericRuleReasoner(rules);
-                InfModel infModel = ModelFactory.createInfModel(r, OntologyManager.getInstance().m);
-                // starting the rule execution
-                infModel.prepare();					
-                // TODO why am I doing this here?
-                Model deducedModel = infModel.getDeductionsModel();  
-                OntologyManager.getInstance().m.add(deducedModel);
-                //deducedModel.write(System.out);
-                //m.write(System.out);
-                
-                writer = null;
-                try {
-                    writer = new BufferedWriter(new OutputStreamWriter(
-                        new FileOutputStream(JsonLDManager.getInstance().deducedModelTemplFilePath), "utf-8"));
-                    deducedModel.write(writer);
-                } catch (IOException ex) {
-                // report
-                } finally {
-                try {writer.close();} catch (Exception ex) {}
-                }
-                
-                writer = null;
-                try {
-                    writer = new BufferedWriter(new OutputStreamWriter(
-                        new FileOutputStream(JsonLDManager.getInstance().rdfXMLTempFilePath2), "utf-8"));
-                    OntologyManager.getInstance().m.write(writer);
-                } catch (IOException ex) {
-                // report
-                } finally {
-                try {writer.close();} catch (Exception ex) {}
-                }
-            } 
-            else
-                System.out.println("That rules file does not exist.\n\n");
-
+            writeFile(preprocessingTempFilePath_device, cDataToWrite);
+            System.out.println("File created: " + preprocessingTempFilePath_device);
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
+    }
+    
+    //[1] Load preferences (JSONLD) and device characteristics (JSONLD)
+    private void loadPreferencesAndDevicePayload()
+    {
+        System.out.println("\n*****************************************************************");
+        System.out.println("* Load preferences (JSONLD) and device characteristics (JSONLD) *");
+        System.out.println("*****************************************************************");
+			
+        // load accessibility namespace
+        OntologyManager.getInstance().m.setNsPrefix("ax", UPREFS.NS);
+        // create RDF Model from preferences and solutions
+        OntologyManager.getInstance().m = ModelFactory.createDefaultModel().read(preprocessingTempFilePath_preferences, "JSON-LD");
+        Model d = ModelFactory.createDefaultModel().read(preprocessingTempFilePath_device, "JSON-LD");
+        OntologyManager.getInstance().m.add(d);
+        OntologyManager.getInstance().m.write(System.out);
+
+        // TODO: use ModelFactors or RDFDataMrg ? 
+        //alternative to read preferences from JSONLD			
+        //RDFDataMgr.read(m, inputURL.toUri().toString(), null, JenaJSONLD.JSONLD);
+    }
+    
+    //[2] Load other semantic data source (registry and solutions)
+    private void loadSemanticData()
+    {
+        System.out.println("\n************************************************************");
+        System.out.println("* Load other semantic data source (registry and solutions) *");
+        System.out.println("************************************************************");
+
+        //Model registry = ModelFactory.createDefaultModel().read(reg, "JSON-LD");
+        Model uListing = ModelFactory.createDefaultModel().read(semanticsSolutionsFilePath, "JSON-LD");
+        Model exTerms = ModelFactory.createDefaultModel().read(explodePrefTermsFilePath, "JSON-LD");
+
+        // merge the Models
+        OntologyManager.getInstance().m = OntologyManager.getInstance().m.union(exTerms);
+        //m = m.union(uListing);	        
+        // print the Model as RDF/XML
+        OntologyManager.getInstance().m.write(System.out);
+    }
+    
+    //[3] Run JENA rules to infer knowledge used for conflict resolution
+    private void runJenaRules()
+    {
+        System.out.println("\n******************************************************************");
+        System.out.println("* Run JENA rules to infer knowledge used for conflict resolution *");
+        System.out.println("******************************************************************");
+        /** 
+            * TODO make this mapping more general to achieve the goal that we are not limited to GPII input sources
+            * This step is used for any kind of mappings from an abritary input source (here preferences from GPII) 
+            * to infer required knowledge for the RBMM reasoning and vocabulary. 
+            * 
+            */
+
+        File f = new File(mappingRulesFilePath);
+        if (f.exists()) 
+        {
+            List<Rule> rules = Rule.rulesFromURL("file:" + mappingRulesFilePath);
+            GenericRuleReasoner r = new GenericRuleReasoner(rules);
+            InfModel infModel = ModelFactory.createInfModel(r, OntologyManager.getInstance().m);
+            // starting the rule execution
+            infModel.prepare();					
+            // TODO why am I doing this here?
+            Model deducedModel = infModel.getDeductionsModel();  
+            OntologyManager.getInstance().m.add(deducedModel);
+            deducedModel.write(System.out);
+            //m.write(System.out);
+        } 
+        else
+            System.out.println("That rules file does not exist.");
     }
 
     private static JSONObject getPreferenceValues(JSONObject outerValues, Object innerValues, String solutionID) throws JSONException 

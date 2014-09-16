@@ -31,8 +31,8 @@ public class RBMM_WebServiceIT extends TestCase
         WebResource webResource = client.resource("http://localhost:8080/RBMM/runJSONLDRules");
         ClientResponse response = webResource.accept("application/json").type("application/json").post(ClientResponse.class, inputFileStr);
         String output = response.getEntity(String.class);
-        System.out.println("Output from Server .... \n");
-        System.out.println(output);
+        //System.out.println("Output from Server .... \n");
+        //System.out.println(output);
         //assertEquals(output, "This is a successful integration test!");
     }
 }

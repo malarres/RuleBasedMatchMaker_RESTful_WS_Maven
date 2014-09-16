@@ -45,18 +45,10 @@ public class RBMM_WebService
             
             finalResultStr = finalResultStr + "name: " + tmpRBMMInputItem_name + ",\nbody:\n" + tmpRBMMInputItem_body_prettyPrint_string + "\n\n\n";
             
-            if(tmpRBMMInputItem_name.equals("semanticsSolutions"))
-                JsonLDManager.getInstance().semanticsSolutionsString = tmpRBMMInputItem_body_prettyPrint_string;
-            else if(tmpRBMMInputItem_name.equals("explodePreferenceTerms"))
-                JsonLDManager.getInstance().explodePrefTermsString = tmpRBMMInputItem_body_prettyPrint_string;
-            else if(tmpRBMMInputItem_name.equals("solutions"))
-                JsonLDManager.getInstance().solutionsString = tmpRBMMInputItem_body_prettyPrint_string;
-            else if(tmpRBMMInputItem_name.equals("preferenceInputString"))
-                JsonLDManager.getInstance().preferenceInputString = tmpRBMMInputItem_body_prettyPrint_string;
+            if(tmpRBMMInputItem_name.equals("current_np_set"))
+                JsonLDManager.getInstance().currentNPSet = tmpRBMMInputItem_body_prettyPrint_string;
             else if(tmpRBMMInputItem_name.equals("current_device_manager_payload"))
                 JsonLDManager.getInstance().currentDeviceManagerPayload = tmpRBMMInputItem_body_prettyPrint_string;
-            else if(tmpRBMMInputItem_name.equals("current_np_set"))
-                JsonLDManager.getInstance().currentNPSet = tmpRBMMInputItem_body_prettyPrint_string;
         }        
         
         JsonLDManager.getInstance().runJSONLDTests();
