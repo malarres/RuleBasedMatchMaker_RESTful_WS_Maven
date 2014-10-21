@@ -6,14 +6,15 @@
             }]
         },
     
-        // Implicit AND
+
         "conditions": [
             {
                 "http://registry.gpii.net/conditions/timeOfDay": {
-                "range": {
-                    "start": 1730,
-                    "end": 730
-                }
+                    "range": {
+                        "start": 1730,
+                        "end": 730
+                    }
+                },
             },
             {
                 "http://registry.gpii.net/conditions/location": {
@@ -26,4 +27,4 @@
              }
         ]
     }
- }
+}
