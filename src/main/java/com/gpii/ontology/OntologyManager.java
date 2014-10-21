@@ -9,21 +9,18 @@ import java.io.BufferedReader;
 /**
  *
  * @author nkak
+ * @author Claudia Loitsch
+ * 
  */
 public class OntologyManager
 {
-	
+    private static OntologyManager instance = null;
+    
     // default model automatically initialized with data from JSON-LD  	
-    public static Model m;
-
-    //	accessibilityConflictModel
-    public static Model acm;
-
-    public static BufferedReader br;
-
+    public static Model _dmodel;
+    
     boolean printDebugInfo;
     public String debug;
-    private static OntologyManager instance = null;
     
     private OntologyManager() 
     {
@@ -32,7 +29,6 @@ public class OntologyManager
         
         // JenaJSONLD must be initialized so that the readers and writers are registered with Jena.
         JenaJSONLD.init();
-        m = ModelFactory.createDefaultModel();
     }
     
     public static OntologyManager getInstance() 
@@ -41,6 +37,12 @@ public class OntologyManager
             instance = new OntologyManager();
         return instance;
     }
+    
+	public void populateJSONLDInput(String uri){
+		
+		_dmodel = ModelFactory.createOntologyModel().read(uri, "JSON-LD");
+		
+	}
     
     public String testHello(String tmpName)
     {
