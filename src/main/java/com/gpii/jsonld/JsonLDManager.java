@@ -42,7 +42,7 @@ public class JsonLDManager
     public String currentDeviceManagerPayload;
   
     //static input files
-    //public String semanticsSolutionsFilePath;
+    public String semanticsSolutionsFilePath;
     //public String explodePrefTermsFilePath;
     public String mappingRulesFilePath;
     public String mmInput;
@@ -63,7 +63,7 @@ public class JsonLDManager
         if(f.exists())  //deployment mode
         {
             //static input files
-            //semanticsSolutionsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/semanticsSolutions.jsonld";
+            semanticsSolutionsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/semanticsSolutions.jsonld";
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/explodePreferenceTerms.jsonld";
             
         	/**
@@ -80,7 +80,7 @@ public class JsonLDManager
         else            //Jetty integration tests
         {
             //static input files
-            //semanticsSolutionsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions.jsonld";
+            semanticsSolutionsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions.jsonld";
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/explodePreferenceTerms.jsonld";
             mappingRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/basicAlignment.rules";
         	mmInput = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/input/newInput.json";
@@ -121,6 +121,9 @@ public class JsonLDManager
     	
     	// populate all default JSONLDInput to a model 
     	OntologyManager.getInstance().populateJSONLDInput(preprocessingTempfilePath);
+    	
+    	// populate semantic information to the model
+    	OntologyManager.getInstance().populateJSONLDInput(semanticsSolutionsFilePath);
     	
     	// infer configuration 
     	Model imodel = inferConfiguration(OntologyManager._dmodel, mappingRulesFilePath);
