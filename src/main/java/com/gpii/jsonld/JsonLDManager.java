@@ -17,7 +17,10 @@ import com.hp.hpl.jena.reasoner.rulesys.GenericRuleReasoner;
 import com.hp.hpl.jena.reasoner.rulesys.Rule;
 import java.io.*;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 import org.json.JSONArray;
@@ -40,10 +43,12 @@ public class JsonLDManager
     //public String semanticsSolutionsFilePath;
     //public String explodePrefTermsFilePath;
     public String mappingRulesFilePath;
-
+    public String mmInput;
+    
     //temp preprocessing output files
     public String preprocessingTempfilePath_defaultInput;
     public String postprocessingTempfilePath_Output;
+
     
     public Gson gson;
     
@@ -63,6 +68,7 @@ public class JsonLDManager
         	 * TODO find a new location, not in folder test data; split ontology alingment rules from matching rules 
         	 */
         	mappingRulesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/basicAlignment.rules";
+        	mmInput = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/input/newInput.json";
             
             // temp preprocessing output files
             preprocessingTempfilePath_defaultInput = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/preprocessingDefaultInput.jsonld";
@@ -75,6 +81,7 @@ public class JsonLDManager
             //semanticsSolutionsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions.jsonld";
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/explodePreferenceTerms.jsonld";
             mappingRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/basicAlignment.rules";
+        	mmInput = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/input/newInput.json";
             
             //temp preprocessing output files
             preprocessingTempfilePath_defaultInput = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/preprocessingDefaultInput.jsonld";
@@ -97,7 +104,15 @@ public class JsonLDManager
     public void runJSONLDTests() 
     {
 
-        // preprocessing();
+        /*try {
+			preprocessing(mmInput);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
     	
     	// populate all default JSONLDInput to a model 
     	OntologyManager.getInstance().populateJSONLDInput(preprocessingTempfilePath_defaultInput);
@@ -239,8 +254,49 @@ public class JsonLDManager
 	 * Create a new class performing translating from JSON input to JSONLD
 	 * Expected input is defined here: https://code.stypi.com/kaspermarkus/MM%20stuff/MM%20Input.js
 	 * Expected output is content of file preprocessingTempfilePath_defaultInput    
+	 * @throws JSONException 
+	 * @throws IOException 
 	 */
-    private void preprocessing() {}
+    private void preprocessing(String in) throws JSONException, IOException {
+    	
+		String inputString = readFile(in, StandardCharsets.UTF_8);  
+		JSONTokener inputTokener = new JSONTokener(inputString);
+		JSONObject mmIn = new JSONObject(inputTokener);		
+		
+    	// JSON Object spec the MM input
+		JSONObject mmInTrans = new JSONObject();
+		JSONObject context = new JSONObject();
+		JSONArray graph = new JSONArray();
+
+        Iterator<?> keys = mmIn.keys();
+        while( keys.hasNext() ){
+        	String key = (String)keys.next();
+        	
+        	if(key.equals("preferences")){
+        			JSONObject mmInContext  = mmIn.getJSONObject(key);
+        			Iterator<?> cKeys = mmInContext.keys(); 
+        		
+        	}
+        	
+        	
+        
+        }
+    	
+
+		
+		
+		
+		context.put("c4a", "http://rbmm.org/schemas/cloud4all/0.1/");
+		context.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		
+		
+		mmInTrans.put("@context", context);
+		mmInTrans.put("@graph", graph);
+		
+	    byte dataToWrite[] = mmInTrans.toString().getBytes(StandardCharsets.US_ASCII);
+	    writeFile(preprocessingTempfilePath_defaultInput, dataToWrite);
+    	
+    }
 
 
 
@@ -265,6 +321,17 @@ public class JsonLDManager
                     e.printStackTrace();
             }
     }
+    
+    /**
+     * TODO create a class for help functions
+     * @param path where to write the file
+     * @param dataToWrite // data to write in the file
+     */
+	static String readFile(String path, Charset encoding) throws IOException 
+	{
+	  byte[] encoded = Files.readAllBytes(Paths.get(path));
+	  return new String(encoded, encoding);
+}
     
     
 }
