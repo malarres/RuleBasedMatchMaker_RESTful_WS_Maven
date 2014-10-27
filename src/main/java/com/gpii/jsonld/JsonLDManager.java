@@ -33,6 +33,7 @@ import org.json.JSONTokener;
  * @author nkak
  * @author Claudia Loitsch
  */
+ 
 public class JsonLDManager 
 {
     //input
@@ -127,23 +128,21 @@ public class JsonLDManager
 
     }
     
-    public Model inferConfiguration(Model model, String ruleFile){
-		
-	    String mappingRules = "C:\\eclipse\\workspace\\PrototypeRBMM_Maven\\RBMMPlayground\\src\\main\\java\\gpii\\testData\\rules\\basicAlignment.rules";
+    public Model inferConfiguration(Model model, String ruleFile)
+    {
+        File f = new File(ruleFile);
+        if (f.exists()) 
+        {
+                List<Rule> rules = Rule.rulesFromURL("file:" + mappingRulesFilePath);
 
-	    File f = new File(ruleFile);
-		if (f.exists()) {
-			List<Rule> rules = Rule.rulesFromURL("file:" + mappingRules);
-			
-			GenericRuleReasoner r = new GenericRuleReasoner(rules);
-			
-			InfModel infModel = ModelFactory.createInfModel(r, model);		    
-			infModel.prepare();					
+                GenericRuleReasoner r = new GenericRuleReasoner(rules);
 
-		    Model deducedModel = infModel.getDeductionsModel();  
-			model.add(deducedModel);
-		}
-   	
+                InfModel infModel = ModelFactory.createInfModel(r, model);		    
+                infModel.prepare();					
+
+            Model deducedModel = infModel.getDeductionsModel();  
+                model.add(deducedModel);
+        }
     	return model;    	
     }
     
