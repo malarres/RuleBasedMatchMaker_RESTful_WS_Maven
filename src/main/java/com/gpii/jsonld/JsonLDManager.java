@@ -319,7 +319,7 @@ public class JsonLDManager
     	        	String pVal = cPrefs.getString(pID);
     	        	
     	        	JSONObject outPref = new JSONObject();
-    	        	outPref.put("@id", pID);
+    	        	outPref.put("c4a:id", pID);
     	        	outPref.put("@type", "c4a:Preference");
     	        	
     	            if (pID.contains("common")) outPref.put("c4a:type", "common");
