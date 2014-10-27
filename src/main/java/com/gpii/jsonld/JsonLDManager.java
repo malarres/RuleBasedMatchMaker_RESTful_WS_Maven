@@ -119,11 +119,13 @@ public class JsonLDManager
 			e.printStackTrace();
 		}
     	
-    	// populate all default JSONLDInput to a model 
-    	OntologyManager.getInstance().populateJSONLDInput(preprocessingTempfilePath);
+        /**
+         * TODO make it configurable to add various input
+         */
+    	// populate all JSONLDInput to a model 
+    	OntologyManager.getInstance().populateJSONLDInput(new String[] {preprocessingTempfilePath, semanticsSolutionsFilePath});
     	
-    	// populate semantic information to the model
-    	OntologyManager.getInstance().populateJSONLDInput(semanticsSolutionsFilePath);
+    	OntologyManager._dmodel.write(System.out);
     	
     	// infer configuration 
     	Model imodel = inferConfiguration(OntologyManager._dmodel, mappingRulesFilePath);
