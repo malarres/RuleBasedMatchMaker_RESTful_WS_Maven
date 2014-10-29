@@ -304,13 +304,15 @@ public class JsonLDManager
 	        while( cKeys.hasNext() ){
 	        	String cID = (String)cKeys.next();
 	        	String cName = inContext.getJSONObject(cID).get("name").toString();
-	        	JSONObject cPrefs = inContext.getJSONObject(cID).getJSONObject("preferences");
 	        	
 	        	JSONObject outPrefSet = new JSONObject();
 	        	outPrefSet.put("@id", "c4a:"+cID);
 	        	outPrefSet.put("@type", "c4a:PreferenceSet");
 	        	outPrefSet.put("c4a:id", cID);
 	        	outPrefSet.put("c4a:name", cName);
+
+	        	// translate preferences and add hasPrefs relation 
+	        	JSONObject cPrefs = inContext.getJSONObject(cID).getJSONObject("preferences");
 	        	
 	        	JSONArray outPrefArray = new JSONArray(); 
     			Iterator<?> pKeys = cPrefs.keys(); 
@@ -335,7 +337,60 @@ public class JsonLDManager
     	        	outPrefArray.put(outPref);
 
     	        }
-	        	outPrefSet.put("c4a:hasPrefs", outPrefArray);        	        	
+	        	outPrefSet.put("c4a:hasPrefs", outPrefArray);
+
+	        	// translate metadata and add hasMetadata relation 
+	        	if(inContext.getJSONObject(cID).has("metadata")){
+	        		JSONArray cMetaOuter = inContext.getJSONObject(cID).getJSONArray("metadata");
+		        	
+		        	// output array
+		        	JSONArray outMetaArray = new JSONArray();
+		        	
+		        	for(int i = 0; i < cMetaOuter.length(); i++){
+		        		
+		        		JSONObject cMeta = cMetaOuter.getJSONObject(i);	        		 
+		        		
+		        		// new JSONObject for each metadata blob
+		        		JSONObject outMetaObject = new JSONObject();
+		        		
+		        		 outMetaObject.put("@type", "c4a:Metadata");
+		        		 outMetaObject.put("c4a:type", cMeta.get("type").toString());
+		        		 outMetaObject.put("c4a:value", cMeta.get("value").toString());
+		        		 outMetaObject.put("c4a:scope", cMeta.getJSONArray("scope"));	        		 
+		        		 
+		        		 outMetaArray.put(outMetaObject); 
+		        	}
+		        	outPrefSet.put("c4a:hasMetadata", outMetaArray);	
+	        	}
+	        	
+	        	// translate condition and add hasCondition relation 
+	        	if(inContext.getJSONObject(cID).has("conditions")){
+	        		
+	        		JSONArray cCondOuter = inContext.getJSONObject(cID).getJSONArray("conditions");
+		        	
+		        	// output array
+		        	JSONArray outCondArray = new JSONArray();
+		        	
+		        	for(int i = 0; i < cCondOuter.length(); i++){
+		        		
+		        		JSONObject cMeta = cCondOuter.getJSONObject(i);	        		 
+		        		
+		        		// new JSONObject for each metadata blob
+		        		JSONObject outMetaObject = new JSONObject();
+		        		
+		        		outMetaObject.put("@type", "c4a:Condition");
+		        		 
+		     			Iterator<?> condKeys = cMeta.keys(); 
+		    	        while(condKeys.hasNext()){
+		    	        	
+		    	        	String condKey = (String)condKeys.next();
+		    	        	outMetaObject.put("c4a:"+condKey, cMeta.get(condKey).toString());
+		    	        }		        		 
+		        		outCondArray.put(outMetaObject); 
+		        	}
+		        	outPrefSet.put("c4a:hasCondition", outCondArray);	
+	        	}
+	        	
 	        	outGraph.put(outPrefSet);        	        	
 	        }			
 			
