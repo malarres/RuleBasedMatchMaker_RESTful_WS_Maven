@@ -17,7 +17,11 @@ import com.hp.hpl.jena.reasoner.rulesys.GenericRuleReasoner;
 import com.hp.hpl.jena.reasoner.rulesys.Rule;
 import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 import org.json.JSONArray;
@@ -41,10 +45,12 @@ public class JsonLDManager
     //public String semanticsSolutionsFilePath;
     //public String explodePrefTermsFilePath;
     public String mappingRulesFilePath;
-
+    public String mmInput;
+    
     //temp preprocessing output files
-    public String preprocessingTempfilePath_defaultInput;
-    public String postprocessingTempfilePath_Output;
+    public String preprocessingTempfilePath;
+    public String postprocessingTempfilePath;
+
     
     public Gson gson;
     
@@ -64,10 +70,11 @@ public class JsonLDManager
         	 * TODO find a new location, not in folder test data; split ontology alingment rules from matching rules 
         	 */
         	mappingRulesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/basicAlignment.rules";
+        	mmInput = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/input/newInput.json";
             
             // temp preprocessing output files
-            preprocessingTempfilePath_defaultInput = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/preprocessingDefaultInput.jsonld";
-            postprocessingTempfilePath_Output = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/postprocessingOutput.json";            
+            preprocessingTempfilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/preprocessingOutput.jsonld";
+            postprocessingTempfilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/postprocessingOutput.json";            
 
         }
         else            //Jetty integration tests
@@ -76,10 +83,11 @@ public class JsonLDManager
             //semanticsSolutionsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions.jsonld";
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/explodePreferenceTerms.jsonld";
             mappingRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/basicAlignment.rules";
+        	mmInput = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/input/newInput.json";
             
             //temp preprocessing output files
-            preprocessingTempfilePath_defaultInput = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/preprocessingDefaultInput.jsonld";
-            postprocessingTempfilePath_Output = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/postprocessingOutput.json";
+            preprocessingTempfilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/preprocessingOutput.jsonld";
+            postprocessingTempfilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/postprocessingOutput.json";
 
         }
         currentNPSet = "";
@@ -98,10 +106,21 @@ public class JsonLDManager
     public void runJSONLDTests() 
     {
 
-        // preprocessing();
+        try {
+			preprocessing(mmInput);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	
     	// populate all default JSONLDInput to a model 
-    	OntologyManager.getInstance().populateJSONLDInput(preprocessingTempfilePath_defaultInput);
+    	OntologyManager.getInstance().populateJSONLDInput(preprocessingTempfilePath);
     	
     	// infer configuration 
     	Model imodel = inferConfiguration(OntologyManager._dmodel, mappingRulesFilePath);
@@ -224,7 +243,7 @@ public class JsonLDManager
 	
 		}
 	    byte dataToWrite[] = mmOut.toString().getBytes(StandardCharsets.US_ASCII);
-	    writeFile(postprocessingTempfilePath_Output, dataToWrite);
+	    writeFile(postprocessingTempfilePath, dataToWrite);
 	    
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
@@ -234,12 +253,155 @@ public class JsonLDManager
 	}
     
 	/**
-	 * TODO Pre-processing 
-	 * Create a new class performing translating from JSON input to JSONLD
-	 * Expected input is defined here: https://code.stypi.com/kaspermarkus/MM%20stuff/MM%20Input.js
-	 * Expected output is content of file preprocessingTempfilePath_defaultInput    
+	 * TODO: Create a new class performing pre-processing
+	 * The function preprocessing translate the input from the Flow Manager, including preference sets, device information, etc from json into json-ld. 
+	 * Expected input is defined at: https://code.stypi.com/81qjpbxb
+	 * Expected output is defined at: http://code.stypi.com/xygkeupl    
+	 * @throws JSONException 
+	 * @throws IOException 
+	 * @throws URISyntaxException 
 	 */
-    private void preprocessing() {}
+    private void preprocessing(String in) throws JSONException, IOException, URISyntaxException {
+    	
+		String inputString = readFile(in, StandardCharsets.UTF_8);  
+		JSONTokener inputTokener = new JSONTokener(inputString);
+		JSONObject mmIn = new JSONObject(inputTokener);		
+		
+		JSONObject 	outPreProc 	= new JSONObject();
+		JSONObject 	outContext 	= new JSONObject();
+		JSONArray 	outGraph 	= new JSONArray();
+
+		if(mmIn.has("preferences")){
+			JSONObject inContext  = mmIn.getJSONObject("preferences").getJSONObject("contexts");
+   			
+			/** Translate preferences sets 
+			 * IN: 
+			 * "gpii-default": {
+			 * 		"name": "Default preferences",
+			 * 		"preferences": {
+			 *  		"http://registry.gpii.net/common/fontSize": 15,
+			 *       }
+			 * }
+			 * GOAL: {
+			 *  "@id": "c4a:nighttime-at-home",
+			 *  "@type": "c4a:PreferenceSet",
+			 *  "c4a:id": "nighttime-at-home",
+			 *  "c4a:name": "Nighttimeathome",
+			 *  "c4a:hasPrefs": [{
+			 *  	"c4a:id": "http://registry.gpii.net/common/fontSize",
+			 *  	"@type": "c4a:Preference",
+			 *  	"c4a:type": "common",
+			 *  	"c4a:name": "fontSize",
+			 *  	"c4a:value": "18"
+			 *  }] 
+			 */
+			Iterator<?> cKeys = inContext.keys(); 
+	        while( cKeys.hasNext() ){
+	        	String cID = (String)cKeys.next();
+	        	String cName = inContext.getJSONObject(cID).get("name").toString();
+	        	JSONObject cPrefs = inContext.getJSONObject(cID).getJSONObject("preferences");
+	        	
+	        	JSONObject outPrefSet = new JSONObject();
+	        	outPrefSet.put("@id", "c4a:"+cID);
+	        	outPrefSet.put("@type", "c4a:PreferenceSet");
+	        	outPrefSet.put("c4a:id", cID);
+	        	outPrefSet.put("c4a:name", cName);
+	        	
+	        	JSONArray outPrefArray = new JSONArray(); 
+    			Iterator<?> pKeys = cPrefs.keys(); 
+    	        while( pKeys.hasNext() ){
+    	        	String pID = (String)pKeys.next();
+    	        	String pVal = cPrefs.getString(pID);
+    	        	
+    	        	JSONObject outPref = new JSONObject();
+    	        	outPref.put("@id", pID);
+    	        	outPref.put("@type", "c4a:Preference");
+    	        	
+    	            if (pID.contains("common")) outPref.put("c4a:type", "common");
+    	            if (pID.contains("applications")) outPref.put("c4a:type", "application");
+    	            
+    	            URI uri = new URI(pID);
+    	            String path = uri.getPath();
+    	            String idStr = path.substring(path.lastIndexOf('/') + 1);
+    	            outPref.put("c4a:name", idStr);
+
+    	            outPref.put("c4a:value", pVal);
+   	        	
+    	        	outPrefArray.put(outPref);
+
+    	        }
+	        	outPrefSet.put("c4a:hasPrefs", outPrefArray);        	        	
+	        	outGraph.put(outPrefSet);        	        	
+	        }			
+			
+		}
+		
+		if(mmIn.has("deviceReporter")){
+			JSONObject inDevice  = mmIn.getJSONObject("deviceReporter");
+			
+			/** Translate operating system;
+			 * IN:   
+			 * "OS": {
+			 *  "id": "win32",
+			 *  "version": "5.0.0"
+			 *  },
+			 * GOAL: {
+			 * "@id": "c4a:win32",
+			 * "@type": "c4a:OperatingSystem",
+			 * "c4a:name": "win32"
+			 * },
+			 */    			
+			if(inDevice.has("OS")){
+    			JSONObject inOS = inDevice.getJSONObject("OS");
+    			String osID = inOS.get("id").toString();
+    			String osVer = inOS.get("version").toString();        			
+
+    			JSONObject outOS = new JSONObject(); 
+    			outOS.put("@type", "c4a:OperatingSystem");
+    			outOS.put("@id", "c4a:"+osID);
+    			outOS.put("name", osID);
+    			outOS.put("version", osVer);        			
+    			
+    			outGraph.put(outOS);        			
+			}
+
+			/** Translate installed solutions;
+			 * IN:   
+			 * solutions": [
+			 * 	{ "id": com.cats.org }
+			 * ]
+			 *  GOAL: {
+			 * "@id": "c4a:com.cats.org",
+			 * "@type": "c4a:InstalledSolution",
+			 * "c4a:name": "com.cats.org"
+			 * },
+			 */
+			if(inDevice.has("solutions")){
+    			JSONArray inSol = inDevice.getJSONArray("solutions");
+    			for(int i = 0; i < inSol.length(); i++){
+    				
+    				String solID = inSol.getJSONObject(i).get("id").toString();
+
+    				JSONObject outSol = new JSONObject(); 
+    				outSol.put("@type", "c4a:InstalledSolution");
+    				outSol.put("@id", "c4a:"+solID);
+    				outSol.put("name", solID);        			
+        			
+        			outGraph.put(outSol);     
+    			}   			
+			}    				
+		}
+        
+		outContext.put("c4a", "http://rbmm.org/schemas/cloud4all/0.1/");
+		outContext.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");		
+		
+		outPreProc.put("@context", outContext);
+		outPreProc.put("@graph", outGraph);
+		
+	    byte dataToWrite[] = outPreProc.toString().getBytes(StandardCharsets.US_ASCII);
+	    writeFile(preprocessingTempfilePath, dataToWrite);
+    	
+    }
 
 
 
@@ -264,6 +426,17 @@ public class JsonLDManager
                     e.printStackTrace();
             }
     }
+    
+    /**
+     * TODO create a class for help functions
+     * @param path where to write the file
+     * @param dataToWrite // data to write in the file
+     */
+	static String readFile(String path, Charset encoding) throws IOException 
+	{
+	  byte[] encoded = Files.readAllBytes(Paths.get(path));
+	  return new String(encoded, encoding);
+}
     
     
 }
