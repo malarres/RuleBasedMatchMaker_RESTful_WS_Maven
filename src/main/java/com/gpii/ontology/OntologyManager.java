@@ -27,6 +27,9 @@ public class OntologyManager
         debug = "";
         printDebugInfo = false;
         
+        // create an ontology model 
+        _dmodel = ModelFactory.createOntologyModel(); 
+        
         // JenaJSONLD must be initialized so that the readers and writers are registered with Jena.
         JenaJSONLD.init();
     }
@@ -38,9 +41,16 @@ public class OntologyManager
         return instance;
     }
     
-	public void populateJSONLDInput(String uri){
+	public void populateJSONLDInput(String[] uris){
 		
-		_dmodel = ModelFactory.createOntologyModel().read(uri, "JSON-LD");
+		//_dmodel = ModelFactory.createOntologyModel().read(uri, "JSON-LD");
+		
+		for (int i=0; i < uris.length; i++){		
+			
+			
+			_dmodel.read(uris[i]);
+			
+		}		
 		
 	}
     

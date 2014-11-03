@@ -1,42 +1,45 @@
 {
     "@context": {
-        "applications": "http://rbmm.org/schemas/accessibility/solutions",
-        "name": "http://rbmm.org/schemas/accessibility/solutions/id",
-        "type": "http://rbmm.org/schemas/accessibility/solutions/ATtype"
+        "c4a": "http://rbmm.org/schemas/cloud4all/0.1/",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
     },
-    "applications": [
+    "@graph": [
         {
-            "@id": "http://registry.gpii.org/applications/com.microsoft.windows.magnifier",
-            "name": "com.microsoft.windows.magnifier",
-            "type": "Magnifier"
-        },
-        {
-            "@id": "http://registry.gpii.org/applications/com.yourdolphin.supernova-as",
-            "name": "com.yourdolphin.supernova-as",
-            "type": [
-                "Magnifier",
-                "Screen Reader"
+            "@id": "c4a:com.cats.org",
+            "@type": "c4a:Solution",
+            "c4a:id": "http://registry.gpii.org/applications/com.cats.org",
+            "c4a:name": "com.cats.org",
+            "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "http://registry.gpii.net/common/fontType",
+                    "c4a:name": "fontType"
+                },
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "http: //registry.gpii.net/application/com.cats.org/catSetting2",
+                    "c4a:name": "catSetting2"
+                }
             ]
         },
         {
-            "@id": "http://registry.gpii.org/applications/org.nvda-project",
-            "name": "org.nvda-project",
-            "type": "Screen Reader"
-        },
-        {
-            "@id": "http://registry.gpii.org/applications/webinsight.webAnywhere.windows",
-            "name": "webinsight.webAnywhere.windows",
-            "type": "Screen Reader"
-        },        
-        {
-            "@id": "http://registry.gpii.org/applications/com.microsoft.windows.onscreenKeyboard",
-            "name": "com.microsoft.windows.onscreenKeyboard",
-            "type": "Screen Keyboard"
-        },
-        {
-            "@id": "http://registry.gpii.org/applications/com.microsoft.windows.highContrast",
-            "name": "com.microsoft.windows.highContrast",
-            "type": "High Contrast"
+            "@id": "c4a:com.microsoft.windows.desktop",
+            "@type": "c4a:Solution",
+            "c4a:id": "http://registry.gpii.org/applications/com.microsoft.windows.desktop",
+            "c4a:name": "com.microsoft.windows.desktop",
+            "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "com.microsoft.windows.desktop/fontofSize",
+                    "c4a:refersTo": "http://registry.gpii.net/common/fontSize",
+                    "c4a:name": "fontofSize"
+                },
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "http://registry.gpii.net/application/com.microsoft.windows.desktop/otherSetting",
+                    "c4a:name": "otherSetting"
+                }
+            ]
         }
     ]
 }
