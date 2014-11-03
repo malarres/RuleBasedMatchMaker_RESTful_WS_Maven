@@ -4,7 +4,6 @@ package com.gpii.ontology;
 import com.github.jsonldjava.jena.JenaJSONLD;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import java.io.BufferedReader;
 
 /**
  *
