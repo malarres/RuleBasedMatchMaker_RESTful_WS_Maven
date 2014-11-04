@@ -40,18 +40,13 @@ public class OntologyManager
         return instance;
     }
     
-	public void populateJSONLDInput(String[] uris){
-		
-		//_dmodel = ModelFactory.createOntologyModel().read(uri, "JSON-LD");
-		
-		for (int i=0; i < uris.length; i++){		
-			
-			
-			_dmodel.read(uris[i]);
-			
-		}		
-		
-	}
+    public void populateJSONLDInput(String[] uris)
+    {
+        //_dmodel = ModelFactory.createOntologyModel().read(uri, "JSON-LD");
+
+        for (int i=0; i < uris.length; i++)
+            _dmodel.read(uris[i]);
+    }
     
     public String testHello(String tmpName)
     {

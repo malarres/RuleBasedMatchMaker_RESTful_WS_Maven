@@ -30,15 +30,10 @@ import org.json.JSONTokener;
  
 public class JsonLDManager 
 {
-    //input
-    public String currentNPSet;
-    public String currentDeviceManagerPayload;
-  
     //static input files
     public String semanticsSolutionsFilePath;
     //public String explodePrefTermsFilePath;
     public String mappingRulesFilePath;
-    public String mmInput;
     
     /**
      * TODO make a global configuration for all C4a specific files
@@ -69,7 +64,6 @@ public class JsonLDManager
         	 * TODO find a new location, not in folder test data; split ontology alingment rules from matching rules 
         	 */
         	mappingRulesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/basicAlignment.rules";
-        	mmInput = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/input/newInput.json";
         	
         	// querries 
         	querryCondPath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/queries/outCondition.sparql";
@@ -86,7 +80,6 @@ public class JsonLDManager
             semanticsSolutionsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions.jsonld";
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/explodePreferenceTerms.jsonld";
             mappingRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/basicAlignment.rules";
-        	mmInput = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/input/newInput.json";
             
         	querryCondPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outCondition.sparql";
         	querryAppsPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outApplications.sparql";
@@ -96,8 +89,6 @@ public class JsonLDManager
             postprocessingTempfilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/postprocessingOutput.json";
 
         }
-        currentNPSet = "";
-        currentDeviceManagerPayload = "";
         
         gson = new Gson();
     }
@@ -109,21 +100,21 @@ public class JsonLDManager
         return instance;
     }
     
-    public void runJSONLDTests() throws IOException, JSONException 
+    public String runJSONLDTests(String tmpInputJsonStr) throws IOException, JSONException 
     {
-
+        String resJsonStr = "";
         try {
-			preprocessing(mmInput);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            preprocessing(tmpInputJsonStr);
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     	
         /**
          * TODO make it configurable to add various input
@@ -141,6 +132,9 @@ public class JsonLDManager
     	String[] queries = {querryCondPath, querryAppsPath};
     	byte [] outToWrite = TransformerManager.getInstance().transformOutput(imodel, queries);
     	writeFile(postprocessingTempfilePath, outToWrite);    	
+        
+        resJsonStr = new String(outToWrite, "UTF-8");
+        return resJsonStr;
     }
     
     public Model inferConfiguration(Model model, String ruleFile)
@@ -174,7 +168,7 @@ public class JsonLDManager
 	 */
     private void preprocessing(String in) throws JSONException, IOException, URISyntaxException {
     	
-		String inputString = readFile(in, StandardCharsets.UTF_8);  
+		String inputString = in;
 		JSONTokener inputTokener = new JSONTokener(inputString);
 		JSONObject mmIn = new JSONObject(inputTokener);		
 		
