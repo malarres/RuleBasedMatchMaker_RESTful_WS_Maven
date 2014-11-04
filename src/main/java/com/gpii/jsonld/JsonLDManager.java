@@ -2,17 +2,10 @@ package com.gpii.jsonld;
 
 import com.google.gson.Gson;
 import com.gpii.ontology.OntologyManager;
-import com.gpii.ontology.UPREFS;
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
+import com.gpii.transformer.TransformerManager;
 import com.hp.hpl.jena.rdf.model.InfModel;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.reasoner.rulesys.GenericRuleReasoner;
 import com.hp.hpl.jena.reasoner.rulesys.Rule;
 import java.io.*;
@@ -47,6 +40,12 @@ public class JsonLDManager
     public String mappingRulesFilePath;
     public String mmInput;
     
+    /**
+     * TODO make a global configuration for all C4a specific files
+     */
+    public String querryCondPath;
+    public String querryAppsPath;
+    
     //temp preprocessing output files
     public String preprocessingTempfilePath;
     public String postprocessingTempfilePath;
@@ -71,6 +70,10 @@ public class JsonLDManager
         	 */
         	mappingRulesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/basicAlignment.rules";
         	mmInput = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/input/newInput.json";
+        	
+        	// querries 
+        	querryCondPath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/queries/outCondition.sparql";
+        	querryAppsPath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/queries/outApplications.sparql";
             
             // temp preprocessing output files
             preprocessingTempfilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/preprocessingOutput.jsonld";
@@ -85,6 +88,9 @@ public class JsonLDManager
             mappingRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/basicAlignment.rules";
         	mmInput = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/input/newInput.json";
             
+        	querryCondPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outCondition.sparql";
+        	querryAppsPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outApplications.sparql";
+        	
             //temp preprocessing output files
             preprocessingTempfilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/preprocessingOutput.jsonld";
             postprocessingTempfilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/postprocessingOutput.json";
@@ -103,7 +109,7 @@ public class JsonLDManager
         return instance;
     }
     
-    public void runJSONLDTests() 
+    public void runJSONLDTests() throws IOException, JSONException 
     {
 
         try {
@@ -125,16 +131,16 @@ public class JsonLDManager
     	// populate all JSONLDInput to a model 
     	OntologyManager.getInstance().populateJSONLDInput(new String[] {preprocessingTempfilePath, semanticsSolutionsFilePath});
     	
-    	OntologyManager._dmodel.write(System.out);
-    	
     	// infer configuration 
     	Model imodel = inferConfiguration(OntologyManager._dmodel, mappingRulesFilePath);
     	
     	// create MM output
-    	createMMoutput(imodel);
-    	
- 
-
+    	/**
+    	 * TODO make a global configuration for cloud4all to use the specific C4a queries
+    	 */
+    	String[] queries = {querryCondPath, querryAppsPath};
+    	byte [] outToWrite = TransformerManager.getInstance().transformOutput(imodel, queries);
+    	writeFile(postprocessingTempfilePath, outToWrite);    	
     }
     
     public Model inferConfiguration(Model model, String ruleFile)
@@ -151,111 +157,11 @@ public class JsonLDManager
 
             Model deducedModel = infModel.getDeductionsModel();  
                 model.add(deducedModel);
+            	model.write(System.out, "N-TRIPLE");
         }
     	return model;    	
     }
-    
-	public void createMMoutput(Model model){
 
-		runQuery(" select DISTINCT (str(?c) as ?contextID) (str(?an) as ?appName) (str(?aa) as ?appActive) (str(?si) as ?setID) (str(?sv) as ?setValue) where{ ?if rdf:type c4a:InferredConfiguration. ?if c4a:id ?c. ?if c4a:refersTo ?app. ?app c4a:name ?an. ?app c4a:isActive ?aa. ?app c4a:settings ?set. ?set c4a:id ?si. ?set c4a:value ?sv. } ORDER BY DESC(?c)", model);  //add the query string
-
-	}  
-    private void runQuery(String queryRequest, Model model){
-		
-		StringBuffer queryStr = new StringBuffer();
-		// Establish Prefixes
-		//Set default Name space first
-		queryStr.append("PREFIX rdfs" + ": <" + "http://www.w3.org/2000/01/rdf-schema#" + "> ");
-		queryStr.append("PREFIX rdf" + ": <" + "http://www.w3.org/1999/02/22-rdf-syntax-ns#" + "> ");
-		queryStr.append("PREFIX c4a" + ": <" + "http://rbmm.org/schemas/cloud4all/0.1/" + "> ");
-		
-		//Now add query
-		queryStr.append(queryRequest);
-		Query query = QueryFactory.create(queryStr.toString());
-		QueryExecution qexec = QueryExecutionFactory.create(query, model);
-		try {
-		ResultSet response = qexec.execSelect();
-		
-		// JSON Object spec the MM output
-		JSONObject mmOut = new JSONObject();
-		JSONObject infConfig = new JSONObject();
-		JSONObject contextSet;
-		JSONObject appSet;
-		JSONObject solution;
-		JSONObject settings;
-		
-		mmOut.put("inferredConfiguration", infConfig);
-		
-		while(response.hasNext()){
-
-			
-			QuerySolution soln = response.nextSolution();
-			System.out.println("out: "+ soln.toString());
-		
-			RDFNode contextID 	= soln.get("?contextID");
-			RDFNode appName 	= soln.get("?appName");
-			RDFNode appActive 	= soln.get("?appActive");
-			RDFNode setId 		= soln.get("?setID");
-			RDFNode setValue 	= soln.get("?setValue");
-			
-			infConfig = mmOut.getJSONObject("inferredConfiguration"); 
-			
-			if(infConfig.has(contextID.toString())){
-				
-				contextSet = infConfig.getJSONObject(contextID.toString());
-				
-			}else {
-				
-				appSet = new JSONObject();
-				infConfig.put(contextID.toString(), appSet);
-				contextSet = infConfig.getJSONObject(contextID.toString());
-				
-			}
-			
-			if(contextSet.has("applications")){
-				
-				appSet = contextSet.getJSONObject("applications");			
-
-			}else {
-				
-				appSet = new JSONObject();
-				contextSet.put("applications", appSet);
-				appSet = contextSet.getJSONObject("applications");
-			}
-			
-			if(appSet.has(appName.toString())){
-				
-				solution = appSet.getJSONObject(appName.toString());
-			}else{
-				solution = new JSONObject();
-				appSet.put(appName.toString(), solution);
-				solution = appSet.getJSONObject(appName.toString());
-			}
-			
-			if(!solution.has("active")){
-				
-				solution.put("active", appActive.toString());
-			}
-
-			if(solution.has("settings")){
-				settings = solution.getJSONObject("settings");
-				settings.put(setId.toString(), setValue.toString());
-			}else {
-				settings = new JSONObject(); 
-				settings.put(setId.toString(), setValue.toString());
-				solution.put("settings", settings);
-			}
-	
-		}
-	    byte dataToWrite[] = mmOut.toString().getBytes(StandardCharsets.US_ASCII);
-	    writeFile(postprocessingTempfilePath, dataToWrite);
-	    
-		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} finally { qexec.close();}				
-
-	}
     
 	/**
 	 * TODO: Create a new class performing pre-processing
@@ -304,13 +210,15 @@ public class JsonLDManager
 	        while( cKeys.hasNext() ){
 	        	String cID = (String)cKeys.next();
 	        	String cName = inContext.getJSONObject(cID).get("name").toString();
-	        	JSONObject cPrefs = inContext.getJSONObject(cID).getJSONObject("preferences");
 	        	
 	        	JSONObject outPrefSet = new JSONObject();
 	        	outPrefSet.put("@id", "c4a:"+cID);
 	        	outPrefSet.put("@type", "c4a:PreferenceSet");
 	        	outPrefSet.put("c4a:id", cID);
 	        	outPrefSet.put("c4a:name", cName);
+
+	        	// translate preferences and add hasPrefs relation 
+	        	JSONObject cPrefs = inContext.getJSONObject(cID).getJSONObject("preferences");
 	        	
 	        	JSONArray outPrefArray = new JSONArray(); 
     			Iterator<?> pKeys = cPrefs.keys(); 
@@ -335,7 +243,60 @@ public class JsonLDManager
     	        	outPrefArray.put(outPref);
 
     	        }
-	        	outPrefSet.put("c4a:hasPrefs", outPrefArray);        	        	
+	        	outPrefSet.put("c4a:hasPrefs", outPrefArray);
+
+	        	// translate metadata and add hasMetadata relation 
+	        	if(inContext.getJSONObject(cID).has("metadata")){
+	        		JSONArray cMetaOuter = inContext.getJSONObject(cID).getJSONArray("metadata");
+		        	
+		        	// output array
+		        	JSONArray outMetaArray = new JSONArray();
+		        	
+		        	for(int i = 0; i < cMetaOuter.length(); i++){
+		        		
+		        		JSONObject cMeta = cMetaOuter.getJSONObject(i);	        		 
+		        		
+		        		// new JSONObject for each metadata blob
+		        		JSONObject outMetaObject = new JSONObject();
+		        		
+		        		 outMetaObject.put("@type", "c4a:Metadata");
+		        		 outMetaObject.put("c4a:type", cMeta.get("type").toString());
+		        		 outMetaObject.put("c4a:value", cMeta.get("value").toString());
+		        		 outMetaObject.put("c4a:scope", cMeta.getJSONArray("scope"));	        		 
+		        		 
+		        		 outMetaArray.put(outMetaObject); 
+		        	}
+		        	outPrefSet.put("c4a:hasMetadata", outMetaArray);	
+	        	}
+	        	
+	        	// translate condition and add hasCondition relation 
+	        	if(inContext.getJSONObject(cID).has("conditions")){
+	        		
+	        		JSONArray cCondOuter = inContext.getJSONObject(cID).getJSONArray("conditions");
+		        	
+		        	// output array
+		        	JSONArray outCondArray = new JSONArray();
+		        	
+		        	for(int i = 0; i < cCondOuter.length(); i++){
+		        		
+		        		JSONObject cMeta = cCondOuter.getJSONObject(i);	        		 
+		        		
+		        		// new JSONObject for each metadata blob
+		        		JSONObject outMetaObject = new JSONObject();
+		        		
+		        		outMetaObject.put("@type", "c4a:Condition");
+		        		 
+		     			Iterator<?> condKeys = cMeta.keys(); 
+		    	        while(condKeys.hasNext()){
+		    	        	
+		    	        	String condKey = (String)condKeys.next();
+		    	        	outMetaObject.put("c4a:"+condKey, cMeta.get(condKey).toString());
+		    	        }		        		 
+		        		outCondArray.put(outMetaObject); 
+		        	}
+		        	outPrefSet.put("c4a:hasCondition", outCondArray);	
+	        	}
+	        	
 	        	outGraph.put(outPrefSet);        	        	
 	        }			
 			

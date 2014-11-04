@@ -13,6 +13,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import org.codehaus.jackson.map.ObjectMapper;
 //import sun.nio.cs.StandardCharsets;
+import org.json.JSONException;
 
 
 
@@ -23,7 +24,7 @@ public class RBMM_WebService
     @POST
     @Path("/runJSONLDRules")
     @Consumes("application/json")
-    public Response runJSONLDRules(RBMMInput tmpInput)
+    public Response runJSONLDRules(RBMMInput tmpInput) throws IOException, JSONException
     {
         OntologyManager.getInstance().debug = "";
         String finalResultStr = "";
