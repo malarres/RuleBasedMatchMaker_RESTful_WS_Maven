@@ -16,12 +16,28 @@ public class RBMM_WebServiceIT extends TestCase
     public void testWS() 
     {
         String inputFileStr = null;
-        File file = new File(System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/input/newInput.json");
+        String outputFileStr = null;
+        
+        File fileIN = new File(System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/preferences/newMMInput.json");
+        File fileOUT = new File(System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/configurations/newMMOutput.json");
+        
+        // read expected input
         try {
-            FileReader reader = new FileReader(file);
-            char[] chars = new char[(int) file.length()];
+            FileReader reader = new FileReader(fileIN);
+            char[] chars = new char[(int) fileIN.length()];
             reader.read(chars);
             inputFileStr = new String(chars);
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        // read expected output
+        try {
+            FileReader reader = new FileReader(fileOUT);
+            char[] chars = new char[(int) fileOUT.length()];
+            reader.read(chars);
+            outputFileStr = new String(chars);
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -33,6 +49,6 @@ public class RBMM_WebServiceIT extends TestCase
         String output = response.getEntity(String.class);
         System.out.println("Output from Server ....\n");
         System.out.println(output);
-        assertEquals(output, "{\"inferredConfiguration\":{\"gpii-default\":{\"applications\":{\"com.microsoft.windows.desktop\":{\"settings\":{\"http://registry.gpii.net/common/fontSize\":\"15\"},\"active\":\"false\"}}},\"nighttime-at-home\":{\"conditions\":[{\"min\":\"600\",\"max\":\"1800\",\"inputPath\":\"http://registry.gpii.net/conditions/timeOfDay\",\"type\":\"http://gpii.net/common/operators/inRange\"}],\"applications\":{\"com.microsoft.windows.desktop\":{\"settings\":{\"http://registry.gpii.net/common/fontSize\":\"18\"},\"active\":\"false\"}}}}}");
+        assertEquals(output, outputFileStr);
     }
 }
