@@ -103,8 +103,8 @@ public class JsonLDManager
         String transIn =  TransformerManager.getInstance().transformInput(tmpInputJsonStr);
     	
         /**
-         * TODO make it configurable to add various input, e.g other semantics. 
-         * TODO use String object and not temp  
+         * TODO make it configurable to add various input, e.g other semantics.
+         *  
          */
     	// populate all JSONLDInput to a model 
     	OntologyManager.getInstance().populateJSONLDInput(transIn, new String[] {semanticsSolutionsFilePath});
@@ -118,14 +118,8 @@ public class JsonLDManager
     	 */
     	String[] queries = {querryCondPath, querryAppsPath};
     	
-    	/**
-    	 * TODO writing TEMP output is not required anymore; it is just there for testing issues 
-    	*/
-    	byte [] outToWrite = TransformerManager.getInstance().transformOutput(imodel, queries);
-    	writeFile(postprocessingTempfilePath, outToWrite);    	
-        
-        resJsonStr = new String(outToWrite, "UTF-8");
-        
+    	resJsonStr = TransformerManager.getInstance().transformOutput(imodel, queries);
+
         return resJsonStr;
     }
     

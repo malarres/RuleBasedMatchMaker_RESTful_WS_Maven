@@ -10,7 +10,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
 import org.json.JSONArray;
@@ -259,7 +258,7 @@ public class TransformerManager
      * @return
      * @throws JSONException
      */
-	public byte[] transformOutput(Model model, String [] queries) throws JSONException {
+	public String transformOutput(Model model, String [] queries) throws JSONException {
 				
 				/**
 				 * mmOut - JSON Object spec the matchmaker output
@@ -429,8 +428,10 @@ public class TransformerManager
 						} finally { qexec.close();}	
 		        }
 		        
-			    byte dataToWrite[] = mmOut.toString().getBytes(StandardCharsets.US_ASCII);
-			    return dataToWrite;	    		
+				/**
+				 * make it configurable to spec the indent factor (number of spaces to add to each level of indentation).
+				 */
+			    return mmOut.toString(5);	    		
 
 	}
 }
