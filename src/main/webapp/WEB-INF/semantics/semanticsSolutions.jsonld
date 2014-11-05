@@ -18,6 +18,7 @@
                 {
                     "@type": "c4a:Setting",
                     "c4a:id": "http: //registry.gpii.net/application/com.cats.org/catSetting2",
+                    "c4a:refersTo": "http://registry.gpii.net/common/fontSize",
                     "c4a:name": "catSetting2"
                 }
             ]
