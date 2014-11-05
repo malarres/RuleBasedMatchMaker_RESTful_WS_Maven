@@ -103,18 +103,7 @@ public class JsonLDManager
     public String runJSONLDTests(String tmpInputJsonStr) throws IOException, JSONException 
     {
         String resJsonStr = "";
-        try {
-            preprocessing(tmpInputJsonStr);
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        preprocessing(tmpInputJsonStr);
     	
         /**
          * TODO make it configurable to add various input
@@ -166,7 +155,7 @@ public class JsonLDManager
 	 * @throws IOException 
 	 * @throws URISyntaxException 
 	 */
-    private void preprocessing(String in) throws JSONException, IOException, URISyntaxException {
+    private void preprocessing(String in) throws JSONException, IOException {
     	
 		String inputString = in;
 		JSONTokener inputTokener = new JSONTokener(inputString);
@@ -227,7 +216,15 @@ public class JsonLDManager
     	            if (pID.contains("common")) outPref.put("c4a:type", "common");
     	            if (pID.contains("applications")) outPref.put("c4a:type", "application");
     	            
-    	            URI uri = new URI(pID);
+    	            URI uri = null;
+					try {
+						
+						uri = new URI(pID);
+						
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
     	            String path = uri.getPath();
     	            String idStr = path.substring(path.lastIndexOf('/') + 1);
     	            outPref.put("c4a:name", idStr);
