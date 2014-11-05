@@ -41,11 +41,6 @@ public class JsonLDManager
     public String querryCondPath;
     public String querryAppsPath;
     
-    //temp preprocessing output files
-    public String preprocessingTempfilePath;
-    public String postprocessingTempfilePath;
-
-    
     public Gson gson;
     
     private static JsonLDManager instance = null;
@@ -69,8 +64,6 @@ public class JsonLDManager
         	querryCondPath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/queries/outCondition.sparql";
         	querryAppsPath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/queries/outApplications.sparql";
             
-            postprocessingTempfilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/postprocessingOutput.json";            
-
         }
         else            //Jetty integration tests
         {
@@ -82,8 +75,6 @@ public class JsonLDManager
         	querryCondPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outCondition.sparql";
         	querryAppsPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outApplications.sparql";
         	
-            postprocessingTempfilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/postprocessingOutput.json";
-
         }
         
         gson = new Gson();
