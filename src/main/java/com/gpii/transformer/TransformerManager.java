@@ -45,7 +45,7 @@ public class TransformerManager
         return instance;
     }
 
-    public byte[] transformInput(String in) throws JSONException{
+    public String transformInput(String in) throws JSONException{
 		
 		String inputString = in;
 		JSONTokener inputTokener = new JSONTokener(inputString);
@@ -245,7 +245,10 @@ public class TransformerManager
 		outPreProc.put("@context", outContext);
 		outPreProc.put("@graph", outGraph);
 		
-    	return outPreProc.toString().getBytes(StandardCharsets.US_ASCII);
+		/**
+		 * make it configurable to spec the indent factor (number of spaces to add to each level of indentation).
+		 */
+		return outPreProc.toString(5);
     	
     }
     

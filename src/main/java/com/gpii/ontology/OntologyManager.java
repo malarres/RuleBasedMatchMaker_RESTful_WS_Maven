@@ -1,6 +1,12 @@
 package com.gpii.ontology;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+
 import com.github.jsonldjava.jena.JenaJSONLD;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -26,9 +32,6 @@ public class OntologyManager
         debug = "";
         printDebugInfo = false;
         
-        // create an ontology model 
-        _dmodel = ModelFactory.createOntologyModel(); 
-        
         // JenaJSONLD must be initialized so that the readers and writers are registered with Jena.
         JenaJSONLD.init();
     }
@@ -40,9 +43,11 @@ public class OntologyManager
         return instance;
     }
     
-    public void populateJSONLDInput(String[] uris)
+    public void populateJSONLDInput(String transIn, String[] uris)
     {
-        //_dmodel = ModelFactory.createOntologyModel().read(uri, "JSON-LD");
+    	InputStream is = new ByteArrayInputStream( transIn.getBytes() );
+   	
+        _dmodel = ModelFactory.createOntologyModel().read(is, null, "JSON-LD");
 
         for (int i=0; i < uris.length; i++)
             _dmodel.read(uris[i]);

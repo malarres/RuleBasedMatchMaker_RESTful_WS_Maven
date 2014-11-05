@@ -69,8 +69,6 @@ public class JsonLDManager
         	querryCondPath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/queries/outCondition.sparql";
         	querryAppsPath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/queries/outApplications.sparql";
             
-            // temp preprocessing output files
-            preprocessingTempfilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/TEMP/preprocessingOutput.jsonld";
             postprocessingTempfilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/postprocessingOutput.json";            
 
         }
@@ -84,8 +82,6 @@ public class JsonLDManager
         	querryCondPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outCondition.sparql";
         	querryAppsPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outApplications.sparql";
         	
-            //temp preprocessing output files
-            preprocessingTempfilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/preprocessingOutput.jsonld";
             postprocessingTempfilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/TEMP/postprocessingOutput.json";
 
         }
@@ -103,13 +99,15 @@ public class JsonLDManager
     public String runJSONLDTests(String tmpInputJsonStr) throws IOException, JSONException 
     {
         String resJsonStr = "";
-        writeFile(preprocessingTempfilePath, TransformerManager.getInstance().transformInput(tmpInputJsonStr));
+        
+        String transIn =  TransformerManager.getInstance().transformInput(tmpInputJsonStr);
     	
         /**
-         * TODO make it configurable to add various input
+         * TODO make it configurable to add various input, e.g other semantics. 
+         * TODO use String object and not temp  
          */
     	// populate all JSONLDInput to a model 
-    	OntologyManager.getInstance().populateJSONLDInput(new String[] {preprocessingTempfilePath, semanticsSolutionsFilePath});
+    	OntologyManager.getInstance().populateJSONLDInput(transIn, new String[] {semanticsSolutionsFilePath});
     	
     	// infer configuration 
     	Model imodel = inferConfiguration(OntologyManager._dmodel, mappingRulesFilePath);
@@ -119,10 +117,15 @@ public class JsonLDManager
     	 * TODO make a global configuration for cloud4all to use the specific C4a queries
     	 */
     	String[] queries = {querryCondPath, querryAppsPath};
+    	
+    	/**
+    	 * TODO writing TEMP output is not required anymore; it is just there for testing issues 
+    	*/
     	byte [] outToWrite = TransformerManager.getInstance().transformOutput(imodel, queries);
     	writeFile(postprocessingTempfilePath, outToWrite);    	
         
         resJsonStr = new String(outToWrite, "UTF-8");
+        
         return resJsonStr;
     }
     
