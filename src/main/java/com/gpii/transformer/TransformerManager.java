@@ -1,5 +1,9 @@
 package com.gpii.transformer;
 
+import com.gpii.jsonld.JsonLDManager;
+import com.gpii.ontology.OntologyManager;
+import com.gpii.ontology.Setting;
+import com.gpii.ontology.Solution;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -7,9 +11,11 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.sun.jersey.server.impl.cdi.Utils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.json.JSONArray;
@@ -42,6 +48,116 @@ public class TransformerManager
         
         
         return instance;
+    }
+    
+    public void transformOwlToJSONLD()
+    {
+        String C4A_NS = "c4a:";
+        
+        OntologyManager.getInstance().loadOntology();
+        OntologyManager.getInstance().processSolutionSettings();
+        OntologyManager.getInstance().printAllSolutionsAndSettings();
+        
+        //create JSON-LD
+        try
+        {
+            JSONObject result = new JSONObject();
+
+            //@context
+            JSONObject context = new JSONObject();
+            context.put("c4a", "http://rbmm.org/schemas/cloud4all/0.1/");
+            context.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+
+            //@graph
+            JSONArray graph = new JSONArray();
+
+            for(int i=0; i<OntologyManager.getInstance().allSolutions.size(); i++)
+            {                
+                Solution tmpSolution = OntologyManager.getInstance().allSolutions.get(i);
+                
+                JSONObject tmpSolutionJsonObj = new JSONObject();
+                tmpSolutionJsonObj.put("@id", C4A_NS + tmpSolution.id);
+                tmpSolutionJsonObj.put("@type", C4A_NS + "Solution");
+                tmpSolutionJsonObj.put(C4A_NS + "id", "http://registry.gpii.org/applications/" + tmpSolution.id);
+                tmpSolutionJsonObj.put(C4A_NS + "name", tmpSolution.name);
+
+                //settings
+                JSONArray tmpSolSettingsJsonArray = new JSONArray();
+                
+                ArrayList<Setting> allSettings = tmpSolution.settings;
+                for(int j=0; j<allSettings.size(); j++)
+                {
+                    Setting tmpSetting = allSettings.get(j);                
+                    if(tmpSetting.ignoreSetting == false
+                            && tmpSetting.type != Setting.UNKNOWN
+                            && tmpSetting.instanceName.startsWith("EASTIN_") == false)
+                    {
+                        JSONObject tmpSolSettingJsonObj = new JSONObject();
+                        tmpSolSettingJsonObj.put("@type", C4A_NS + "Setting");
+                        if(tmpSetting.hasID.equals("") == false)
+                            tmpSolSettingJsonObj.put(C4A_NS + "id", "http://registry.gpii.net/application/" + tmpSolution.id + "/" + tmpSetting.hasID);
+                        
+                        if(tmpSetting.hasName.equals("") == false)
+                            tmpSolSettingJsonObj.put(C4A_NS + "name", tmpSetting.hasName);
+                        else
+                            tmpSolSettingJsonObj.put(C4A_NS + "name", tmpSetting.instanceName);
+                        
+                        if(tmpSetting.value.equals("") == false
+                                && tmpSetting.value.toLowerCase().trim().equals("unknown") == false)
+                            tmpSolSettingJsonObj.put(C4A_NS + "defaultValue", tmpSetting.value);
+                        
+                        if(tmpSetting.type == Setting.STRING)
+                            tmpSolSettingJsonObj.put(C4A_NS + "type", "string");
+                        else if(tmpSetting.type == Setting.FLOAT)
+                            tmpSolSettingJsonObj.put(C4A_NS + "type", "float");
+                        else if(tmpSetting.type == Setting.BOOLEAN)
+                            tmpSolSettingJsonObj.put(C4A_NS + "type", "boolean");
+                        else if(tmpSetting.type == Setting.INT)
+                            tmpSolSettingJsonObj.put(C4A_NS + "type", "int");
+                        else if(tmpSetting.type == Setting.TIME)
+                            tmpSolSettingJsonObj.put(C4A_NS + "type", "time");
+                        else if(tmpSetting.type == Setting.DATE)
+                            tmpSolSettingJsonObj.put(C4A_NS + "type", "date");
+                        else if(tmpSetting.type == Setting.DATETIME)
+                            tmpSolSettingJsonObj.put(C4A_NS + "type", "dateTime");
+
+                        
+                        if(tmpSetting.hasDescription.equals("") == false
+                                && tmpSetting.hasDescription.toLowerCase().trim().equals("missing") == false)
+                            tmpSolSettingJsonObj.put(C4A_NS + "hasDescription", tmpSetting.hasDescription);
+                        if(tmpSetting.type != Setting.BOOLEAN
+                                && tmpSetting.hasValueSpace.equals("") == false)
+                            tmpSolSettingJsonObj.put(C4A_NS + "hasValueSpace", tmpSetting.hasValueSpace);
+                        if(tmpSetting.hasConstraints.equals("") == false
+                                && tmpSetting.hasConstraints.toLowerCase().trim().equals("no constraints") == false)
+                            tmpSolSettingJsonObj.put(C4A_NS + "hasConstraints", tmpSetting.hasConstraints);
+                        if(tmpSetting.isMappedToRegTerm.equals("") == false)
+                        {
+                            tmpSolSettingJsonObj.put(C4A_NS + "refersTo", "http://registry.gpii.net/common/" + tmpSetting.isMappedToRegTerm);
+                            tmpSolSettingJsonObj.put(C4A_NS + "isExactMatching", tmpSetting.isExactMatching);
+                        }
+                        if(tmpSetting.hasCommentsForMapping.equals("") == false
+                                && tmpSetting.hasCommentsForMapping.toLowerCase().trim().equals("no comments") == false)
+                            tmpSolSettingJsonObj.put(C4A_NS + "hasCommentsForMapping", tmpSetting.hasCommentsForMapping);
+
+                        tmpSolSettingsJsonArray.put(tmpSolSettingJsonObj);
+                    }
+                }
+                
+                tmpSolutionJsonObj.put(C4A_NS + "settings", tmpSolSettingsJsonArray);
+                
+                graph.put(tmpSolutionJsonObj);
+            }
+
+            result.put("@context", context);
+            result.put("@graph", graph);
+
+            com.gpii.utils.Utils.getInstance().writeFile(JsonLDManager.getInstance().semanticsSolutionsGeneratedFromOwlFilePath, result.toString(4));     
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public String transformInput(String in) throws JSONException{

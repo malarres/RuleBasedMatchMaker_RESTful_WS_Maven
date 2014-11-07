@@ -30,8 +30,11 @@ import org.json.JSONTokener;
  
 public class JsonLDManager 
 {
+    public static final boolean INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD = true; 
+    
     //static input files
     public String semanticsSolutionsFilePath;
+    public String semanticsSolutionsGeneratedFromOwlFilePath;
     //public String explodePrefTermsFilePath;
     public String mappingRulesFilePath;
     
@@ -53,6 +56,7 @@ public class JsonLDManager
         {
             //static input files
             semanticsSolutionsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/semanticsSolutions.jsonld";
+            semanticsSolutionsGeneratedFromOwlFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/semanticsSolutions_GENERATED.jsonld";
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/explodePreferenceTerms.jsonld";
             
         	/**
@@ -69,6 +73,7 @@ public class JsonLDManager
         {
             //static input files
             semanticsSolutionsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions.jsonld";
+            semanticsSolutionsGeneratedFromOwlFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions_GENERATED.jsonld";
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/explodePreferenceTerms.jsonld";
             mappingRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/basicAlignment.rules";
             

@@ -1,6 +1,7 @@
 package com.gpii.restful;
 
 
+import com.gpii.jsonld.JsonLDManager;
 import com.gpii.utils.Utils;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -16,8 +17,12 @@ import sun.nio.cs.StandardCharsets;
 
 public class RBMM_WebServiceIT extends TestCase
 {
-    public void testWS() 
+    public void test_runJSONLDRules() 
     {
+        System.out.println("\n****************************************");
+        System.out.println("* Testing 'runJSONLDRules' web service *");
+        System.out.println("****************************************");
+        
         String inputJsonStr = null;
         String expectedOutputJsonStr = null;
         
@@ -37,9 +42,39 @@ public class RBMM_WebServiceIT extends TestCase
         ClientResponse response = webResource.accept("application/json").type("application/json").post(ClientResponse.class, inputJsonStr);
         String output = response.getEntity(String.class);
         
-        System.out.println("\nOutput from Server...\n");
+        System.out.println("\nWeb service output:\n");
         System.out.println(output);
                
         assertEquals(output, expectedOutputJsonStr);
+    }    
+    
+    public void test_transformOwlToJSONLD() 
+    {
+        if(JsonLDManager.INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD)
+        {
+            System.out.println("\n*********************************************************************************************************************************");
+            System.out.println("* Testing 'transformOwlToJSONLD' web service                                                                                    *");
+            System.out.println("*                                                                                                                               *");
+            System.out.println("* Please be patient. This process will take some minutes. The whole solutions ontology is being transformed into JSON-LD format.*");
+            System.out.println("* You can disable this test by setting -> JsonLDManager.INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD = false   *");
+            System.out.println("*********************************************************************************************************************************");
+
+            Client client = Client.create();
+            WebResource webResource = client.resource("http://localhost:8080/RBMM/transformOwlToJSONLD");
+            ClientResponse response = webResource.get(ClientResponse.class);
+            String output = response.getEntity(String.class);
+
+            System.out.println("\nWeb service output:\n");
+            System.out.println(output);
+
+            //assertEquals(output, expectedOutputJsonStr);
+        }
+        else
+        {
+            System.out.println("\n*****************************************************************************************************************************************************************************");
+            System.out.println("* Testing of 'transformOwlToJSONLD' was skipped because it's a time consuming process (JsonLDManager.INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD = false) *");
+            System.out.println("*****************************************************************************************************************************************************************************\n");
+        }
     }
+    
 }
