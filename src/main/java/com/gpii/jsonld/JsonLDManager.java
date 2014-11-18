@@ -12,9 +12,9 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+//import java.nio.charset.StandardCharsets;
+//import java.nio.file.Files;
+//import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 import org.json.JSONArray;
@@ -30,8 +30,11 @@ import org.json.JSONTokener;
  
 public class JsonLDManager 
 {
+    public static final boolean INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD = true; 
+    
     //static input files
     public String semanticsSolutionsFilePath;
+    public String semanticsSolutionsGeneratedFromOwlFilePath;
     //public String explodePrefTermsFilePath;
     public String mappingRulesFilePath;
     public String decConflictsRulesFilePath;
@@ -55,6 +58,7 @@ public class JsonLDManager
         {
             //static input files
             semanticsSolutionsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/semanticsSolutions.jsonld";
+            semanticsSolutionsGeneratedFromOwlFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/semanticsSolutions_GENERATED.jsonld";
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/explodePreferenceTerms.jsonld";
             
         	/**
@@ -72,6 +76,7 @@ public class JsonLDManager
         {
             //static input files
             semanticsSolutionsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions.jsonld";
+            semanticsSolutionsGeneratedFromOwlFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions_GENERATED.jsonld";
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/explodePreferenceTerms.jsonld";
             mappingRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/basicAlignment.rules";
             decConflictsRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/conflictDetection.rules";
@@ -149,38 +154,7 @@ public class JsonLDManager
     }
 
     
-    /**
-     * TODO create a class for help functions
-     * @param path where to write the file
-     * @param dataToWrite // data to write in the file
-     */
-    private void writeFile(String path, byte[] dataToWrite){
-            FileOutputStream out = null;
-            try {
-                    out = new FileOutputStream(path);
-            } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-            }
-            try {
-                    out.write(dataToWrite);
-                    out.close();
-            } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-            }
-    }
     
-    /**
-     * TODO create a class for help functions
-     * @param path where to write the file
-     * @param dataToWrite // data to write in the file
-     */
-	static String readFile(String path, Charset encoding) throws IOException 
-	{
-	  byte[] encoded = Files.readAllBytes(Paths.get(path));
-	  return new String(encoded, encoding);
-}
     
     
 }
