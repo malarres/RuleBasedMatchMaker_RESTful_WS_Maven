@@ -34,6 +34,8 @@ public class JsonLDManager
     public String semanticsSolutionsFilePath;
     //public String explodePrefTermsFilePath;
     public String mappingRulesFilePath;
+    public String decConflictsRulesFilePath;
+    
     
     /**
      * TODO make a global configuration for all C4a specific files
@@ -59,6 +61,7 @@ public class JsonLDManager
         	 * TODO find a new location, not in folder test data; split ontology alingment rules from matching rules 
         	 */
         	mappingRulesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/basicAlignment.rules";
+        	decConflictsRulesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/conflictDetection.rules";
         	
         	// querries 
         	querryCondPath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/queries/outCondition.sparql";
@@ -71,6 +74,8 @@ public class JsonLDManager
             semanticsSolutionsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions.jsonld";
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/explodePreferenceTerms.jsonld";
             mappingRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/basicAlignment.rules";
+            decConflictsRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/conflictDetection.rules";
+            
             
         	querryCondPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outCondition.sparql";
         	querryAppsPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outApplications.sparql";
@@ -101,7 +106,7 @@ public class JsonLDManager
     	OntologyManager.getInstance().populateJSONLDInput(transIn, new String[] {semanticsSolutionsFilePath});
     	
     	// infer configuration 
-    	Model imodel = inferConfiguration(OntologyManager._dmodel, mappingRulesFilePath);
+    	Model imodel = inferConfiguration(OntologyManager._dmodel, new String[] {mappingRulesFilePath, decConflictsRulesFilePath});
     	
     	// create MM output
     	/**
@@ -114,21 +119,31 @@ public class JsonLDManager
         return resJsonStr;
     }
     
-    public Model inferConfiguration(Model model, String ruleFile)
+    public Model inferConfiguration(Model model, String[] rulePths)
     {
-        File f = new File(ruleFile);
-        if (f.exists()) 
-        {
-                List<Rule> rules = Rule.rulesFromURL("file:" + mappingRulesFilePath);
-
-                GenericRuleReasoner r = new GenericRuleReasoner(rules);
-
-                InfModel infModel = ModelFactory.createInfModel(r, model);		    
-                infModel.prepare();					
-
-            Model deducedModel = infModel.getDeductionsModel();  
-                model.add(deducedModel);
-            	model.write(System.out, "N-TRIPLE");
+        for (String path : rulePths) {
+        	
+            File f = new File(path);
+            if (f.exists()) 
+            {
+	            List<Rule> rules = Rule.rulesFromURL("file:" + path);
+	            
+	            System.out.println(rules.toString());
+	
+	            GenericRuleReasoner r = new GenericRuleReasoner(rules);
+	
+	            InfModel infModel = ModelFactory.createInfModel(r, model);		    
+	            
+	            infModel.prepare();					
+	
+	            Model deducedModel = infModel.getDeductionsModel();  
+	            
+	            model.add(deducedModel);
+	            
+	            deducedModel.write(System.out, "N-TRIPLE");
+	            //model.write(System.out, "N-TRIPLE");
+            }
+        	
         }
     	return model;    	
     }

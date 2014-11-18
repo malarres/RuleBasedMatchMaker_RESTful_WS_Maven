@@ -1,0 +1,29 @@
+@prefix c4a: <http://rbmm.org/schemas/cloud4all/0.1/>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+
+[DetectMultipleSolutionConflict: 
+(?config_x c4a:refersTo ?s1)
+(?config_y c4a:refersTo ?s2)
+
+(?config_x rdf:type c4a:Configuration)
+(?config_y rdf:type c4a:Configuration)
+
+notEqual(?config_x, ?config_y)
+
+(?if rdf:type c4a:InferredConfiguration)
+(?if c4a:refersTo ?config_x)
+(?if c4a:refersTo ?config_y)
+
+(?s1 c4a:class ?c)
+(?s2 c4a:class ?c)
+
+makeSkolem(?newConflict, ?if, ?c)
+->
+(?if c4a:hasConflict ?newConflict)
+(?newConflict rdf:type c4a:Conflict)
+(?newConflict c4a:name "MultipleSolutionConflict")
+(?newConflict c4a:refersTo ?if)
+(?newConflict c4a:affects ?s1)
+(?newConflict c4a:affects ?s2)
+(?newConflict c4a:class ?c)
+]

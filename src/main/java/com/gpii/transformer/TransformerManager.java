@@ -293,6 +293,7 @@ public class TransformerManager
 						while(response.hasNext()){
 							
 							QuerySolution soln = response.nextSolution();
+							System.out.println("out querry: " +soln.toString());
 							
 							infConfig = mmOut.getJSONObject("inferredConfiguration");
 							

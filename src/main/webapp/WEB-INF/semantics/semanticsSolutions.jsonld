@@ -24,14 +24,40 @@
             ]
         },
         {
+            "@id": "c4a:com.microsoft.windows.magnifier",
+            "@type": "c4a:Solution",
+            "c4a:id": "http://registry.gpii.org/applications/com.microsoft.windows.magnifier",
+            "c4a:name": "com.microsoft.windows.magnifier",
+            "c4a:class": [
+                {
+                    "@type": "c4a:AssistiveTechnology",
+                    "@id": "c4a:magnifier"
+                }
+            ],            
+            "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "http: //registry.gpii.net/application/com.microsoft.windows.magnifier/magnifier",
+                    "c4a:refersTo": "http://registry.gpii.net/common/magnifierEnabled",
+                    "c4a:name": "windows magnifier"
+                }
+            ]
+        },
+        {
             "@id": "c4a:com.microsoft.windows.desktop",
             "@type": "c4a:Solution",
             "c4a:id": "http://registry.gpii.org/applications/com.microsoft.windows.desktop",
             "c4a:name": "com.microsoft.windows.desktop",
+            "c4a:class": [
+                {
+                    "@type": "c4a:AccessibilitySetting",
+                    "c4a:name": "builtin"
+                }
+            ],
             "c4a:settings": [
                 {
                     "@type": "c4a:Setting",
-                    "c4a:id": "com.microsoft.windows.desktop/fontofSize",
+                    "c4a:id": "http: //registry.gpii.net/application/com.microsoft.windows.desktop/fontofSize",
                     "c4a:refersTo": "http://registry.gpii.net/common/fontSize",
                     "c4a:name": "fontofSize"
                 },
@@ -41,6 +67,83 @@
                     "c4a:name": "otherSetting"
                 }
             ]
+        },
+        {
+            "@id": "c4a:org.nvda-project",
+            "@type": "c4a:Solution",
+            "c4a:id": "http://registry.gpii.org/applications/org.nvda-project",
+            "c4a:name": "org.nvda-project",
+            "c4a:class": [
+                {
+                    "@type": "c4a:AssistiveTechnology",
+                    "@id": "c4a:screenreader"
+                }
+            ],
+            "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "http: //registry.gpii.net/application/org.nvda-project/speech\\.espeak\\.rate",
+                    "c4a:refersTo": "http://registry.gpii.net/common/speechRate",
+                    "c4a:name": "rate"
+                },
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "http: //registry.gpii.net/application/org.nvda-project/speech\\.synth",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled",
+                    "c4a:name": "synth"
+                },
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "http: //registry.gpii.net/application/org.nvda-project/speech\\.outputDevice",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled",
+                    "c4a:name": "outputDevice"
+                }
+            ]
+        },
+        {
+            "@id": "c4a:com.yourdolphin.supernova-as",
+            "@type": "c4a:Solution",
+            "c4a:id": "http://registry.gpii.org/applications/com.yourdolphin.supernova-as",
+            "c4a:name": "com.yourdolphin.supernova-as",
+            "c4a:class": [
+                {
+                    "@type": "c4a:AssistiveTechnology",
+                    "@id": "c4a:screenreader"
+                },
+                {
+                    "@type": "c4a:AssistiveTechnology",
+                    "@id": "c4a:magnifier"
+                }
+            ],
+            "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "http: //registry.gpii.net/application/com.yourdolphin.supernova-as/screenreader",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled",
+                    "c4a:name": "screenreader"
+                },
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "http: //registry.gpii.net/application/com.yourdolphin.supernova-as/magnifier",
+                    "c4a:refersTo": "http://registry.gpii.net/common/magnifierEnabled",
+                    "c4a:name": "magnifier"
+                }
+            ]
+        },
+        {
+            "@id": "c4a:screenreader",
+            "@type": "c4a:AssistiveTechnology",
+            "c4a:name": "Screen Reader"
+        },
+        {
+            "@id": "c4a:magnifier",
+            "@type": "c4a:AssistiveTechnology",
+            "c4a:name": "Magnifier"
+        },
+        {
+            "@id": "c4a:builtin",
+            "@type": "c4a:AccessibilitySetting",
+            "c4a:name": "Built in Features"
         }
     ]
 }

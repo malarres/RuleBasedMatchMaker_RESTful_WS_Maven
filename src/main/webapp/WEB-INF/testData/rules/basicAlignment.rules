@@ -26,10 +26,11 @@
 
 equal(?p_id, ?set_id)
 
-makeSkolem(?newConfig, ?if)
+makeSkolem(?newConfig, ?solution)
 makeSkolem(?newSetting, ?setting, ?pref)
 ->
 (?if c4a:refersTo ?newConfig)
+(?newConfig c4a:refersTo ?solution)
 (?newConfig c4a:settings ?newSetting)
 (?newConfig rdf:type c4a:Configuration)
 (?newConfig c4a:id ?sol_id)
