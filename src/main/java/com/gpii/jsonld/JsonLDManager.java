@@ -30,7 +30,7 @@ import org.json.JSONTokener;
  
 public class JsonLDManager 
 {
-    public static final boolean INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD = true; 
+    public static final boolean INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD = false; 
     
     //static input files
     public String semanticsSolutionsFilePath;
