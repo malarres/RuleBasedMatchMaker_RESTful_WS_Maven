@@ -17,19 +17,19 @@
 (?pref c4a:value ?p_value)
 
 (?solution rdf:type c4a:InstalledSolution)
-(?solution c4a:settings ?setting)
 (?solution c4a:id ?sol_id)
 (?solution c4a:name ?sol_name)
+(?solution c4a:settings ?setting)
 
 (?setting rdf:type c4a:Setting)
 (?setting c4a:refersTo ?set_id)
 
 equal(?p_id, ?set_id)
 
-makeSkolem(?newConfig, ?if)
+makeSkolem(?newConfig, ?pref)
 makeSkolem(?newSetting, ?setting, ?pref)
 ->
-(?if c4a:refersTo ?newConfig)
+(?if c4a:refersToConfig ?newConfig)
 (?newConfig c4a:settings ?newSetting)
 (?newConfig rdf:type c4a:Configuration)
 (?newConfig c4a:id ?sol_id)

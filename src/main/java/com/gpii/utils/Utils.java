@@ -1,8 +1,12 @@
 package com.gpii.utils;
 
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.Scanner;
+import com.gpii.jsonld.JsonLDManager;
+import com.hp.hpl.jena.rdf.model.Model;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  *
@@ -29,6 +33,7 @@ public class Utils
             BufferedWriter out = new BufferedWriter(new FileWriter(path));
             out.write(content);
             out.close();
+            System.out.println("\n\n* Generated file: " + path);
         }
         catch (IOException e)
         {
@@ -47,6 +52,41 @@ public class Utils
             fileContents = fileContents + ch; 
         }
         return fileContents;
+    }
+    
+    public void writeOntologyModelToFile(Model tmpModel, String tmpFilepath)
+    {
+        FileWriter out = null;
+        try {
+            out = new FileWriter(tmpFilepath);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        try {
+            tmpModel.write(out, "RDF/XML");
+        }
+        finally 
+        {
+            try {
+                out.close();
+                System.out.println("\n\n* Generated file: " + tmpFilepath);
+            }
+            catch (IOException closeException) {
+                closeException.printStackTrace();
+            }
+        }
+    }
+    
+    public String jsonPrettyPrint(String tmpJsonStr)
+    {
+        String res = "";        
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            res = mapper.defaultPrettyPrintingWriter().writeValueAsString(JsonLDManager.getInstance().gson.fromJson(tmpJsonStr, Object.class));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }          
+        return res;
     }
     
 }

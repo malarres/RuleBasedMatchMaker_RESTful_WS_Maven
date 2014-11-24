@@ -13,7 +13,7 @@ WHERE
 {
 	?if rdf:type c4a:InferredConfiguration.
 	?if c4a:id ?c.
-	?if c4a:refersTo ?app.
+	?if c4a:refersToConfig ?app.
 	?app rdf:type ?type.
 	?app c4a:name ?an.
 	?app c4a:isActive ?aa.
