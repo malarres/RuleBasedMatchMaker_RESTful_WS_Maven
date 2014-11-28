@@ -38,6 +38,8 @@ public class JsonLDManager
     //public String explodePrefTermsFilePath;
     public String mappingRulesFilePath;
     public String decConflictsRulesFilePath;
+    public String resConflictsRulesFilePath;
+    public String addPrefSolutionToConfig;
     
     
     /**
@@ -66,6 +68,8 @@ public class JsonLDManager
         	 */
         	mappingRulesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/basicAlignment.rules";
         	decConflictsRulesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/conflictDetection.rules";
+        	resConflictsRulesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/conflictresolution.rules";
+        	addPrefSolutionToConfig = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/AddPreferredSolutionToConfiguration.rules";
         	
         	// querries 
         	querryCondPath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/queries/outCondition.sparql";
@@ -80,7 +84,8 @@ public class JsonLDManager
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/explodePreferenceTerms.jsonld";
             mappingRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/basicAlignment.rules";
             decConflictsRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/conflictDetection.rules";
-            
+            resConflictsRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/conflictResolution.rules";
+            addPrefSolutionToConfig = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/AddPreferredSolutionToConfiguration.rules";
             
         	querryCondPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outCondition.sparql";
         	querryAppsPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outApplications.sparql";
@@ -111,7 +116,7 @@ public class JsonLDManager
     	OntologyManager.getInstance().populateJSONLDInput(transIn, new String[] {semanticsSolutionsFilePath});
     	
     	// infer configuration 
-    	Model imodel = inferConfiguration(OntologyManager._dmodel, new String[] {mappingRulesFilePath, decConflictsRulesFilePath});
+    	Model imodel = inferConfiguration(OntologyManager._dmodel, new String[] {mappingRulesFilePath, decConflictsRulesFilePath, addPrefSolutionToConfig, resConflictsRulesFilePath});
     	
     	// create MM output
     	/**

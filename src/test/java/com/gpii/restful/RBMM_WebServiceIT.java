@@ -58,7 +58,7 @@ public class RBMM_WebServiceIT extends TestCase
         String expectedOutputJsonStr = null;
         
         String filepathIN = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/preferences/vladimir.json";
-        String filepathExpectedOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/configurations/vladimierOUT.json";
+        String filepathExpectedOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/vladimierOUT.json";
         
         // read input & expected output
         try {
@@ -79,6 +79,73 @@ public class RBMM_WebServiceIT extends TestCase
         assertEquals(output, expectedOutputJsonStr);
     	
     }
+    
+    public void test_resolveMSC_OneSolutionPreffered(){
+        
+    	System.out.println("\n*****************************************************");
+        System.out.println("* Testing 'Resolution of Multiple Solution Conflict  ' *");
+        System.out.println("* Test criteria: one solution preferred; no AT suits ' *");
+        System.out.println("*******************************************************");    	
+    	
+        String inputJsonStr = null;
+        String expectedOutputJsonStr = null;
+        
+        String filepathIN = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/preferences/MSC_oneInstATpreferred_noATSuite.json";
+        String filepathExpectedOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/MSC_oneInstATpreferred_noATSuiteOUT.json";
+        
+        // read input & expected output
+        try {
+            inputJsonStr = Utils.getInstance().readFile(filepathIN);
+            expectedOutputJsonStr = Utils.getInstance().readFile(filepathExpectedOUT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        Client client = Client.create();
+        WebResource webResource = client.resource("http://localhost:8080/RBMM/runJSONLDRules");
+        ClientResponse response = webResource.accept("application/json").type("application/json").post(ClientResponse.class, inputJsonStr);
+        String output = response.getEntity(String.class);
+        
+        System.out.println("\nWeb service output:\n");
+        System.out.println(output);
+               
+        assertEquals(output, expectedOutputJsonStr);
+    	
+    }   
+
+    public void test_resolveMSC_MultiSolutionPreffered(){
+        
+    	System.out.println("\n*************************************************************************");
+        System.out.println("* Testing 'Resolution of Multiple Solution Conflict  ' ********************");
+        System.out.println("* Test criteria: multiple ATs of same type installed ' ********************");
+        System.out.println("* multiple preferred installed; one preferred not installed no AT suits ' *");
+        System.out.println("***************************************************************************");    	
+    	
+        String inputJsonStr = null;
+        String expectedOutputJsonStr = null;
+        
+        String filepathIN = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/preferences/MSC_multiInstATpreferred_noATSuite.json";
+        String filepathExpectedOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/MSC_multiInstATpreferred_noATSuiteOUT.json";
+        
+        // read input & expected output
+        try {
+            inputJsonStr = Utils.getInstance().readFile(filepathIN);
+            expectedOutputJsonStr = Utils.getInstance().readFile(filepathExpectedOUT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        Client client = Client.create();
+        WebResource webResource = client.resource("http://localhost:8080/RBMM/runJSONLDRules");
+        ClientResponse response = webResource.accept("application/json").type("application/json").post(ClientResponse.class, inputJsonStr);
+        String output = response.getEntity(String.class);
+        
+        System.out.println("\nWeb service output:\n");
+        System.out.println(output);
+               
+        assertEquals(output, expectedOutputJsonStr);
+    	
+    } 
     
     public void test_transformOwlToJSONLD() 
     {

@@ -35,7 +35,7 @@ makeSkolem(?newSetting, ?setting, ?pref)
 (?newConfig rdf:type c4a:Configuration)
 (?newConfig c4a:id ?sol_id)
 (?newConfig c4a:name ?sol_name)
-(?newConfig c4a:isActive "false")
+(?newConfig c4a:isActive "true")
 
 (?newSetting rdf:type c4a:Setting)
 (?newSetting c4a:id ?p_id)

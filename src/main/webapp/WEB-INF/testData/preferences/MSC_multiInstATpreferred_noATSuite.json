@@ -19,7 +19,11 @@
                     {
                         "type": "priority",
                         "scope": [
-                            "http://registry.gpii.net/applications/org.nvda-project" 
+                            "http://registry.gpii.net/applications/org.nvda-project" , 
+							"http://registry.gpii.net/applications/com.microsoft.windows.magnifier",
+							"http://registry.gpii.net/applications/com.freedomscientific.jaws" 
+							 
+							
                         ],
                         "value": 1024
                     }
@@ -75,9 +79,12 @@
             {
                 "id": "com.microsoft.windows.cursors"
             },
-            {
-                "id": "com.yourdolphin.supernova-as"
-            }
+			{
+				"id": "com.freedomscientific.jaws"
+			},
+			{
+				"id": "com.baumretec.cobra"
+			}
         ]
     },
     "environmentReporter": {},
