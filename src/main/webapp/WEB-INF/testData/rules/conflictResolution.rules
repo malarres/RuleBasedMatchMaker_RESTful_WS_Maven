@@ -20,7 +20,7 @@
 	->
 	drop(4)
 	(?config c4a:isActive "false")
-	(?conflict c4a:activated ?config_b)
+ 	(?conflict c4a:activated ?config_b)
 	print('***********Res1a******************')
 	print('conflict: ' ?class)
 	print('solution set to not activate: ' ?sol)	
@@ -45,9 +45,36 @@
 	notEqual(?config, ?config_b)
 	noValue(?conflict c4a:deactivated ?x)
 	->
-	drop(5)
+	drop(4, 5)
 	(?config c4a:isActive "false")
 	(?conflict c4a:deactivated ?config)
+	print('***********Res1b******************')
+	print('conflict: ' ?class)
+	print('solution set to not activate: ' ?sol)	
+	print('preferred solution set to be activate: ' ?sol_b)	
+]
+
+[Res1c:
+	(?conflict rdf:type c4a:Conflict)
+	(?conflict c4a:class ?class)
+	(?conflict c4a:refersTo ?config)	
+	(?config c4a:isActive "true")
+	(?config c4a:refersTo ?sol)
+	
+	(?conflict c4a:refersTo ?config_b)
+	(?config_b c4a:isActive "true")
+	(?config_b c4a:refersTo ?sol_b)
+
+	notEqual(?config, ?config_b)
+	noValue(?conflict c4a:activated ?config)
+	noValue(?conflict c4a:activated ?config_b)	
+	noValue(?conflict c4a:resolution "preferred")
+	noValue(?conflict c4a:deactivated ?x)
+	->
+	drop(3)
+	(?config c4a:isActive "false")
+	(?conflict c4a:deactivated ?config)
+	(?conflict c4a:activated ?config_b)
 	print('***********Res1b******************')
 	print('conflict: ' ?class)
 	print('solution set to not activate: ' ?sol)	
