@@ -51,7 +51,7 @@ public class RBMM_WebServiceIT extends TestCase
     public void test_detectMultipleSolutionsConflict(){
         
     	System.out.println("\n*****************************************************");
-        System.out.println("* Testing 'Detection of Multiple Solutions Conflicts' *");
+        System.out.println("* Testing 'Vladimir' *");
         System.out.println("*******************************************************");    	
     	
         String inputJsonStr = null;
@@ -118,7 +118,7 @@ public class RBMM_WebServiceIT extends TestCase
     	System.out.println("\n*************************************************************************");
         System.out.println("* Testing 'Resolution of Multiple Solution Conflict  ' ********************");
         System.out.println("* Test criteria: multiple ATs of same type installed ' ********************");
-        System.out.println("* multiple preferred installed; one preferred not installed no AT suits ' *");
+        System.out.println("* multiple preferred installed; one installed not preferred; AT suits ' *");
         System.out.println("***************************************************************************");    	
     	
         String inputJsonStr = null;
