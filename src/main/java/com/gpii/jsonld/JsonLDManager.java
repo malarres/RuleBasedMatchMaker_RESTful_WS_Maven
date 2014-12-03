@@ -35,18 +35,20 @@ public class JsonLDManager
     //static input files
     public String semanticsSolutionsFilePath;
     public String semanticsSolutionsGeneratedFromOwlFilePath;
+    public String feedbackMessagesFilePath;
     //public String explodePrefTermsFilePath;
     public String mappingRulesFilePath;
     public String decConflictsRulesFilePath;
     public String resConflictsRulesFilePath;
     public String addPrefSolutionToConfig;
-    
+    public String addFeebackRulesFilePath;
     
     /**
      * TODO make a global configuration for all C4a specific files
      */
     public String querryCondPath;
     public String querryAppsPath;
+    public String querryMetaDataPath;
     
     public Gson gson;
     
@@ -61,6 +63,7 @@ public class JsonLDManager
             //static input files
             semanticsSolutionsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/semanticsSolutions.jsonld";
             semanticsSolutionsGeneratedFromOwlFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/semanticsSolutions_GENERATED.jsonld";
+            feedbackMessagesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/feedbackMessages.jsonld";
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/explodePreferenceTerms.jsonld";
             
         	/**
@@ -70,26 +73,28 @@ public class JsonLDManager
         	decConflictsRulesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/conflictDetection.rules";
         	resConflictsRulesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/conflictresolution.rules";
         	addPrefSolutionToConfig = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/AddPreferredSolutionToConfiguration.rules";
-        	
+        	addFeebackRulesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/rules/feedback.rules";
         	// querries 
         	querryCondPath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/queries/outCondition.sparql";
         	querryAppsPath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/queries/outApplications.sparql";
-            
+        	querryMetaDataPath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/testData/queries/outMetadata.sparql";
         }
         else            //Jetty integration tests
         {
             //static input files
             semanticsSolutionsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions.jsonld";
             semanticsSolutionsGeneratedFromOwlFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions_GENERATED.jsonld";
+            feedbackMessagesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/feedbackMessages.jsonld";
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/explodePreferenceTerms.jsonld";
             mappingRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/basicAlignment.rules";
             decConflictsRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/conflictDetection.rules";
             resConflictsRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/conflictResolution.rules";
             addPrefSolutionToConfig = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/AddPreferredSolutionToConfiguration.rules";
+            addFeebackRulesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/rules/feedback.rules";
             
         	querryCondPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outCondition.sparql";
         	querryAppsPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outApplications.sparql";
-        	
+        	querryMetaDataPath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/queries/outMetadata.sparql";        	
         }
         
         gson = new Gson();
@@ -113,16 +118,16 @@ public class JsonLDManager
          *  
          */
     	// populate all JSONLDInput to a model 
-    	OntologyManager.getInstance().populateJSONLDInput(transIn, new String[] {semanticsSolutionsFilePath});
+    	OntologyManager.getInstance().populateJSONLDInput(transIn, new String[] {semanticsSolutionsFilePath, feedbackMessagesFilePath});
     	
     	// infer configuration 
-    	Model imodel = inferConfiguration(OntologyManager._dmodel, new String[] {mappingRulesFilePath, decConflictsRulesFilePath, addPrefSolutionToConfig, resConflictsRulesFilePath});
+    	Model imodel = inferConfiguration(OntologyManager._dmodel, new String[] {mappingRulesFilePath, decConflictsRulesFilePath, addPrefSolutionToConfig, resConflictsRulesFilePath, addFeebackRulesFilePath});
     	
     	// create MM output
     	/**
     	 * TODO make a global configuration for cloud4all to use the specific C4a queries
     	 */
-    	String[] queries = {querryCondPath, querryAppsPath};
+    	String[] queries = {querryMetaDataPath, querryCondPath, querryAppsPath};
     	
     	resJsonStr = TransformerManager.getInstance().transformOutput(imodel, queries);
 
@@ -150,7 +155,7 @@ public class JsonLDManager
 	            
 	            model.add(deducedModel);
 	            
-	            deducedModel.write(System.out, "N-TRIPLE");
+	            //deducedModel.write(System.out, "N-TRIPLE");
 	            //model.write(System.out, "N-TRIPLE");
             }
         	

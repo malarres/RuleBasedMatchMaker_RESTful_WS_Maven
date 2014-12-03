@@ -401,7 +401,12 @@ public class TransformerManager
 						JSONObject 	appSet;
 						JSONObject 	solution = null;
 						JSONObject 	settings;
-						JSONArray 	conSet; 
+						JSONArray 	conSet;
+						JSONArray 	metaSet;
+						JSONObject 	metadata;
+						JSONArray 	scopeSet;
+						JSONObject  msgSet;
+						
 						
 						String contextID = null; 
 						String queryType = null;
@@ -423,7 +428,7 @@ public class TransformerManager
 							if(soln.contains("?type")){
 								
 								queryType 	= soln.get("?type").toString();
-								
+							
 							}
 							
 							/**
@@ -523,7 +528,6 @@ public class TransformerManager
 									contextSet.put("conditions", conSet);
 									conSet = contextSet.getJSONArray("conditions");
 								}
-								
 								// create a new condition object and put it to the condition array
 								JSONObject condition = new JSONObject (); 
 								/**
@@ -538,6 +542,79 @@ public class TransformerManager
 								
 								conSet.put(condition);								
 			                }
+							
+							/**
+							 * Metadata - create a new metadata array if not exists
+							 * 
+							 */
+							if(queryType.equals(defaultNameSpace+"Metadata")){
+								
+								// add metadata section to the context block
+								if(contextSet.has("metadata")){
+									
+									metaSet = contextSet.getJSONArray("metadata");			
+
+								}else {
+									
+									metaSet = new JSONArray();
+									contextSet.put("metadata", metaSet);
+									metaSet = contextSet.getJSONArray("metadata");
+								}
+								
+								//check if there is already an object for type "helpMessage" in the scope of an application
+								String metaType = soln.get("?metaType").toString();
+								String scope = soln.get("?metaScope").toString();
+								/**
+								 * TODO
+								 * 
+								 * scope and message type make a meta data object unique for now. 
+								 * But does this work if you would have one helpMessage for solution A 
+								 * and one helpMessage for Solution A and B ???     
+								 * 
+								 */
+								metadata = objectContains(metaSet, metaType, scope);
+								
+								if(metadata == null){
+									System.out.println("does something matches:" +metadata);
+									metadata = new JSONObject();
+									// type
+									metadata.put("type", metaType);
+									// scope
+									if(metadata.has("scope")){
+										
+										scopeSet = metadata.getJSONArray("scope");									
+										
+									}
+									else{
+										
+										scopeSet = new JSONArray();
+										metadata.put("scope", scopeSet);
+										scopeSet = metadata.getJSONArray("scope");
+										
+									}
+									scopeSet.put(scope);
+									metaSet.put(metadata);
+								}
+								
+								// message
+								if(metadata.has("message")){
+									
+									msgSet = metadata.getJSONObject("message");			
+
+								}else {
+									
+									msgSet = new JSONObject();
+									metadata.put("message", msgSet);
+									msgSet = metadata.getJSONObject("message");
+								}
+								
+								JSONObject msg = new JSONObject();
+								msg.put("message", soln.get("?msgText").toString());
+								msg.put("learnMore", "todo Sollution URI");
+								msgSet.put(soln.get("?msgLang").toString(), msg);								
+
+								
+							}
 						}
 						} catch (JSONException e1) {
 							// TODO Auto-generated catch block
@@ -551,4 +628,63 @@ public class TransformerManager
 			    return mmOut.toString(5);	    		
 
 	}
+	
+	private JSONObject objectContains(JSONArray metaData, String metaType,
+			String metaScope) throws JSONException {
+		
+		boolean typeSupported 	= false; 
+		boolean scopeSupported 	= false; 
+		JSONObject match = null;
+		JSONObject next = null;
+		
+		if(metaData.length() > 0) {
+			
+			for (int i = 0; i < metaData.length(); i++) {
+				
+				next = metaData.getJSONObject(i); 
+				
+				// type
+				if(next.get("type").toString().equals(metaType)) typeSupported = true; 
+				
+				// scope
+				JSONArray scopeSet = next.getJSONArray("scope");
+				
+				for(int j=0; j < scopeSet.length(); j++) {
+					
+					if(scopeSet.get(j).toString().equals(metaScope)) scopeSupported = true;
+					
+				}
+
+			}
+			
+			if(typeSupported && scopeSupported) match = next;
+
+		}
+		
+		return match;
+	}
+
+	public static boolean contains(JSONArray array, String string) throws JSONException {
+		
+		boolean r = false; 
+		
+		if(array.length() > 0){
+			for(int i=0; i<array.length(); i++) {
+				
+				if(array.getString(i).equals(string)) {
+					
+					r = true; 
+				}
+				else {
+					r = false;					
+				}
+			
+			}
+		}
+		else {
+			r = false;
+		}
+		return r;		
+	}
+	
 }
