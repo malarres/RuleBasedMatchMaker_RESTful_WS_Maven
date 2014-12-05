@@ -190,8 +190,13 @@ public class TransformerManager
 			 *  	"c4a:id": "http://registry.gpii.net/common/fontSize",
 			 *  	"@type": "c4a:Preference",
 			 *  	"c4a:type": "common",
-			 *  	"c4a:name": "fontSize",
-			 *  	"c4a:value": "18"
+			 *  	"c4a:setting": [
+			 *  		{
+			 *  			"c4a:name": "fontSize",
+			 *  			"c4a:value": "18"
+			 *  		}
+			 *  	]
+			 *  	
 			 *  }] 
 			 */
 			Iterator<?> cKeys = inContext.keys(); 
@@ -211,16 +216,11 @@ public class TransformerManager
 	        	JSONArray outPrefArray = new JSONArray(); 
     			Iterator<?> pKeys = cPrefs.keys(); 
     	        while( pKeys.hasNext() ){
+    	        	// common, e.g. http://registry.gpii.net/common/highContrastEnabled
+    	        	// application, e.g http://registry.gpii.net/applications/org.chrome.cloud4chrome 
     	        	String pID = (String)pKeys.next();
-    	        	String pVal = cPrefs.getString(pID);
     	        	
-    	        	JSONObject outPref = new JSONObject();
-    	        	outPref.put("c4a:id", pID);
-    	        	outPref.put("@type", "c4a:Preference");
-    	        	
-    	            if (pID.contains("common")) outPref.put("c4a:type", "common");
-    	            if (pID.contains("applications")) outPref.put("c4a:type", "application");
-    	            
+    	        	// get the path of pID 
     	            URI uri = null;
 					try {
 						
@@ -231,11 +231,41 @@ public class TransformerManager
 						e.printStackTrace();
 					}
     	            String path = uri.getPath();
-    	            String idStr = path.substring(path.lastIndexOf('/') + 1);
-    	            outPref.put("c4a:name", idStr);
+    	            
+    	            // create preference object:
+    	        	JSONObject outPref = new JSONObject();
+    	        	outPref.put("c4a:id", pID);
+    	        	outPref.put("@type", "c4a:Preference");
+    	        	
+    	        	if (pID.contains("common")){    	            	
+        	            //get preference name from path
+    	            	String idStr = path.substring(path.lastIndexOf('/') + 1);
+        	        	// common preference value is always a String, e.g. black-white
+        	        	String comPrefVal = cPrefs.getString(pID);
+    	            	
+        	        	outPref.put("c4a:type", "common");   	            	
+    	            	outPref.put("c4a:name", idStr);
+        	            outPref.put("c4a:value", comPrefVal);
 
-    	            outPref.put("c4a:value", pVal);
-   	        	
+    	            } 
+    	            if (pID.contains("applications")){    	            	
+
+        	        	// app-specific preference value is always a JSONObject, e.g. { fontsize: 0.5, invertColours:false}    	            	
+    	            	JSONObject appPrefValueObject = cPrefs.getJSONObject(pID);    	            	
+    	    			Iterator<?> setKeys = appPrefValueObject.keys(); 
+    	            	JSONArray settingSet = new JSONArray();    	    	        
+    	            	while( setKeys.hasNext() ){
+    	            		JSONObject setting = new JSONObject();
+    	    				String appPrefID = (String)setKeys.next();
+    	    	        	String appPrefValue = appPrefValueObject.getString(appPrefID);
+        	            	setting.put("c4a:name", appPrefID);
+            	            setting.put("c4a:value", appPrefValue);
+            	            settingSet.put(setting);
+    	            	}
+    	            	outPref.put("c4a:setting", settingSet);    	            	
+    	    			outPref.put("c4a:type", "application");
+
+    	            }   	        	
     	        	outPrefArray.put(outPref);
 
     	        }
@@ -401,6 +431,7 @@ public class TransformerManager
 						JSONObject 	appSet;
 						JSONObject 	solution = null;
 						JSONObject 	settings;
+						JSONObject  extraWrap;
 						JSONArray 	conSet;
 						JSONArray 	metaSet;
 						JSONObject 	metadata;
@@ -493,22 +524,45 @@ public class TransformerManager
 								}
 								
 								// add settings to separate settings block. 							
-								if(soln.contains("?setID") && soln.contains("setValue") ){
+								if(soln.contains("?setID") && soln.contains("setValue") && soln.contains("setName") ){
 
 									String setId 		= soln.get("?setID").toString();
+									String setName 		= soln.get("?setName").toString();
 									String setValue 	= soln.get("?setValue").toString();
 									
 									if(solution.has("settings")){
 										
 										settings = solution.getJSONObject("settings");
-										settings.put(setId, setValue);
 										
 									}else {
 										
 										settings = new JSONObject(); 
-										settings.put(setId, setValue);
 										solution.put("settings", settings);
-									}									
+										settings = solution.getJSONObject("settings");
+									}
+									
+									if(setId.contains("registry.gpii.net/applications/")){
+										
+										if(settings.has(setId)){
+											
+											extraWrap = settings.getJSONObject(setId);
+											
+										}
+										else{
+											
+											extraWrap = new JSONObject();
+											settings.put(setId, extraWrap);
+											extraWrap = settings.getJSONObject(setId);
+										}
+										
+										extraWrap.put(setName, setValue);
+										
+									}else{
+										
+										settings.put(setId, setValue);
+
+										
+									}
 								}	
 							}						
 

@@ -9,6 +9,7 @@ SELECT DISTINCT
 	(str(?aa) as ?appActive)
 	(str(?si) as ?setID)
 	(str(?sv) as ?setValue)
+	(str(?sn) as ?setName)
 WHERE
 {
 	?if rdf:type c4a:InferredConfiguration.
@@ -19,5 +20,6 @@ WHERE
 	?app c4a:isActive ?aa.
 	?app c4a:settings ?set.
 	?set c4a:id ?si.
-	?set c4a:value ?sv
+	?set c4a:value ?sv.
+	?set c4a:name ?sn.
 } ORDER BY DESC(?c)

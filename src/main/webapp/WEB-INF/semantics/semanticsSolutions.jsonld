@@ -24,6 +24,20 @@
             ]
         },
         {
+            "@id": "http://registry.gpii.net/applications/org.chrome.cloud4chrome",
+            "@type": "c4a:Solution",
+            "c4a:id": "http://registry.gpii.net/applications/org.chrome.cloud4chrome",
+            "c4a:name": "org.chrome.cloud4chrome",
+            "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "http://registry.gpii.net/applications/org.chrome.cloud4chrome/fontSize",
+                    "c4a:name": "font size",
+                    "c4a:refersTo": "http://registry.gpii.net/common/fontSize"
+                }
+            ]
+        },        
+        {
             "@id": "http://registry.gpii.net/applications/com.microsoft.windows.magnifier",
             "@type": "c4a:Solution",
             "c4a:id": "http://registry.gpii.net/applications/com.microsoft.windows.magnifier",
