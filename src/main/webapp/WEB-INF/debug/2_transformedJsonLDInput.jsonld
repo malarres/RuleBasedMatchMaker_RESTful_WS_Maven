@@ -8,14 +8,14 @@
     "@type" : "c4a:PreferenceSet",
     "c4a:hasPrefs" : [ {
       "@type" : "c4a:Preference",
-      "c4a:id" : "http://registry.gpii.net/common/display.screenEnhancement.magnification",
-      "c4a:name" : "display.screenEnhancement.magnification",
+      "c4a:id" : "http://registry.gpii.net/common/magnification",
+      "c4a:name" : "magnification",
       "c4a:type" : "common",
-      "c4a:value" : "1.5"
+      "c4a:value" : "15"
     }, {
       "@type" : "c4a:Preference",
-      "c4a:id" : "http://registry.gpii.net/common/display.screenReader.-provisional-screenReaderTTSEnabled",
-      "c4a:name" : "display.screenReader.-provisional-screenReaderTTSEnabled",
+      "c4a:id" : "http://registry.gpii.net/common/screenReaderTTSEnabled",
+      "c4a:name" : "screenReaderTTSEnabled",
       "c4a:type" : "common",
       "c4a:value" : "true"
     } ],
@@ -33,20 +33,20 @@
     } ],
     "c4a:hasMetadata" : [ {
       "@type" : "c4a:Metadata",
-      "c4a:scope" : [ "http://registry.gpii.net/common/display.screenEnhancement.magnification" ],
+      "c4a:scope" : [ "http://registry.gpii.net/common/magnification" ],
       "c4a:type" : "required",
       "c4a:value" : "100"
     } ],
     "c4a:hasPrefs" : [ {
       "@type" : "c4a:Preference",
-      "c4a:id" : "http://registry.gpii.net/common/display.screenEnhancement.magnification",
-      "c4a:name" : "display.screenEnhancement.magnification",
+      "c4a:id" : "http://registry.gpii.net/common/magnification",
+      "c4a:name" : "magnification",
       "c4a:type" : "common",
-      "c4a:value" : "2.0"
+      "c4a:value" : "18"
     }, {
       "@type" : "c4a:Preference",
-      "c4a:id" : "http://registry.gpii.net/common/display.screenReader.-provisional-screenReaderTTSEnabled",
-      "c4a:name" : "display.screenReader.-provisional-screenReaderTTSEnabled",
+      "c4a:id" : "http://registry.gpii.net/common/screenReaderTTSEnabled",
+      "c4a:name" : "screenReaderTTSEnabled",
       "c4a:type" : "common",
       "c4a:value" : "true"
     } ],
@@ -62,8 +62,8 @@
     "@type" : "c4a:InstalledSolution",
     "name" : "org.nvda-project"
   }, {
-    "@id" : "c4a:com.microsoft.windows.magnifier",
+    "@id" : "c4a:com.microsoft.windows.desktop",
     "@type" : "c4a:InstalledSolution",
-    "name" : "com.microsoft.windows.magnifier"
+    "name" : "com.microsoft.windows.desktop"
   } ]
 }

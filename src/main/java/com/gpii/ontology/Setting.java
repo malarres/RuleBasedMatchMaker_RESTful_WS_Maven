@@ -1,7 +1,5 @@
 package com.gpii.ontology;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author nkak

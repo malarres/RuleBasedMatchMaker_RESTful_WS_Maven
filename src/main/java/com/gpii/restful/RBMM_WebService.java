@@ -4,15 +4,11 @@ import com.gpii.jsonld.JsonLDManager;
 import com.gpii.ontology.OntologyManager;
 import com.gpii.transformer.TransformerManager;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
-import org.codehaus.jackson.map.ObjectMapper;
-//import sun.nio.cs.StandardCharsets;
 import org.json.JSONException;
 
 

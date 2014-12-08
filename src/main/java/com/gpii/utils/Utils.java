@@ -33,7 +33,7 @@ public class Utils
             BufferedWriter out = new BufferedWriter(new FileWriter(path));
             out.write(content);
             out.close();
-            System.out.println("\n\n* Generated file: " + path);
+            System.out.println("* Generated file: " + path);
         }
         catch (IOException e)
         {
@@ -69,7 +69,7 @@ public class Utils
         {
             try {
                 out.close();
-                System.out.println("\n\n* Generated file: " + tmpFilepath);
+                System.out.println("* Generated file: " + tmpFilepath);
             }
             catch (IOException closeException) {
                 closeException.printStackTrace();

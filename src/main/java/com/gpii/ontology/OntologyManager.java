@@ -2,10 +2,7 @@ package com.gpii.ontology;
 
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
 
 import com.github.jsonldjava.jena.JenaJSONLD;
 import com.hp.hpl.jena.ontology.Individual;
@@ -16,6 +13,7 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Properties;
 
 /**
  *
@@ -62,12 +60,35 @@ public class OntologyManager
     
     public void loadOntology()
     {
+        //read properties file
+        Properties prop = new Properties();
+	InputStream configInputStream = null;
+        
         String owlPathStr = "";     
-        File f = new File(System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semanticFrameworkOfContentAndSolutions.owl");
-        if(f.exists())  //deployment mode
-            owlPathStr = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semanticFrameworkOfContentAndSolutions.owl";
-        else            //Jetty integration tests
-            owlPathStr = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semanticFrameworkOfContentAndSolutions.owl";
+        File f = new File(System.getProperty("user.dir") + "/../webapps/CLOUD4All_SST_Restful_WS/WEB-INF/config.properties");
+        try
+        {
+            if(f.exists())  //deployment mode
+            {
+                configInputStream = new FileInputStream(System.getProperty("user.dir") + "/../webapps/CLOUD4All_SST_Restful_WS/WEB-INF/config.properties");
+                //read properties file
+                prop.load(configInputStream);
+
+                owlPathStr = System.getProperty("user.dir") + prop.getProperty("solutionsOntology_DEPLOYMENT");
+            }
+            else            //Jetty integration tests
+            {
+                configInputStream = new FileInputStream(System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/config.properties");
+                //read properties file
+                prop.load(configInputStream);
+                
+                owlPathStr = System.getProperty("user.dir") + prop.getProperty("solutionsOntology_JETTY");
+            }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
         
         InputStream in = null;
         
