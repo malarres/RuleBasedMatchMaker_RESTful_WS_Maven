@@ -13,7 +13,7 @@ To build the RuleBasedMatchMaker web-service:
 
 Usage example using [curl](http://curl.haxx.se/):
 
-	curl -X POST -H "Content-Type: application/json" http://localhost:8080/CLOUD4All_RBMM_Restful_WS/RBMM/runJSONLDRules -d @testData\allInOneInput.json
+	curl -X POST -H "Content-Type: application/json" http://localhost:8080/CLOUD4All_RBMM_Restful_WS/RBMM/runJSONLDRules -d @{MY_INPUT.json}
 
 ### Funding Acknowledgement
 
