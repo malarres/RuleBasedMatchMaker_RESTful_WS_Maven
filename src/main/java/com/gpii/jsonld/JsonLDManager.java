@@ -57,7 +57,7 @@ public class JsonLDManager
         {
             if(f.exists())  //Deployment mode
             {
-                configInputStream = new FileInputStream(System.getProperty("user.dir") + "/../webapps/CLOUD4All_SST_Restful_WS/WEB-INF/config.properties");
+                configInputStream = new FileInputStream(System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/config.properties");
                 //read properties file
                 prop.load(configInputStream);
                 

@@ -65,7 +65,7 @@ public class OntologyManager
 	InputStream configInputStream = null;
         
         String owlPathStr = "";     
-        File f = new File(System.getProperty("user.dir") + "/../webapps/CLOUD4All_SST_Restful_WS/WEB-INF/config.properties");
+        File f = new File(System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/config.properties");
         try
         {
             if(f.exists())  //deployment mode
