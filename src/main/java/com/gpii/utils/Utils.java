@@ -3,9 +3,11 @@ package com.gpii.utils;
 import com.gpii.jsonld.JsonLDManager;
 import com.hp.hpl.jena.rdf.model.Model;
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -30,7 +32,7 @@ public class Utils
     public void writeFile(String path, String content)
     {
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(path));
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path),"UTF-8"));
             out.write(content);
             out.close();
             System.out.println("* Generated file: " + path);
