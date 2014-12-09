@@ -11,7 +11,8 @@
                     "http://registry.gpii.net/common/screenReaderTTSEnabled": true,
                     "http://registry.gpii.net/common/speechRate": 300,
                     "http://registry.gpii.net/applications/org.chrome.cloud4chrome": {
-                        "fontSize": "medium"
+                        "fontSize": "medium", 
+						"invertColours": false
                     }
                 },
                 "metadata": [
@@ -83,7 +84,14 @@
             },
             {
                 "id": "com.yourdolphin.supernova-as"
-            }
+            },
+			{
+				"id": "org.chrome.cloud4chrome"
+			},
+			{
+				"id": "com.microsoft.windows.mouseTrailing"
+			}
+			
         ]
     },
     "environmentReporter": {},
