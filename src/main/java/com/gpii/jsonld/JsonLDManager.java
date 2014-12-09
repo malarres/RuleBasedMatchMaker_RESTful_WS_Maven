@@ -61,7 +61,7 @@ public class JsonLDManager
         if(f.exists())  //deployment mode
         {
             //static input files
-            semanticsSolutionsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/semanticsSolutions.jsonld";
+            semanticsSolutionsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/semanticsSolutionsReview.jsonld";
             semanticsSolutionsGeneratedFromOwlFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/semanticsSolutions_GENERATED.jsonld";
             feedbackMessagesFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/feedbackMessages.jsonld";
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/explodePreferenceTerms.jsonld";
@@ -82,7 +82,7 @@ public class JsonLDManager
         else            //Jetty integration tests
         {
             //static input files
-            semanticsSolutionsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions.jsonld";
+            semanticsSolutionsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutionsReview.jsonld";
             semanticsSolutionsGeneratedFromOwlFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/semanticsSolutions_GENERATED.jsonld";
             feedbackMessagesFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/feedbackMessages.jsonld";
             //explodePrefTermsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/explodePreferenceTerms.jsonld";
@@ -155,8 +155,8 @@ public class JsonLDManager
 	            
 	            model.add(deducedModel);
 	            
-	            //deducedModel.write(System.out, "N-TRIPLE");
-	            //model.write(System.out, "N-TRIPLE");
+	          // deducedModel.write(System.out, "N-TRIPLE");
+	          // model.write(System.out, "N-TRIPLE");
             }
         	
         }
