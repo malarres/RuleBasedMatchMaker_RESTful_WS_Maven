@@ -13,8 +13,12 @@ To build the RuleBasedMatchMaker web-service:
 
 Usage example using [curl](http://curl.haxx.se/):
 
-	curl -X POST -H "Content-Type: application/json" http://localhost:8080/CLOUD4All_RBMM_Restful_WS/RBMM/runJSONLDRules -d @testData\allInOneInput.json
+	curl -X POST -H "Content-Type: application/json" http://localhost:8080/CLOUD4All_RBMM_Restful_WS/RBMM/runJSONLDRules -d @{MY_INPUT.json}
 
+### Troubleshooting 
+	
+If you are encountering problems with test failures, please ensure that the encoding of the debug files, e.g. [5_RBMMJsonOutput.json](https://github.com/NickKaklanis/RuleBasedMatchMaker_RESTful_WS_Maven/blob/JSON-LD/src/main/webapp/WEB-INF/debug/5_RBMMJsonOutput.json), is similar with the encoding of the files including the tests' expected outcomes, e.g. [expected_output_test1.json](https://github.com/NickKaklanis/RuleBasedMatchMaker_RESTful_WS_Maven/blob/JSON-LD/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/expected_output_test1.json). You can check the encoding of a file using e.g. [Notepad++](http://notepad-plus-plus.org/) Menu->Encoding.
+	
 ### Funding Acknowledgement
 
 The research leading to these results has received funding from the European

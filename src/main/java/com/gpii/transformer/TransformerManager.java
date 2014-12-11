@@ -11,7 +11,6 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.sun.jersey.server.impl.cdi.Utils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,7 +30,7 @@ import org.json.JSONTokener;
 public class TransformerManager
 {
 
-	private static TransformerManager instance = null;
+    private static TransformerManager instance = null;
 	
     /**
      * TODO make it configurable
@@ -79,7 +78,7 @@ public class TransformerManager
                 tmpSolutionJsonObj.put("@id", C4A_NS + tmpSolution.id);
                 tmpSolutionJsonObj.put("@type", C4A_NS + "Solution");
                 tmpSolutionJsonObj.put(C4A_NS + "id", "http://registry.gpii.org/applications/" + tmpSolution.id);
-                tmpSolutionJsonObj.put(C4A_NS + "name", tmpSolution.name);
+                tmpSolutionJsonObj.put(C4A_NS + "name", tmpSolution.id);
 
                 //settings
                 JSONArray tmpSolSettingsJsonArray = new JSONArray();
@@ -106,20 +105,25 @@ public class TransformerManager
                                 && tmpSetting.value.toLowerCase().trim().equals("unknown") == false)
                             tmpSolSettingJsonObj.put(C4A_NS + "defaultValue", tmpSetting.value);
                         
+                        /*if(tmpSetting.hasID.contains("common")) 
+                            tmpSolSettingJsonObj.put(C4A_NS + "type", "common");
+                        else if(tmpSetting.hasID.contains("applications")) 
+                            tmpSolSettingJsonObj.put(C4A_NS + "type", "application");*/
+                        
                         if(tmpSetting.type == Setting.STRING)
-                            tmpSolSettingJsonObj.put(C4A_NS + "type", "string");
+                            tmpSolSettingJsonObj.put(C4A_NS + "primitive_type", "string");
                         else if(tmpSetting.type == Setting.FLOAT)
-                            tmpSolSettingJsonObj.put(C4A_NS + "type", "float");
+                            tmpSolSettingJsonObj.put(C4A_NS + "primitive_type", "float");
                         else if(tmpSetting.type == Setting.BOOLEAN)
-                            tmpSolSettingJsonObj.put(C4A_NS + "type", "boolean");
+                            tmpSolSettingJsonObj.put(C4A_NS + "primitive_type", "boolean");
                         else if(tmpSetting.type == Setting.INT)
-                            tmpSolSettingJsonObj.put(C4A_NS + "type", "int");
+                            tmpSolSettingJsonObj.put(C4A_NS + "primitive_type", "int");
                         else if(tmpSetting.type == Setting.TIME)
-                            tmpSolSettingJsonObj.put(C4A_NS + "type", "time");
+                            tmpSolSettingJsonObj.put(C4A_NS + "primitive_type", "time");
                         else if(tmpSetting.type == Setting.DATE)
-                            tmpSolSettingJsonObj.put(C4A_NS + "type", "date");
+                            tmpSolSettingJsonObj.put(C4A_NS + "primitive_type", "date");
                         else if(tmpSetting.type == Setting.DATETIME)
-                            tmpSolSettingJsonObj.put(C4A_NS + "type", "dateTime");
+                            tmpSolSettingJsonObj.put(C4A_NS + "primitive_type", "dateTime");
 
                         
                         if(tmpSetting.hasDescription.equals("") == false
@@ -420,7 +424,7 @@ public class TransformerManager
 		    	
 		        for ( String url : queries) {
 		    		
-		        	Query query = QueryFactory.read(url);
+		        	Query query = QueryFactory.read(System.getProperty("user.dir")+url);
 
 					QueryExecution qexec = QueryExecutionFactory.create(query, model) ;
 					
@@ -445,7 +449,8 @@ public class TransformerManager
 						while(response.hasNext()){
 							
 							QuerySolution soln = response.nextSolution();
-							System.out.println("out querry: " +soln.toString());
+							
+							//System.out.println("soln: " + soln.toString());
 							
 							infConfig = mmOut.getJSONObject("inferredConfiguration");
 							

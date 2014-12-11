@@ -1,0 +1,69 @@
+{
+  "@context" : {
+    "c4a" : "http://rbmm.org/schemas/cloud4all/0.1/",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph" : [ {
+    "@id" : "c4a:gpii-default",
+    "@type" : "c4a:PreferenceSet",
+    "c4a:hasPrefs" : [ {
+      "@type" : "c4a:Preference",
+      "c4a:id" : "http://registry.gpii.net/common/magnification",
+      "c4a:name" : "magnification",
+      "c4a:type" : "common",
+      "c4a:value" : "15"
+    }, {
+      "@type" : "c4a:Preference",
+      "c4a:id" : "http://registry.gpii.net/common/screenReaderTTSEnabled",
+      "c4a:name" : "screenReaderTTSEnabled",
+      "c4a:type" : "common",
+      "c4a:value" : "true"
+    } ],
+    "c4a:id" : "gpii-default",
+    "c4a:name" : "Default preferences"
+  }, {
+    "@id" : "c4a:nighttime-at-home",
+    "@type" : "c4a:PreferenceSet",
+    "c4a:hasCondition" : [ {
+      "@type" : "c4a:Condition",
+      "c4a:inputPath" : "http://registry.gpii.net/conditions/timeOfDay",
+      "c4a:max" : "1800",
+      "c4a:min" : "600",
+      "c4a:type" : "http://gpii.net/common/operators/inRange"
+    } ],
+    "c4a:hasMetadata" : [ {
+      "@type" : "c4a:Metadata",
+      "c4a:scope" : [ "http://registry.gpii.net/common/magnification" ],
+      "c4a:type" : "required",
+      "c4a:value" : "100"
+    } ],
+    "c4a:hasPrefs" : [ {
+      "@type" : "c4a:Preference",
+      "c4a:id" : "http://registry.gpii.net/common/magnification",
+      "c4a:name" : "magnification",
+      "c4a:type" : "common",
+      "c4a:value" : "18"
+    }, {
+      "@type" : "c4a:Preference",
+      "c4a:id" : "http://registry.gpii.net/common/screenReaderTTSEnabled",
+      "c4a:name" : "screenReaderTTSEnabled",
+      "c4a:type" : "common",
+      "c4a:value" : "true"
+    } ],
+    "c4a:id" : "nighttime-at-home",
+    "c4a:name" : "Nighttime at home"
+  }, {
+    "@id" : "c4a:win32",
+    "@type" : "c4a:OperatingSystem",
+    "name" : "win32",
+    "version" : "5.0.0"
+  }, {
+    "@id" : "c4a:org.nvda-project",
+    "@type" : "c4a:InstalledSolution",
+    "name" : "org.nvda-project"
+  }, {
+    "@id" : "c4a:com.microsoft.windows.desktop",
+    "@type" : "c4a:InstalledSolution",
+    "name" : "com.microsoft.windows.desktop"
+  } ]
+}
