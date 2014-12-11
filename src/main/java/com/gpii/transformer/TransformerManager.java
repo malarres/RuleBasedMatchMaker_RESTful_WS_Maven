@@ -194,8 +194,13 @@ public class TransformerManager
 			 *  	"c4a:id": "http://registry.gpii.net/common/fontSize",
 			 *  	"@type": "c4a:Preference",
 			 *  	"c4a:type": "common",
-			 *  	"c4a:name": "fontSize",
-			 *  	"c4a:value": "18"
+			 *  	"c4a:setting": [
+			 *  		{
+			 *  			"c4a:name": "fontSize",
+			 *  			"c4a:value": "18"
+			 *  		}
+			 *  	]
+			 *  	
 			 *  }] 
 			 */
 			Iterator<?> cKeys = inContext.keys(); 
@@ -215,16 +220,11 @@ public class TransformerManager
 	        	JSONArray outPrefArray = new JSONArray(); 
     			Iterator<?> pKeys = cPrefs.keys(); 
     	        while( pKeys.hasNext() ){
+    	        	// common, e.g. http://registry.gpii.net/common/highContrastEnabled
+    	        	// application, e.g http://registry.gpii.net/applications/org.chrome.cloud4chrome 
     	        	String pID = (String)pKeys.next();
-    	        	String pVal = cPrefs.getString(pID);
     	        	
-    	        	JSONObject outPref = new JSONObject();
-    	        	outPref.put("c4a:id", pID);
-    	        	outPref.put("@type", "c4a:Preference");
-    	        	
-    	            if (pID.contains("common")) outPref.put("c4a:type", "common");
-    	            if (pID.contains("applications")) outPref.put("c4a:type", "application");
-    	            
+    	        	// get the path of pID 
     	            URI uri = null;
 					try {
 						
@@ -235,11 +235,41 @@ public class TransformerManager
 						e.printStackTrace();
 					}
     	            String path = uri.getPath();
-    	            String idStr = path.substring(path.lastIndexOf('/') + 1);
-    	            outPref.put("c4a:name", idStr);
+    	            
+    	            // create preference object:
+    	        	JSONObject outPref = new JSONObject();
+    	        	outPref.put("c4a:id", pID);
+    	        	outPref.put("@type", "c4a:Preference");
+    	        	
+    	        	if (pID.contains("common")){    	            	
+        	            //get preference name from path
+    	            	String idStr = path.substring(path.lastIndexOf('/') + 1);
+        	        	// common preference value is always a String, e.g. black-white
+        	        	String comPrefVal = cPrefs.getString(pID);
+    	            	
+        	        	outPref.put("c4a:type", "common");   	            	
+    	            	outPref.put("c4a:name", idStr);
+        	            outPref.put("c4a:value", comPrefVal);
 
-    	            outPref.put("c4a:value", pVal);
-   	        	
+    	            } 
+    	            if (pID.contains("applications")){    	            	
+
+        	        	// app-specific preference value is always a JSONObject, e.g. { fontsize: 0.5, invertColours:false}    	            	
+    	            	JSONObject appPrefValueObject = cPrefs.getJSONObject(pID);    	            	
+    	    			Iterator<?> setKeys = appPrefValueObject.keys(); 
+    	            	JSONArray settingSet = new JSONArray();    	    	        
+    	            	while( setKeys.hasNext() ){
+    	            		JSONObject setting = new JSONObject();
+    	    				String appPrefID = (String)setKeys.next();
+    	    	        	String appPrefValue = appPrefValueObject.getString(appPrefID);
+        	            	setting.put("c4a:name", appPrefID);
+            	            setting.put("c4a:value", appPrefValue);
+            	            settingSet.put(setting);
+    	            	}
+    	            	outPref.put("c4a:setting", settingSet);    	            	
+    	    			outPref.put("c4a:type", "application");
+
+    	            }   	        	
     	        	outPrefArray.put(outPref);
 
     	        }
@@ -337,7 +367,7 @@ public class TransformerManager
 			 * 	{ "id": com.cats.org }
 			 * ]
 			 *  GOAL: {
-			 * "@id": "c4a:com.cats.org",
+			 * "@id": "http://registry.gpii.org/applications/com.cats.org",
 			 * "@type": "c4a:InstalledSolution",
 			 * "c4a:name": "com.cats.org"
 			 * },
@@ -350,7 +380,7 @@ public class TransformerManager
 
     				JSONObject outSol = new JSONObject(); 
     				outSol.put("@type", "c4a:InstalledSolution");
-    				outSol.put("@id", "c4a:"+solID);
+    				outSol.put("@id", "http://registry.gpii.net/applications/"+solID);
     				outSol.put("name", solID);        			
         			
         			outGraph.put(outSol);     
@@ -394,7 +424,7 @@ public class TransformerManager
 		    	
 		        for ( String url : queries) {
 		    		
-		        	Query query = QueryFactory.read(url);
+		        	Query query = QueryFactory.read(System.getProperty("user.dir")+url);
 
 					QueryExecution qexec = QueryExecutionFactory.create(query, model) ;
 					
@@ -405,7 +435,13 @@ public class TransformerManager
 						JSONObject 	appSet;
 						JSONObject 	solution = null;
 						JSONObject 	settings;
-						JSONArray 	conSet; 
+						JSONObject  extraWrap;
+						JSONArray 	conSet;
+						JSONArray 	metaSet;
+						JSONObject 	metadata;
+						JSONArray 	scopeSet;
+						JSONObject  msgSet;
+						
 						
 						String contextID = null; 
 						String queryType = null;
@@ -413,7 +449,8 @@ public class TransformerManager
 						while(response.hasNext()){
 							
 							QuerySolution soln = response.nextSolution();
-                                                        //System.out.println("soln: " + soln.toString());
+							
+							//System.out.println("soln: " + soln.toString());
 							
 							infConfig = mmOut.getJSONObject("inferredConfiguration");
 							
@@ -427,7 +464,7 @@ public class TransformerManager
 							if(soln.contains("?type")){
 								
 								queryType 	= soln.get("?type").toString();
-								
+							
 							}
 							
 							/**
@@ -492,22 +529,45 @@ public class TransformerManager
 								}
 								
 								// add settings to separate settings block. 							
-								if(soln.contains("?setID") && soln.contains("setValue") ){
+								if(soln.contains("?setID") && soln.contains("setValue") && soln.contains("setName") ){
 
 									String setId 		= soln.get("?setID").toString();
+									String setName 		= soln.get("?setName").toString();
 									String setValue 	= soln.get("?setValue").toString();
 									
 									if(solution.has("settings")){
 										
 										settings = solution.getJSONObject("settings");
-										settings.put(setId, setValue);
 										
 									}else {
 										
 										settings = new JSONObject(); 
-										settings.put(setId, setValue);
 										solution.put("settings", settings);
-									}									
+										settings = solution.getJSONObject("settings");
+									}
+									
+									if(setId.contains("registry.gpii.net/applications/")){
+										
+										if(settings.has(setId)){
+											
+											extraWrap = settings.getJSONObject(setId);
+											
+										}
+										else{
+											
+											extraWrap = new JSONObject();
+											settings.put(setId, extraWrap);
+											extraWrap = settings.getJSONObject(setId);
+										}
+										
+										extraWrap.put(setName, setValue);
+										
+									}else{
+										
+										settings.put(setId, setValue);
+
+										
+									}
 								}	
 							}						
 
@@ -527,7 +587,6 @@ public class TransformerManager
 									contextSet.put("conditions", conSet);
 									conSet = contextSet.getJSONArray("conditions");
 								}
-								
 								// create a new condition object and put it to the condition array
 								JSONObject condition = new JSONObject (); 
 								/**
@@ -542,6 +601,79 @@ public class TransformerManager
 								
 								conSet.put(condition);								
 			                }
+							
+							/**
+							 * Metadata - create a new metadata array if not exists
+							 * 
+							 */
+							if(queryType.equals(defaultNameSpace+"Metadata")){
+								
+								// add metadata section to the context block
+								if(contextSet.has("metadata")){
+									
+									metaSet = contextSet.getJSONArray("metadata");			
+
+								}else {
+									
+									metaSet = new JSONArray();
+									contextSet.put("metadata", metaSet);
+									metaSet = contextSet.getJSONArray("metadata");
+								}
+								
+								//check if there is already an object for type "helpMessage" in the scope of an application
+								String metaType = soln.get("?metaType").toString();
+								String scope = soln.get("?metaScope").toString();
+								/**
+								 * TODO
+								 * 
+								 * scope and message type make a meta data object unique for now. 
+								 * But does this work if you would have one helpMessage for solution A 
+								 * and one helpMessage for Solution A and B ???     
+								 * 
+								 */
+								metadata = objectContains(metaSet, metaType, scope);
+								
+								if(metadata == null){
+									System.out.println("does something matches:" +metadata);
+									metadata = new JSONObject();
+									// type
+									metadata.put("type", metaType);
+									// scope
+									if(metadata.has("scope")){
+										
+										scopeSet = metadata.getJSONArray("scope");									
+										
+									}
+									else{
+										
+										scopeSet = new JSONArray();
+										metadata.put("scope", scopeSet);
+										scopeSet = metadata.getJSONArray("scope");
+										
+									}
+									scopeSet.put(scope);
+									metaSet.put(metadata);
+								}
+								
+								// message
+								if(metadata.has("message")){
+									
+									msgSet = metadata.getJSONObject("message");			
+
+								}else {
+									
+									msgSet = new JSONObject();
+									metadata.put("message", msgSet);
+									msgSet = metadata.getJSONObject("message");
+								}
+								
+								JSONObject msg = new JSONObject();
+								msg.put("message", soln.get("?msgText").toString());
+								msg.put("learnMore", "todo Sollution URI");
+								msgSet.put(soln.get("?msgLang").toString(), msg);								
+
+								
+							}
 						}
 						} catch (JSONException e1) {
 							// TODO Auto-generated catch block
@@ -555,4 +687,63 @@ public class TransformerManager
 			    return mmOut.toString(5);	    		
 
 	}
+	
+	private JSONObject objectContains(JSONArray metaData, String metaType,
+			String metaScope) throws JSONException {
+		
+		boolean typeSupported 	= false; 
+		boolean scopeSupported 	= false; 
+		JSONObject match = null;
+		JSONObject next = null;
+		
+		if(metaData.length() > 0) {
+			
+			for (int i = 0; i < metaData.length(); i++) {
+				
+				next = metaData.getJSONObject(i); 
+				
+				// type
+				if(next.get("type").toString().equals(metaType)) typeSupported = true; 
+				
+				// scope
+				JSONArray scopeSet = next.getJSONArray("scope");
+				
+				for(int j=0; j < scopeSet.length(); j++) {
+					
+					if(scopeSet.get(j).toString().equals(metaScope)) scopeSupported = true;
+					
+				}
+
+			}
+			
+			if(typeSupported && scopeSupported) match = next;
+
+		}
+		
+		return match;
+	}
+
+	public static boolean contains(JSONArray array, String string) throws JSONException {
+		
+		boolean r = false; 
+		
+		if(array.length() > 0){
+			for(int i=0; i<array.length(); i++) {
+				
+				if(array.getString(i).equals(string)) {
+					
+					r = true; 
+				}
+				else {
+					r = false;					
+				}
+			
+			}
+		}
+		else {
+			r = false;
+		}
+		return r;		
+	}
+	
 }

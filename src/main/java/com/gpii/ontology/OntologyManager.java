@@ -326,7 +326,7 @@ public class OntologyManager
         _dmodel = ModelFactory.createOntologyModel().read(is, null, "JSON-LD");
 
         for (int i=0; i < uris.length; i++)
-            _dmodel.read(uris[i]);
+            _dmodel.read(System.getProperty("user.dir") + uris[i]);
     }
     
     public String testHello(String tmpName)
