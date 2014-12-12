@@ -331,6 +331,104 @@
             ]
         },
         {
+            "@id": "http://registry.gpii.net/applications/com.android.talkback",
+            "@type": "c4a:Solution",
+            "c4a:id": "http://registry.gpii.net/applications/com.android.talkback",
+            "c4a:name": "com.android.talkback",
+            "c4a:class": [
+                {
+                    "@type": "c4a:AssistiveTechnology",
+                    "@id": "c4a:screenreader"
+                }
+            ],
+            "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled"
+                }
+            ]
+        },
+        {
+            "@id": "http://registry.gpii.net/applications/com.android.settings.secure",
+            "@type": "c4a:Solution",
+            "c4a:id": "http://registry.gpii.net/applications/com.android.settings.secure",
+            "c4a:name": "com.android.settings.secure",
+            "c4a:class": [
+                {
+                    "@type": "c4a:AccessibilitySetting",
+                    "@id": "c4a:builtin"
+                }
+            ],
+            "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "tts_default_pitch",
+                    "c4a:refersTo": "http://registry.gpii.net/common/pitch",
+                    "c4a:name": "tts_default_pitch"
+                },
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "tts_default_rate",
+                    "c4a:refersTo": "http://registry.gpii.net/common/speechRate",
+                    "c4a:name": "tts_default_rate"
+                }                
+            ]
+        },        
+        {
+            "@id": "http://registry.gpii.net/applications/com.android.persistentConfiguration",
+            "@type": "c4a:Solution",
+            "c4a:id": "http://registry.gpii.net/applications/com.android.persistentConfiguration",
+            "c4a:name": "com.android.persistentConfiguration",
+            "c4a:class": [
+                {
+                    "@type": "c4a:AccessibilitySetting",
+                    "@id": "c4a:builtin"
+                }
+            ],
+            "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "fontScale",
+                    "c4a:refersTo": "http://registry.gpii.net/common/fontSize",
+                    "c4a:name": "fontScale"
+                },
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "locale",
+                    "c4a:refersTo": "http://registry.gpii.net/common/language",
+                    "c4a:name": "locale"
+                }                
+            ]
+        },
+        {
+            "@id": "http://registry.gpii.net/applications/com.android.audioManager",
+            "@type": "c4a:Solution",
+            "c4a:id": "http://registry.gpii.net/applications/com.android.audioManager",
+            "c4a:name": "com.android.audioManager",
+            "c4a:class": [
+                {
+                    "@type": "c4a:AccessibilitySetting",
+                    "@id": "c4a:builtin"
+                }
+            ],
+            "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "STREAM_MUSIC",
+                    "c4a:refersTo": "http://registry.gpii.net/common/volumeTTS",
+                    "c4a:name": "STREAM_MUSIC"
+                },
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "STREAM_SYSTEM",
+                    "c4a:refersTo": "http://registry.gpii.net/common/volume",
+                    "c4a:name": "STREAM_SYSTEM"
+                }                
+            ]
+        },        
+        {
             "@id": "c4a:screenreader",
             "@type": "c4a:AssistiveTechnology",
             "c4a:name": "Screen Reader"
