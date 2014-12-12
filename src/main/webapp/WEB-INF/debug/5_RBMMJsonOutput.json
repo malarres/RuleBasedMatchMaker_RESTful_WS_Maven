@@ -2,29 +2,20 @@
   "inferredConfiguration" : {
     "gpii-default" : {
       "applications" : {
-        "org.nvda-project" : {
+        "com.freedomscientific.jaws" : {
           "active" : "false",
           "settings" : {
-            "http://registry.gpii.net/common/screenReaderTTSEnabled" : "true"
+            "http://registry.gpii.net/common/speechRate" : "300"
+          }
+        },
+        "org.nvda-project" : {
+          "active" : "true",
+          "settings" : {
+            "http://registry.gpii.net/common/screenReaderTTSEnabled" : "true",
+            "http://registry.gpii.net/common/speechRate" : "300"
           }
         }
       }
-    },
-    "nighttime-at-home" : {
-      "applications" : {
-        "org.nvda-project" : {
-          "active" : "false",
-          "settings" : {
-            "http://registry.gpii.net/common/screenReaderTTSEnabled" : "true"
-          }
-        }
-      },
-      "conditions" : [ {
-        "inputPath" : "http://registry.gpii.net/conditions/timeOfDay",
-        "max" : "1800",
-        "min" : "600",
-        "type" : "http://gpii.net/common/operators/inRange"
-      } ]
     }
   }
 }
