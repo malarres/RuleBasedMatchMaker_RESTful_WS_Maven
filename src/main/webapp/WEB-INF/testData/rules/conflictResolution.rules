@@ -21,10 +21,10 @@
 	drop(4)
 	(?config c4a:isActive "false")
  	(?conflict c4a:activated ?config_b)
-	print('***********Res1a******************')
+	print('***********Resolution A MSC ******************')
 	print('conflict: ' ?class)
-	print('solution set to not activate: ' ?sol)	
-	print('preferred solution set to be activate: ' ?sol_b)	
+	print('deactivated solution: ' ?sol)	
+	print('activated solution: ' ?sol_b)	
 ]
 
 [Res1b:
@@ -48,10 +48,10 @@
 	drop(4, 5)
 	(?config c4a:isActive "false")
 	(?conflict c4a:deactivated ?config)
-	print('***********Res1b******************')
+	print('*********** Resolution B MSC ******************')
 	print('conflict: ' ?class)
-	print('solution set to not activate: ' ?sol)	
-	print('preferred solution set to be activate: ' ?sol_b)	
+	print('deactivated solution: ' ?sol)	
+	print('activated solution: ' ?sol_b)	
 ]
 
 [Res1c:
@@ -75,8 +75,8 @@
 	(?config c4a:isActive "false")
 	(?conflict c4a:deactivated ?config)
 	(?conflict c4a:activated ?config_b)
-	print('***********Res1b******************')
+	print('*********** Resolution C MSC******************')
 	print('conflict: ' ?class)
-	print('solution set to not activate: ' ?sol)	
-	print('preferred solution set to be activate: ' ?sol_b)	
+	print('deactivated solution: ' ?sol)	
+	print('activated solution: ' ?sol_b)	
 ]

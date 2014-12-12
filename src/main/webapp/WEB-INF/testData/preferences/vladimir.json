@@ -12,7 +12,7 @@
                     "http://registry.gpii.net/common/speechRate": 300,
                     "http://registry.gpii.net/applications/org.chrome.cloud4chrome": {
                         "fontSize": "medium", 
-						"invertColours": false
+						"highContrastEnabled": true
                     }
                 },
                 "metadata": [

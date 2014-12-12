@@ -15,5 +15,5 @@
 	(?config c4a:solPreferred "true")
 	(?conflict c4a:resolution "preferred")
 	print('***************************')
-	print('set to preferred: ' ?sol_id)
+	print('Preferred solution: ' ?sol_id)
 ]

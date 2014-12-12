@@ -92,9 +92,5 @@ notEqual(?set1, ?set2)
 notEqual(?set2_id, ?sol_id)
 equal(?set1_id, ?sol_id)
 ->
-print('config has both common and app setting')
-print('sol_id: ' ?sol_id)
-print('set1_id: ' ?set1_id)
-print('set2_id: ' ?set2_id)
 drop(4)
 ]
