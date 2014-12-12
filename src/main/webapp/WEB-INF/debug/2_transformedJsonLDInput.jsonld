@@ -6,29 +6,12 @@
   "@graph" : [ {
     "@id" : "c4a:gpii-default",
     "@type" : "c4a:PreferenceSet",
-    "c4a:hasMetadata" : [ {
-      "@type" : "c4a:Metadata",
-      "c4a:scope" : [ "http://registry.gpii.net/common/screenReaderTTSEnabled" ],
-      "c4a:type" : "required",
-      "c4a:value" : "1024"
-    }, {
-      "@type" : "c4a:Metadata",
-      "c4a:scope" : [ "http://registry.gpii.net/applications/org.nvda-project", "http://registry.gpii.net/applications/com.microsoft.windows.magnifier", "http://registry.gpii.net/applications/com.yourdolphin.supernova-as" ],
-      "c4a:type" : "priority",
-      "c4a:value" : "1024"
-    } ],
     "c4a:hasPrefs" : [ {
       "@type" : "c4a:Preference",
-      "c4a:id" : "http://registry.gpii.net/common/speechRate",
-      "c4a:name" : "speechRate",
+      "c4a:id" : "http://registry.gpii.net/common/magnification",
+      "c4a:name" : "magnification",
       "c4a:type" : "common",
-      "c4a:value" : "300"
-    }, {
-      "@type" : "c4a:Preference",
-      "c4a:id" : "http://registry.gpii.net/common/magnifierEnabled",
-      "c4a:name" : "magnifierEnabled",
-      "c4a:type" : "common",
-      "c4a:value" : "true"
+      "c4a:value" : "15"
     }, {
       "@type" : "c4a:Preference",
       "c4a:id" : "http://registry.gpii.net/common/screenReaderTTSEnabled",
@@ -39,69 +22,48 @@
     "c4a:id" : "gpii-default",
     "c4a:name" : "Default preferences"
   }, {
+    "@id" : "c4a:nighttime-at-home",
+    "@type" : "c4a:PreferenceSet",
+    "c4a:hasCondition" : [ {
+      "@type" : "c4a:Condition",
+      "c4a:inputPath" : "http://registry.gpii.net/conditions/timeOfDay",
+      "c4a:max" : "1800",
+      "c4a:min" : "600",
+      "c4a:type" : "http://gpii.net/common/operators/inRange"
+    } ],
+    "c4a:hasMetadata" : [ {
+      "@type" : "c4a:Metadata",
+      "c4a:scope" : [ "http://registry.gpii.net/common/magnification" ],
+      "c4a:type" : "required",
+      "c4a:value" : "100"
+    } ],
+    "c4a:hasPrefs" : [ {
+      "@type" : "c4a:Preference",
+      "c4a:id" : "http://registry.gpii.net/common/magnification",
+      "c4a:name" : "magnification",
+      "c4a:type" : "common",
+      "c4a:value" : "18"
+    }, {
+      "@type" : "c4a:Preference",
+      "c4a:id" : "http://registry.gpii.net/common/screenReaderTTSEnabled",
+      "c4a:name" : "screenReaderTTSEnabled",
+      "c4a:type" : "common",
+      "c4a:value" : "true"
+    } ],
+    "c4a:id" : "nighttime-at-home",
+    "c4a:name" : "Nighttime at home"
+  }, {
     "@id" : "c4a:win32",
     "@type" : "c4a:OperatingSystem",
     "name" : "win32",
     "version" : "5.0.0"
   }, {
-    "@id" : "http://registry.gpii.net/applications/com.microsoft.windows.desktop",
-    "@type" : "c4a:InstalledSolution",
-    "name" : "com.microsoft.windows.desktop"
-  }, {
-    "@id" : "http://registry.gpii.net/applications/com.microsoft.windows.magnifier",
-    "@type" : "c4a:InstalledSolution",
-    "name" : "com.microsoft.windows.magnifier"
-  }, {
-    "@id" : "http://registry.gpii.net/applications/com.microsoft.windows.onscreenKeyboard",
-    "@type" : "c4a:InstalledSolution",
-    "name" : "com.microsoft.windows.onscreenKeyboard"
-  }, {
     "@id" : "http://registry.gpii.net/applications/org.nvda-project",
     "@type" : "c4a:InstalledSolution",
     "name" : "org.nvda-project"
   }, {
-    "@id" : "http://registry.gpii.net/applications/trace.easyOne.communicator.windows",
+    "@id" : "http://registry.gpii.net/applications/com.microsoft.windows.desktop",
     "@type" : "c4a:InstalledSolution",
-    "name" : "trace.easyOne.communicator.windows"
-  }, {
-    "@id" : "http://registry.gpii.net/applications/trace.easyOne.communicator.linux",
-    "@type" : "c4a:InstalledSolution",
-    "name" : "trace.easyOne.communicator.linux"
-  }, {
-    "@id" : "http://registry.gpii.net/applications/trace.easyOne.sudan.windows",
-    "@type" : "c4a:InstalledSolution",
-    "name" : "trace.easyOne.sudan.windows"
-  }, {
-    "@id" : "http://registry.gpii.net/applications/trace.easyOne.sudan.linux",
-    "@type" : "c4a:InstalledSolution",
-    "name" : "trace.easyOne.sudan.linux"
-  }, {
-    "@id" : "http://registry.gpii.net/applications/webinsight.webAnywhere.windows",
-    "@type" : "c4a:InstalledSolution",
-    "name" : "webinsight.webAnywhere.windows"
-  }, {
-    "@id" : "http://registry.gpii.net/applications/com.texthelp.readWriteGold",
-    "@type" : "c4a:InstalledSolution",
-    "name" : "com.texthelp.readWriteGold"
-  }, {
-    "@id" : "http://registry.gpii.net/applications/net.opendirective.maavis",
-    "@type" : "c4a:InstalledSolution",
-    "name" : "net.opendirective.maavis"
-  }, {
-    "@id" : "http://registry.gpii.net/applications/com.microsoft.windows.highContrast",
-    "@type" : "c4a:InstalledSolution",
-    "name" : "com.microsoft.windows.highContrast"
-  }, {
-    "@id" : "http://registry.gpii.net/applications/com.microsoft.windows.mouseTracking",
-    "@type" : "c4a:InstalledSolution",
-    "name" : "com.microsoft.windows.mouseTracking"
-  }, {
-    "@id" : "http://registry.gpii.net/applications/com.microsoft.windows.cursors",
-    "@type" : "c4a:InstalledSolution",
-    "name" : "com.microsoft.windows.cursors"
-  }, {
-    "@id" : "http://registry.gpii.net/applications/com.freedomscientific.jaws",
-    "@type" : "c4a:InstalledSolution",
-    "name" : "com.freedomscientific.jaws"
+    "name" : "com.microsoft.windows.desktop"
   } ]
 }
