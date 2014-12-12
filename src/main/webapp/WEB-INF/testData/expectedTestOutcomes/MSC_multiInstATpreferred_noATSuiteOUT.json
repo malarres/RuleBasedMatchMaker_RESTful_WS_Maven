@@ -1,17 +1,10 @@
 {"inferredConfiguration": {"gpii-default": {"applications": {
      "com.freedomscientific.jaws": {
           "active": "true",
-          "settings": {
-               "http://registry.gpii.net/common/screenReaderTTSEnabled": "true",
-               "http://registry.gpii.net/common/speechRate": "300"
-          }
-     },
-     "com.microsoft.windows.magnifier": {
-          "active": "true",
-          "settings": {"http://registry.gpii.net/common/magnifierEnabled": "true"}
+          "settings": {"http://registry.gpii.net/common/speechRate": "300"}
      },
      "org.nvda-project": {
-          "active": "false",
+          "active": "true",
           "settings": {
                "http://registry.gpii.net/common/screenReaderTTSEnabled": "true",
                "http://registry.gpii.net/common/speechRate": "300"
