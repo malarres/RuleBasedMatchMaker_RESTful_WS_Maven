@@ -31,8 +31,7 @@
           "active" : "true",
           "settings" : {
             "http://registry.gpii.net/applications/org.chrome.cloud4chrome" : {
-              "fontSize" : "medium",
-              "highContrastEnabled" : "true"
+              "fontSize" : "medium"
             }
           }
         },
@@ -94,8 +93,7 @@
           "active" : "true",
           "settings" : {
             "http://registry.gpii.net/applications/org.chrome.cloud4chrome" : {
-              "fontSize" : "medium",
-              "highContrastEnabled" : "true"
+              "fontSize" : "medium"
             }
           }
         },
