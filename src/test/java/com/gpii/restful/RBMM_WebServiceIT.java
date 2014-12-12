@@ -63,9 +63,12 @@ public class RBMM_WebServiceIT extends TestCase
         String expectedOutputJsonStr2 = null;
         
         String filepathIN = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/preferences/vladimir.json";
+
         String filepathActualOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/debug/5_RBMMJsonOutput.json";
+
         String filepathExpectedOUT1 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/vladimirLobbyOUT_case1.json";
         String filepathExpectedOUT2 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/vladimirLobbyOUT_case2.json";
+
         
         // read input & expected output
         try {
@@ -97,7 +100,7 @@ public class RBMM_WebServiceIT extends TestCase
             outputIsSimilarToOneOfTheExpected = true;
         assertEquals(outputIsSimilarToOneOfTheExpected, true);	
     }
-    
+
     public void test_VladimirSubway(){
         
     	System.out.println("\n*****************************************************");

@@ -55,7 +55,7 @@
 	(?s2_set c4a:value "true")
 	notEqual(?config_x, ?config_y)
 	->
-	drop(7)
+	drop(8)
 	print('************ CONFLICT DETECTION ****************')
 	print('CONFLICT DETECTED: High Contrast Conflict on Windows')
 	print('CONFLICT CLASS: Layer Based Conclicts')
