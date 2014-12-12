@@ -13,6 +13,7 @@
 	notEqual(?config_x, ?config_y)
 	
 	(?if rdf:type c4a:InferredConfiguration)
+	(?if c4a:id ?if_id)
 	(?if c4a:refersTo ?config_x)
 	(?if c4a:refersTo ?config_y)
 	
@@ -35,12 +36,14 @@
 	print('CONFLICT: Multiple Solution Conflict')
 	print('CONFLICT CLASS: Multiple Assistive Technologies')
 	print('TYPE: ' ?c)
+	print('CONTEXT' ?if_id)
 	print('AFFECTED SOLUTION: ' ?s1)
 	]
 
 // DETECTION AND RESOLUTIN OF HIGH CONTRAST CONFLICT ON WINDOWS
 	[DetectHighcontrastConflict:
 	(?if rdf:type c4a:InferredConfiguration)
+	(?if c4a:id ?if_id)	
 	(?if c4a:refersTo ?config_x)
 	(?if c4a:refersTo ?config_y)
 	(?config_x rdf:type c4a:Configuration)
@@ -56,6 +59,7 @@
 	print('************ CONFLICT DETECTION ****************')
 	print('CONFLICT DETECTED: High Contrast Conflict on Windows')
 	print('CONFLICT CLASS: Layer Based Conclicts')
+	print('CONTEXT' ?if_id)	
 	print('AFFECTED SOLUTION: ' ?s2)
 	print('CONFLICT RESOLUTION: deactivate high contrast')
 	] 

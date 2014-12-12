@@ -10,7 +10,8 @@
 	(?c rdf:type c4a:AssistiveTechnology)
 	
 	(?if rdf:type c4a:InferredConfiguration)
-	(?if c4a:refersTo ?config_x)
+	(?if c4a:id ?if_id)
+	(?if c4a:refersTo ?config)
 	 
 	noValue(?config c4a:solPreferred "true")
 	makeSkolem(?newMetaData, ?if, ?s)	
@@ -21,6 +22,6 @@
 	(?newMetaData c4a:refersTo c4a:NoPrefferdAT)
 	(?if c4a:hasMetadata ?newMetaData)
 	print('***********FeedbackForAts******************')
-	print('conflict: ' ?class)
-	print('provide Help for: ' ?s)	
+	print('CONTEXT: ' ?if_id)
+	print('HELP FOR SOLUTION: ' ?s)	
 ]
