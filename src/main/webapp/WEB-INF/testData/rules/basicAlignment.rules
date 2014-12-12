@@ -78,3 +78,23 @@ makeSkolem(?newSetting, ?pref, ?prefSetting)
 (?newSetting c4a:name ?p_name)
 (?newSetting c4a:value ?p_value)
 ]
+
+// Removes all matched common settings from a configuration for which a user has app-specific preferences defined 
+[RemoveCommonSettings: 
+(?if c4a:refersTo ?config)
+(?config rdf:type c4a:Configuration)
+(?config c4a:id ?sol_id)
+(?config c4a:settings ?set1)
+(?config c4a:settings ?set2)
+(?set1 c4a:id ?set1_id)
+(?set2 c4a:id ?set2_id)
+notEqual(?set1, ?set2)
+notEqual(?set2_id, ?sol_id)
+equal(?set1_id, ?sol_id)
+->
+print('config has both common and app setting')
+print('sol_id: ' ?sol_id)
+print('set1_id: ' ?set1_id)
+print('set2_id: ' ?set2_id)
+drop(4)
+]
