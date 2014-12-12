@@ -58,11 +58,11 @@
     "name" : "win32",
     "version" : "5.0.0"
   }, {
-    "@id" : "c4a:org.nvda-project",
+    "@id" : "http://registry.gpii.net/applications/org.nvda-project",
     "@type" : "c4a:InstalledSolution",
     "name" : "org.nvda-project"
   }, {
-    "@id" : "c4a:com.microsoft.windows.desktop",
+    "@id" : "http://registry.gpii.net/applications/com.microsoft.windows.desktop",
     "@type" : "c4a:InstalledSolution",
     "name" : "com.microsoft.windows.desktop"
   } ]
