@@ -140,6 +140,7 @@ public class RBMM_WebServiceIT extends TestCase
                
         assertEquals(actualOutputStr, expectedOutputJsonStr);
     }
+    
     public void test_Mary(){
         
     	System.out.println("\n*****************************************************");
@@ -179,6 +180,7 @@ public class RBMM_WebServiceIT extends TestCase
                
         assertEquals(actualOutputStr, expectedOutputJsonStr);
     }
+    
     public void test_Manuel(){
         
     	System.out.println("\n*****************************************************");
@@ -187,16 +189,19 @@ public class RBMM_WebServiceIT extends TestCase
     	
         String inputJsonStr = null;
         String actualOutputStr = null;
-        String expectedOutputJsonStr = null;
+        String expectedOutputJsonStr1 = null;
+        String expectedOutputJsonStr2 = null;
         
         String filepathIN = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/preferences/manuel.json";
         String filepathActualOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/debug/5_RBMMJsonOutput.json";
-        String filepathExpectedOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/manuelOUT.json";
+        String filepathExpectedOUT1 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/manuelOUT_case1.json";
+        String filepathExpectedOUT2 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/manuelOUT_case2.json";
         
         // read input & expected output
         try {
             inputJsonStr = Utils.getInstance().readFile(filepathIN);
-            expectedOutputJsonStr = Utils.getInstance().readFile(filepathExpectedOUT);
+            expectedOutputJsonStr1 = Utils.getInstance().readFile(filepathExpectedOUT1);
+            expectedOutputJsonStr2 = Utils.getInstance().readFile(filepathExpectedOUT2);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -215,9 +220,14 @@ public class RBMM_WebServiceIT extends TestCase
         } catch (IOException e) {
             e.printStackTrace();
         }
-               
-        assertEquals(actualOutputStr, expectedOutputJsonStr);
+        
+        boolean outputIsSimilarToOneOfTheExpected = false;
+        if(actualOutputStr.equals(expectedOutputJsonStr1)
+                || actualOutputStr.equals(expectedOutputJsonStr2))
+            outputIsSimilarToOneOfTheExpected = true;
+        assertEquals(outputIsSimilarToOneOfTheExpected, true);	
     }
+    
     public void test_ChrisWin(){
         
     	System.out.println("\n*****************************************************");
@@ -226,16 +236,19 @@ public class RBMM_WebServiceIT extends TestCase
     	
         String inputJsonStr = null;
         String actualOutputStr = null;
-        String expectedOutputJsonStr = null;
+        String expectedOutputJsonStr1 = null;
+        String expectedOutputJsonStr2 = null;
         
         String filepathIN = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/preferences/chrisWindows.json";
         String filepathActualOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/debug/5_RBMMJsonOutput.json";
-        String filepathExpectedOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/chrisWindowsOUT.json";
+        String filepathExpectedOUT1 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/chrisWindowsOUT_case1.json";
+        String filepathExpectedOUT2 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/chrisWindowsOUT_case2.json";
         
         // read input & expected output
         try {
             inputJsonStr = Utils.getInstance().readFile(filepathIN);
-            expectedOutputJsonStr = Utils.getInstance().readFile(filepathExpectedOUT);
+            expectedOutputJsonStr1 = Utils.getInstance().readFile(filepathExpectedOUT1);
+            expectedOutputJsonStr2 = Utils.getInstance().readFile(filepathExpectedOUT2);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -255,8 +268,13 @@ public class RBMM_WebServiceIT extends TestCase
             e.printStackTrace();
         }
                
-        assertEquals(actualOutputStr, expectedOutputJsonStr);
+        boolean outputIsSimilarToOneOfTheExpected = false;
+        if(actualOutputStr.equals(expectedOutputJsonStr1)
+                || actualOutputStr.equals(expectedOutputJsonStr2))
+            outputIsSimilarToOneOfTheExpected = true;
+        assertEquals(outputIsSimilarToOneOfTheExpected, true);
     }
+    
     public void test_ChrisAndroid(){
         
     	System.out.println("\n*****************************************************");
@@ -296,6 +314,7 @@ public class RBMM_WebServiceIT extends TestCase
                
         assertEquals(actualOutputStr, expectedOutputJsonStr);
     }
+    
     public void test_LiWindows(){
         
     	System.out.println("\n*****************************************************");
@@ -304,16 +323,25 @@ public class RBMM_WebServiceIT extends TestCase
     	
         String inputJsonStr = null;
         String actualOutputStr = null;
-        String expectedOutputJsonStr = null;
+        String expectedOutputJsonStr1 = null;
+        String expectedOutputJsonStr2 = null;
+        String expectedOutputJsonStr3 = null;
+        String expectedOutputJsonStr4 = null;
         
         String filepathIN = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/preferences/liWindows.json";
         String filepathActualOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/debug/5_RBMMJsonOutput.json";
-        String filepathExpectedOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/liWindowsOUT.json";
+        String filepathExpectedOUT1 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/liWindowsOUT_case1.json";
+        String filepathExpectedOUT2 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/liWindowsOUT_case2.json";
+        String filepathExpectedOUT3 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/liWindowsOUT_case3.json";
+        String filepathExpectedOUT4 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/liWindowsOUT_case4.json";
         
         // read input & expected output
         try {
             inputJsonStr = Utils.getInstance().readFile(filepathIN);
-            expectedOutputJsonStr = Utils.getInstance().readFile(filepathExpectedOUT);
+            expectedOutputJsonStr1 = Utils.getInstance().readFile(filepathExpectedOUT1);
+            expectedOutputJsonStr2 = Utils.getInstance().readFile(filepathExpectedOUT2);
+            expectedOutputJsonStr3 = Utils.getInstance().readFile(filepathExpectedOUT3);
+            expectedOutputJsonStr4 = Utils.getInstance().readFile(filepathExpectedOUT4);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -332,9 +360,16 @@ public class RBMM_WebServiceIT extends TestCase
         } catch (IOException e) {
             e.printStackTrace();
         }
-               
-        assertEquals(actualOutputStr, expectedOutputJsonStr);
+        
+        boolean outputIsSimilarToOneOfTheExpected = false;
+        if(actualOutputStr.equals(expectedOutputJsonStr1)
+                || actualOutputStr.equals(expectedOutputJsonStr2)
+                || actualOutputStr.equals(expectedOutputJsonStr3)
+                || actualOutputStr.equals(expectedOutputJsonStr4))
+            outputIsSimilarToOneOfTheExpected = true;
+        assertEquals(outputIsSimilarToOneOfTheExpected, true);	
     }
+    
     public void test_LiAndroid(){
         
     	System.out.println("\n*****************************************************");
@@ -343,16 +378,19 @@ public class RBMM_WebServiceIT extends TestCase
     	
         String inputJsonStr = null;
         String actualOutputStr = null;
-        String expectedOutputJsonStr = null;
+        String expectedOutputJsonStr1 = null;
+        String expectedOutputJsonStr2 = null;
         
         String filepathIN = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/preferences/liAndroid.json";
         String filepathActualOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/debug/5_RBMMJsonOutput.json";
-        String filepathExpectedOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/liAndroidOUT.json";
+        String filepathExpectedOUT1 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/liAndroidOUT_case1.json";
+        String filepathExpectedOUT2 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/liAndroidOUT_case2.json";
         
         // read input & expected output
         try {
             inputJsonStr = Utils.getInstance().readFile(filepathIN);
-            expectedOutputJsonStr = Utils.getInstance().readFile(filepathExpectedOUT);
+            expectedOutputJsonStr1 = Utils.getInstance().readFile(filepathExpectedOUT1);
+            expectedOutputJsonStr2 = Utils.getInstance().readFile(filepathExpectedOUT2);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -371,8 +409,12 @@ public class RBMM_WebServiceIT extends TestCase
         } catch (IOException e) {
             e.printStackTrace();
         }
-               
-        assertEquals(actualOutputStr, expectedOutputJsonStr);
+        
+        boolean outputIsSimilarToOneOfTheExpected = false;
+        if(actualOutputStr.equals(expectedOutputJsonStr1)
+                || actualOutputStr.equals(expectedOutputJsonStr2))
+            outputIsSimilarToOneOfTheExpected = true;
+        assertEquals(outputIsSimilarToOneOfTheExpected, true);
     }	
     /*
     public void test_resolveMSC_OneSolutionPreffered(){
