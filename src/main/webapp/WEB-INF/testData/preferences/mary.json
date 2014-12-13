@@ -1,0 +1,77 @@
+{
+    "preferences": {
+        "contexts": {
+            "gpii-default": {
+                "name": "Default preferences",
+                "preferences": {
+                    "http://registry.gpii.net/common/onScreenKeyboardEnabled": true,
+					"http://registry.gpii.net/common/matchMakerType": "RuleBased"
+                }					
+            }
+        }
+    },
+    "deviceReporter": {
+        "OS": {
+            "id": "win32",
+            "version": "5.0.0"
+        },
+        "solutions": [
+            {
+                "id": "com.microsoft.windows.desktop"
+            },
+            {
+                "id": "com.microsoft.windows.magnifier"
+            },
+            {
+                "id": "com.microsoft.windows.onscreenKeyboard"
+            },
+            {
+                "id": "org.nvda-project"
+            },
+            {
+                "id": "trace.easyOne.communicator.windows"
+            },
+            {
+                "id": "trace.easyOne.communicator.linux"
+            },
+            {
+                "id": "trace.easyOne.sudan.windows"
+            },
+            {
+                "id": "trace.easyOne.sudan.linux"
+            },
+            {
+                "id": "webinsight.webAnywhere.windows"
+            },
+            {
+                "id": "com.texthelp.readWriteGold"
+            },
+            {
+                "id": "net.opendirective.maavis"
+            },
+            {
+                "id": "com.microsoft.windows.highContrast"
+            },
+            {
+                "id": "com.microsoft.windows.mouseTracking"
+            },
+            {
+                "id": "com.microsoft.windows.cursors"
+            },
+            {
+                "id": "com.yourdolphin.supernova-as"
+            },
+			{
+				"id": "com.microsoft.windows.mouseTrailing"
+			}				
+        ]
+    },
+    "environmentReporter": {},
+    "solutionsRegistry": {},
+    "activeContexts": [
+        "gpii-default",
+        "nighttime-at-home"
+    ],
+    "inverseCapabilities": {},
+    "rematch": {}
+}
