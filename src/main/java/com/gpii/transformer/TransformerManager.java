@@ -11,6 +11,7 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -245,7 +246,9 @@ public class TransformerManager
         	            //get preference name from path
     	            	String idStr = path.substring(path.lastIndexOf('/') + 1);
         	        	// common preference value is always a String, e.g. black-white
-        	        	String comPrefVal = cPrefs.getString(pID);
+        	        	String comPrefVal = cPrefs.get(pID).toString();
+        	        	
+        	        	//System.out.println("value type: " +comPrefVal);
     	            	
         	        	outPref.put("c4a:type", "common");   	            	
     	            	outPref.put("c4a:name", idStr);
@@ -261,7 +264,7 @@ public class TransformerManager
     	            	while( setKeys.hasNext() ){
     	            		JSONObject setting = new JSONObject();
     	    				String appPrefID = (String)setKeys.next();
-    	    	        	String appPrefValue = appPrefValueObject.getString(appPrefID);
+    	    	        	String appPrefValue = appPrefValueObject.get(appPrefID).toString();
         	            	setting.put("c4a:name", appPrefID);
             	            setting.put("c4a:value", appPrefValue);
             	            settingSet.put(setting);
@@ -520,7 +523,7 @@ public class TransformerManager
 								// add activation of application
 								if(soln.contains("?appActive")){
 
-									String appActive 	= soln.get("?appActive").toString();
+									Boolean appActive 	= new Boolean(soln.get("?appActive").toString());
 									
 									if(!solution.has("active")){
 										
@@ -533,7 +536,27 @@ public class TransformerManager
 
 									String setId 		= soln.get("?setID").toString();
 									String setName 		= soln.get("?setName").toString();
-									String setValue 	= soln.get("?setValue").toString();
+									Object setValue 	= soln.get("?setValue"); 
+									
+								    try {
+								    	int i = Integer.parseInt(setValue.toString());
+								        setValue = i;
+
+								    } catch (NumberFormatException e){
+								    }
+								    try {
+								    	double i = Double.parseDouble(setValue.toString());
+								        setValue = i;
+
+								    } catch (NumberFormatException e){
+								    }								    
+									
+									
+									if(setValue.toString().equals("true") || setValue.toString().equals("false")){
+										
+										setValue = new Boolean(setValue.toString());
+
+									}
 									
 									if(solution.has("settings")){
 										
