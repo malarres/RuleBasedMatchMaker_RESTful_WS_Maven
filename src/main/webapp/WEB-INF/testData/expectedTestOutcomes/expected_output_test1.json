@@ -3,9 +3,9 @@
     "gpii-default" : {
       "applications" : {
         "org.nvda-project" : {
-          "active" : "true",
+          "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/screenReaderTTSEnabled" : "true"
+            "http://registry.gpii.net/common/screenReaderTTSEnabled" : true
           }
         }
       },
@@ -31,9 +31,9 @@
     "nighttime-at-home" : {
       "applications" : {
         "org.nvda-project" : {
-          "active" : "true",
+          "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/screenReaderTTSEnabled" : "true"
+            "http://registry.gpii.net/common/screenReaderTTSEnabled" : true
           }
         }
       },

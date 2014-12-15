@@ -3,22 +3,22 @@
     "gpii-default" : {
       "applications" : {
         "com.android.settings.secure" : {
-          "active" : "true",
+          "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/speechRate" : "350"
+            "http://registry.gpii.net/common/speechRate" : 350.0
           }
         },
         "com.android.talkback" : {
-          "active" : "true",
+          "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/screenReaderTTSEnabled" : "true"
+            "http://registry.gpii.net/common/screenReaderTTSEnabled" : true
           }
         },
         "es.codefactory.android.app.ma" : {
-          "active" : "false",
+          "active" : false,
           "settings" : {
-            "http://registry.gpii.net/common/screenReaderTTSEnabled" : "true",
-            "http://registry.gpii.net/common/speechRate" : "350"
+            "http://registry.gpii.net/common/screenReaderTTSEnabled" : true,
+            "http://registry.gpii.net/common/speechRate" : 350.0
           }
         }
       },

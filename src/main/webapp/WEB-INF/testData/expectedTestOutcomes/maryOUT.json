@@ -3,9 +3,9 @@
     "gpii-default" : {
       "applications" : {
         "com.microsoft.windows.onscreenKeyboard" : {
-          "active" : "true",
+          "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/onScreenKeyboardEnabled" : "true"
+            "http://registry.gpii.net/common/onScreenKeyboardEnabled" : true
           }
         }
       }

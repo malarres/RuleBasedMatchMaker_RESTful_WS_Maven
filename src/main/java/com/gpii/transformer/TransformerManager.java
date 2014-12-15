@@ -471,7 +471,7 @@ public class TransformerManager
 							}
 							
 							/**
-							 * Context - create a new context object if not exitis
+							 * Context - create a new context object if not exists
 							 *  
 							 */
 							if(infConfig.has(contextID.toString())){

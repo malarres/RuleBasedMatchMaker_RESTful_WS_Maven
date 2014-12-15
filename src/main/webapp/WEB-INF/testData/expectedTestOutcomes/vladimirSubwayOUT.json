@@ -3,15 +3,15 @@
     "gpii-default" : {
       "applications" : {
         "com.android.settings.secure" : {
-          "active" : "true",
+          "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/speechRate" : "300"
+            "http://registry.gpii.net/common/speechRate" : 300.0
           }
         },
         "com.android.talkback" : {
-          "active" : "true",
+          "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/screenReaderTTSEnabled" : "true"
+            "http://registry.gpii.net/common/screenReaderTTSEnabled" : true
           }
         }
       }
@@ -19,21 +19,21 @@
     "noise" : {
       "applications" : {
         "com.android.audioManager" : {
-          "active" : "true",
+          "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/volumeTTS" : "0.9"
+            "http://registry.gpii.net/common/volumeTTS" : 0.9
           }
         },
         "com.android.settings.secure" : {
-          "active" : "true",
+          "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/speechRate" : "300"
+            "http://registry.gpii.net/common/speechRate" : 300.0
           }
         },
         "com.android.talkback" : {
-          "active" : "true",
+          "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/screenReaderTTSEnabled" : "true"
+            "http://registry.gpii.net/common/screenReaderTTSEnabled" : true
           }
         }
       },
