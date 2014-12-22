@@ -535,6 +535,52 @@ public class RBMM_WebServiceIT extends TestCase
             System.out.println("******************************************************************************************************************************************************************************\n");
         }
 
-    }*/
+    }
+    public void test_BasicAlignment(){
+        
+    	System.out.println("\n**********************************************************************");
+        System.out.println("* Tetsing Basic Alignment of Solutions and Setting *********************");
+        System.out.println("** for multiple contetxs. N&P sets:  ***********************************");    	
+        System.out.println("** 1. same preference across N&P sets (high contrast)*******************"); 
+        System.out.println("** 2. different preference values across N&P sets (cursor size) ********"); 
+        System.out.println("** 3. common prefs not matched to app-specific prefs *******************");
+    	System.out.println("\n**********************************************************************");
+    	
+        String inputJsonStr = null;
+        String actualOutputStr = null;
+        String expectedOutputJsonStr1 = null;
+        
+        String filepathIN = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/preferences/basicAlignment.json";
+        String filepathActualOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/debug/5_RBMMJsonOutput.json";
+        String filepathExpectedOUT1 = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/basicAlignmentOUT.json";
+        
+        // read input & expected output
+        try {
+            inputJsonStr = Utils.getInstance().readFile(filepathIN);
+            expectedOutputJsonStr1 = Utils.getInstance().readFile(filepathExpectedOUT1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        Client client = Client.create();
+        WebResource webResource = client.resource("http://localhost:8080/RBMM/runJSONLDRules");
+        ClientResponse response = webResource.accept("application/json").type("application/json").post(ClientResponse.class, inputJsonStr);
+        String output = response.getEntity(String.class);
+        
+        System.out.println("\nWeb service output:\n");
+        System.out.println(output);
+        
+        // read actual output
+        try {
+            actualOutputStr = Utils.getInstance().readFile(filepathActualOUT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        boolean outputIsSimilarToOneOfTheExpected = false;
+        if(actualOutputStr.equals(expectedOutputJsonStr1))
+            outputIsSimilarToOneOfTheExpected = true;
+        assertEquals(outputIsSimilarToOneOfTheExpected, true);	
+    }*/   
     
 }
