@@ -2,11 +2,25 @@
   "inferredConfiguration" : {
     "gpii-default" : {
       "applications" : {
+        "com.microsoft.windows.magnifier" : {
+          "active" : false,
+          "settings" : {
+            "http://registry.gpii.net/common/magnification" : 1.5,
+            "http://registry.gpii.net/common/magnifierEnabled" : true
+          }
+        },
         "com.yourdolphin.supernova-as" : {
           "active" : true,
           "settings" : {
             "http://registry.gpii.net/common/magnification" : 1.5,
             "http://registry.gpii.net/common/magnifierEnabled" : true,
+            "http://registry.gpii.net/common/screenReaderTTSEnabled" : true,
+            "http://registry.gpii.net/common/speechRate" : 200.0
+          }
+        },
+        "org.nvda-project" : {
+          "active" : false,
+          "settings" : {
             "http://registry.gpii.net/common/screenReaderTTSEnabled" : true,
             "http://registry.gpii.net/common/speechRate" : 200.0
           }
@@ -21,11 +35,25 @@
             "http://registry.gpii.net/common/highContrastEnabled" : true
           }
         },
+        "com.microsoft.windows.magnifier" : {
+          "active" : false,
+          "settings" : {
+            "http://registry.gpii.net/common/magnification" : 2.0,
+            "http://registry.gpii.net/common/magnifierEnabled" : true
+          }
+        },
         "com.yourdolphin.supernova-as" : {
           "active" : true,
           "settings" : {
             "http://registry.gpii.net/common/magnification" : 2.0,
             "http://registry.gpii.net/common/magnifierEnabled" : true,
+            "http://registry.gpii.net/common/screenReaderTTSEnabled" : true,
+            "http://registry.gpii.net/common/speechRate" : 200.0
+          }
+        },
+        "org.nvda-project" : {
+          "active" : false,
+          "settings" : {
             "http://registry.gpii.net/common/screenReaderTTSEnabled" : true,
             "http://registry.gpii.net/common/speechRate" : 200.0
           }

@@ -2,16 +2,37 @@
   "inferredConfiguration" : {
     "gpii-default" : {
       "applications" : {
-        "com.android.settings.secure" : {
+        "com.microsoft.windows.cursors" : {
           "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/speechRate" : 300.0
+            "http://registry.gpii.net/common/cursorSize" : 0.5
           }
         },
-        "com.android.talkback" : {
+        "com.microsoft.windows.highContrast" : {
           "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/screenReaderTTSEnabled" : true
+            "http://registry.gpii.net/common/highContrastEnabled" : true
+          }
+        },
+        "com.microsoft.windows.mouseTrailing" : {
+          "active" : true,
+          "settings" : {
+            "http://registry.gpii.net/common/mouseTrailing" : 19.0
+          }
+        },
+        "org.chrome.cloud4chrome" : {
+          "active" : true,
+          "settings" : {
+            "http://registry.gpii.net/applications/org.chrome.cloud4chrome" : {
+              "fontSize" : "medium"
+            }
+          }
+        },
+        "org.nvda-project" : {
+          "active" : true,
+          "settings" : {
+            "http://registry.gpii.net/common/screenReaderTTSEnabled" : true,
+            "http://registry.gpii.net/common/speechRate" : 300.0
           }
         }
       },
@@ -30,28 +51,43 @@
             "message" : "Η εφαρμογή υποστηρικτικής τεχνολογίας που προτιμάτε δεν είναι διαθέσιμη. Επιλέξαμε για εσάς μια εναλλακτική εφαρμογή."
           }
         },
-        "scope" : [ "com.android.talkback" ],
+        "scope" : [ "org.nvda-project" ],
         "type" : "helpMessage"
       } ]
     },
     "noise" : {
       "applications" : {
-        "com.android.audioManager" : {
+        "com.microsoft.windows.cursors" : {
           "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/volumeTTS" : 0.9
+            "http://registry.gpii.net/common/cursorSize" : 0.5
           }
         },
-        "com.android.settings.secure" : {
+        "com.microsoft.windows.highContrast" : {
           "active" : true,
           "settings" : {
+            "http://registry.gpii.net/common/highContrastEnabled" : true
+          }
+        },
+        "com.microsoft.windows.mouseTrailing" : {
+          "active" : true,
+          "settings" : {
+            "http://registry.gpii.net/common/mouseTrailing" : 10.0
+          }
+        },
+        "org.chrome.cloud4chrome" : {
+          "active" : true,
+          "settings" : {
+            "http://registry.gpii.net/applications/org.chrome.cloud4chrome" : {
+              "fontSize" : "medium"
+            }
+          }
+        },
+        "org.nvda-project" : {
+          "active" : true,
+          "settings" : {
+            "http://registry.gpii.net/common/screenReaderTTSEnabled" : true,
             "http://registry.gpii.net/common/speechRate" : 300.0
-          }
-        },
-        "com.android.talkback" : {
-          "active" : true,
-          "settings" : {
-            "http://registry.gpii.net/common/screenReaderTTSEnabled" : true
           }
         }
       },
@@ -76,7 +112,7 @@
             "message" : "Η εφαρμογή υποστηρικτικής τεχνολογίας που προτιμάτε δεν είναι διαθέσιμη. Επιλέξαμε για εσάς μια εναλλακτική εφαρμογή."
           }
         },
-        "scope" : [ "com.android.talkback" ],
+        "scope" : [ "org.nvda-project" ],
         "type" : "helpMessage"
       } ]
     }
