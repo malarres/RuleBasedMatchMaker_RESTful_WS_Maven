@@ -643,6 +643,30 @@
             ]
         },
         {
+            "@id":"http://registry.gpii.net/applications/com.microsoft.windows.displaySettings",
+            "@type":"c4a:Solution",
+            "c4a:id":"http://registry.gpii.net/applications/com.microsoft.windows.displaySettings",
+            "c4a:name":"com.microsoft.windows.displaySettings",
+            "c4a:class":[
+                {
+                    "@type":"c4a:AccessibilitySetting",
+                    "@id":"c4a:builtin"
+                }
+            ]
+        },
+        {
+            "@id":"http://registry.gpii.net/applications/com.texthelp.readWriteGold",
+            "@type":"c4a:Solution",
+            "c4a:id":"http://registry.gpii.net/applications/com.texthelp.readWriteGold",
+            "c4a:name":"com.texthelp.readWriteGold",
+            "c4a:class":[
+                {
+                    "@type":"c4a:AccessibilitySolution",
+                    "@id":"c4a:os"
+                }
+            ]
+        },                
+        {
             "@id":"c4a:screenreader",
             "@type":"c4a:AssistiveTechnology",
             "c4a:name":"ScreenReader"
@@ -661,6 +685,11 @@
             "@id":"c4a:browser",
             "@type":"c4a:AccessibilitySolution",
             "c4a:name":"BrowserFeatures"
-        }
+        },
+        {
+            "@id":"c4a:os",
+            "@type":"c4a:AccessibilitySolution",
+            "c4a:name":"DesktopSoftware"
+        }        
     ]
 }
