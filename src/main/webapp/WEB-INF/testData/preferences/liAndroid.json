@@ -7,7 +7,8 @@
 					"http://registry.gpii.net/common/screenReaderTTSEnabled": true,
                     "http://registry.gpii.net/common/speechRate": 200,
                     "http://registry.gpii.net/common/magnifierEnabled": true, 	
-					"http://registry.gpii.net/common/magnification": 1.5 
+					"http://registry.gpii.net/common/magnification": 1.5 ,
+					"http://registry.gpii.net/common/matchMakerType": "RuleBased"						
                 },
                 "metadata": [
                     {
@@ -27,7 +28,8 @@
                     "http://registry.gpii.net/common/speechRate": 200,
                     "http://registry.gpii.net/common/magnifierEnabled": true, 	
 					"http://registry.gpii.net/common/magnification": 2.0, 
-					"http://registry.gpii.net/common/highContrastEnabled": true
+					"http://registry.gpii.net/common/highContrastEnabled": true,
+					"http://registry.gpii.net/common/matchMakerType": "RuleBased"						
                 },
                 "metadata": [
                     {
@@ -57,23 +59,8 @@
         },
         "solutions": [
             {
-                "id": "com.android.talkback"
-            },
-            {
-                "id": "com.android.persistentConfiguration"
-            },
-            {
-                "id": "com.android.audioManager"
-            },
-            {
-                "id": "com.android.settings.system"
-            },
-            {
-                "id": "com.android.settings.secure"
-            },
-            {
                 "id": "es.codefactory.android.app.ma"
-            }			
+            }		
         ]
     },
     "environmentReporter": {},

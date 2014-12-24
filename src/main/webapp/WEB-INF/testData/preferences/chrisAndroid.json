@@ -7,7 +7,10 @@
                     "http://registry.gpii.net/common/screenReaderTTSEnabled": true,
                     "http://registry.gpii.net/common/screenReaderBrailleOutput": true,
                     "http://registry.gpii.net/common/speechRate": 350,
-					"http://registry.gpii.net/common/matchMakerType": "RuleBased"					
+					"http://registry.gpii.net/applications/com.microsoft.windows.displaySettings": { 
+						"isActive": true
+					},					
+					"http://registry.gpii.net/common/matchMakerType": "RuleBased"			
                 },
                 "metadata": [
                     {
@@ -27,21 +30,6 @@
             "version": "3.0.31-693204"
         },
         "solutions": [
-            {
-                "id": "com.android.talkback"
-            },
-            {
-                "id": "com.android.persistentConfiguration"
-            },
-            {
-                "id": "com.android.audioManager"
-            },
-            {
-                "id": "com.android.settings.system"
-            },
-            {
-                "id": "com.android.settings.secure"
-            },
             {
                 "id": "es.codefactory.android.app.ma"
             }			

@@ -27,7 +27,7 @@
 
 equal(?p_id, ?set_id)
 
-makeSkolem(?newConfig, ?solution)
+makeSkolem(?newConfig, ?solution, ?if)
 makeSkolem(?newSetting, ?setting, ?pref)
 ->
 (?if c4a:refersTo ?newConfig)
@@ -62,7 +62,7 @@ makeSkolem(?newSetting, ?setting, ?pref)
 
 equal(?prefSol_id, ?instSol_id)
 
-makeSkolem(?newConfig, ?solution)
+makeSkolem(?newConfig, ?solution, ?if)
 makeSkolem(?newSetting, ?pref, ?prefSetting)
 ->
 (?if c4a:refersTo ?newConfig)

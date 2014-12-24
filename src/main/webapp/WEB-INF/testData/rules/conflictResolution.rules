@@ -1,9 +1,8 @@
 	@prefix c4a: <http://rbmm.org/schemas/cloud4all/0.1/>.
 	@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 
-[Res1a:
+[Res1aJustOnePreferred:
 	(?conflict rdf:type c4a:Conflict)
-	(?conflict c4a:resolution "preferred")
 	(?conflict c4a:class ?class)
 	(?conflict c4a:refersTo ?config)
 	(?config c4a:isActive "true")
@@ -23,7 +22,7 @@
 	noValue(?conflict c4a:activated ?config_b)
 	noValue(?conflict c4a:activated ?config)
 	->
-	drop(4)
+	drop(3)
 	(?config c4a:isActive "false")
  	(?conflict c4a:activated ?config_b)
 	print('***********Resolution A MSC ******************')
@@ -33,9 +32,8 @@
 	print('activated solution: ' ?sol_b)	
 ]
 
-[Res1b:
+[Res1bTwoSolPreferred:
 	(?conflict rdf:type c4a:Conflict)
-	(?conflict c4a:resolution "preferred")
 	(?conflict c4a:class ?class)
 	(?conflict c4a:refersTo ?config)
 	(?conflict c4a:activated ?config)
@@ -60,39 +58,6 @@
 	(?config c4a:isActive "false")
 	(?conflict c4a:deactivated ?config)
 	print('*********** Resolution B MSC ******************')
-	print('CONTEXT: ' ?if_id)
-	print('conflict: ' ?class)
-	print('deactivated solution: ' ?sol)	
-	print('activated solution: ' ?sol_b)	
-]
-
-[Res1c:
-	(?conflict rdf:type c4a:Conflict)
-	(?conflict c4a:class ?class)
-	(?conflict c4a:refersTo ?config)	
-	(?config c4a:isActive "true")
-	(?config c4a:refersTo ?sol)
-	
-	(?conflict c4a:refersTo ?config_b)
-	(?config_b c4a:isActive "true")
-	(?config_b c4a:refersTo ?sol_b)
-
-	(?if rdf:type c4a:InferredConfiguration)
-	(?if c4a:id ?if_id)	
-	(?if c4a:refersTo ?config)
-	(?if c4a:refersTo ?config_b)
-	
-	notEqual(?config, ?config_b)
-	noValue(?conflict c4a:activated ?config)
-	noValue(?conflict c4a:activated ?config_b)	
-	noValue(?conflict c4a:resolution "preferred")
-	noValue(?conflict c4a:deactivated ?x)
-	->
-	drop(3)
-	(?config c4a:isActive "false")
-	(?conflict c4a:deactivated ?config)
-	(?conflict c4a:activated ?config_b)
-	print('*********** Resolution C MSC******************')
 	print('CONTEXT: ' ?if_id)
 	print('conflict: ' ?class)
 	print('deactivated solution: ' ?sol)	

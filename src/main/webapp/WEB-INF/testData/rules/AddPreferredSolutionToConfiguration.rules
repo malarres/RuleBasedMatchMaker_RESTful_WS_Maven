@@ -13,7 +13,6 @@
 	equal(?prefsol, ?sol_id)
 	->
 	(?config c4a:solPreferred "true")
-	(?conflict c4a:resolution "preferred")
 	print('**********PREFDERRED SOLUTION **************')
 	print('CONTEXT: ' ?if_id)
 	print('SOLUTION: ' ?sol_id)
