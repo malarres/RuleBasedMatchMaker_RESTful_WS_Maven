@@ -22,26 +22,21 @@ import org.json.JSONException;
  
 public class JsonLDManager 
 {
+    public static final int FINAL_SERVER_DEPLOYMENT_MODE = 0;
+    public static final int JETTY_INTEGRATION_TESTS_MODE = 1;
+    public int currentDeploymentMode;
+    public String WEBINF_PATH;
 
+    public boolean PERFORM_INTEGRATION_TESTS;
     public boolean INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD; 
     public boolean USE_THE_REAL_ONTOLOGY;
     
     //static input files
-    public String semanticsSolutionsFilePath;
-    public String semanticsSolutionsGeneratedFromOwlFilePath;
-    public String feedbackMessagesFilePath;    
     public String [] semantics;
-    //public String explodePrefTermsFilePath;
-    
-    public String mappingRulesFilePath;
-    public String decConflictsRulesFilePath;
-    public String resConflictsRulesFilePath;
-    public String addPrefSolutionToConfig;
-    public String addFeebackRulesFilePath;
-
+    public String semanticsGeneratedFromOwlFilePath;
     public String [] rules; 
-    
     public String [] queries; 
+    public String solutionsOntology;
     
     public String querryCondPath;
     public String querryAppsPath;
@@ -71,66 +66,51 @@ public class JsonLDManager
         {
             if(f.exists())  //Deployment mode
             {
+                currentDeploymentMode = FINAL_SERVER_DEPLOYMENT_MODE;
                 configInputStream = new FileInputStream(System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/config.properties");
+            
                 //read properties file
                 prop.load(configInputStream);
                 
-                //static input files
-                //semanticsSolutionsFilePath = System.getProperty("user.dir") + prop.getProperty("semanticsSolutionsFilePath_DEPLOYMENT");
-                semanticsSolutionsGeneratedFromOwlFilePath = System.getProperty("user.dir") + prop.getProperty("semanticsSolutionsGeneratedFromOwlFilePath_DEPLOYMENT");
-                semantics = prop.getProperty("semanticsSolutionsFilePath_DEPLOYMENT").split(";");
-                //debug
-                initialJsonInputFilepath = System.getProperty("user.dir") + prop.getProperty("initialJsonInputFilepath_DEPLOYMENT");
-                transformedJsonLDInputFilepath = System.getProperty("user.dir") + prop.getProperty("transformedJsonLDInputFilepath_DEPLOYMENT");
-                initialOntModelFilepath = System.getProperty("user.dir") + prop.getProperty("initialOntModelFilepath_DEPLOYMENT");
-                inferredOntModelFilepath = System.getProperty("user.dir") + prop.getProperty("inferredOntModelFilepath_DEPLOYMENT");
-                rbmmJsonOutputFilepath = System.getProperty("user.dir") + prop.getProperty("rbmmJsonOutputFilepath_DEPLOYMENT");
-                //-debug
-
-                //explodePrefTermsFilePath = System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/semantics/explodePreferenceTerms.jsonld";
-
-                /**
-                 * TODO find a new location, not in folder test data; split ontology alignment rules from matching rules 
-                 */
-                //mappingRulesFilePath = System.getProperty("user.dir") + prop.getProperty("mappingRulesFilePath_DEPLOYMENT");
-                rules = prop.getProperty("mappingRulesFilePath_DEPLOYMENT").split(";");
-
-                // queries 
-                queries = prop.getProperty("querryPaths_DEPLOYMENT").split(";");
-                //querryCondPath = System.getProperty("user.dir") + prop.getProperty("querryCondPath_DEPLOYMENT");
-                //querryAppsPath = System.getProperty("user.dir") + prop.getProperty("querryAppsPath_DEPLOYMENT");
+                WEBINF_PATH = prop.getProperty("DEPLOYMENT_WEBINF_PATH");
             }
             else            //Jetty integration tests
             {
+                currentDeploymentMode = JETTY_INTEGRATION_TESTS_MODE;
                 configInputStream = new FileInputStream(System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/config.properties");
+            
                 //read properties file
                 prop.load(configInputStream);
                 
-                //static input files
-                //semanticsSolutionsFilePath = System.getProperty("user.dir") + prop.getProperty("semanticsSolutionsFilePath_JETTY");
-                //semanticsSolutionsGeneratedFromOwlFilePath = System.getProperty("user.dir") + prop.getProperty("semanticsSolutionsGeneratedFromOwlFilePath_JETTY");
-                semantics = prop.getProperty("semanticsSolutionsFilePath_JETTY").split(";");
-                //debug
-                initialJsonInputFilepath = System.getProperty("user.dir") + prop.getProperty("initialJsonInputFilepath_JETTY");
-                transformedJsonLDInputFilepath = System.getProperty("user.dir") + prop.getProperty("transformedJsonLDInputFilepath_JETTY");
-                initialOntModelFilepath = System.getProperty("user.dir") + prop.getProperty("initialOntModelFilepath_JETTY");
-                inferredOntModelFilepath = System.getProperty("user.dir") + prop.getProperty("inferredOntModelFilepath_JETTY");
-                rbmmJsonOutputFilepath = System.getProperty("user.dir") + prop.getProperty("rbmmJsonOutputFilepath_JETTY");
-                //-debug
-
-                //explodePrefTermsFilePath = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/semantics/explodePreferenceTerms.jsonld";
-                //mappingRulesFilePath = System.getProperty("user.dir") + prop.getProperty("mappingRulesFilePath_JETTY");
-                rules = prop.getProperty("mappingRulesFilePath_JETTY").split(";");
-                
-                queries = prop.getProperty("querryPaths_JETTY").split(";");
-                //querryCondPath = System.getProperty("user.dir") + prop.getProperty("querryCondPath_JETTY");
-                //querryAppsPath = System.getProperty("user.dir") + prop.getProperty("querryAppsPath_JETTY");
+                WEBINF_PATH = prop.getProperty("JETTY_WEBINF_PATH");
             }
+                    
+            //static input files
+            semantics = prop.getProperty("semantics").split(";");
+            semanticsGeneratedFromOwlFilePath = prop.getProperty("semanticsGeneratedFromOwlFilePath");
+            
+            /**
+             * TODO find a new location, not in folder test data; split ontology alignment rules from matching rules 
+             */
+            rules = prop.getProperty("rules").split(";");
+            // queries 
+            queries = prop.getProperty("queries").split(";");
+            solutionsOntology = System.getProperty("user.dir") + WEBINF_PATH + prop.getProperty("solutionsOntology");
+            
+            //debug
+            initialJsonInputFilepath = System.getProperty("user.dir") + WEBINF_PATH + prop.getProperty("initialJsonInputFilepath");
+            transformedJsonLDInputFilepath = System.getProperty("user.dir") + WEBINF_PATH + prop.getProperty("transformedJsonLDInputFilepath");
+            initialOntModelFilepath = System.getProperty("user.dir") + WEBINF_PATH + prop.getProperty("initialOntModelFilepath");
+            inferredOntModelFilepath = System.getProperty("user.dir") + WEBINF_PATH + prop.getProperty("inferredOntModelFilepath");
+            rbmmJsonOutputFilepath = System.getProperty("user.dir") + WEBINF_PATH + prop.getProperty("rbmmJsonOutputFilepath");
+            //-debug
+            
+            PERFORM_INTEGRATION_TESTS = Boolean.parseBoolean(prop.getProperty("PERFORM_INTEGRATION_TESTS"));
             INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD = Boolean.parseBoolean(prop.getProperty("INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD"));
             USE_THE_REAL_ONTOLOGY = Boolean.parseBoolean(prop.getProperty("USE_THE_REAL_ONTOLOGY"));
             
             if(USE_THE_REAL_ONTOLOGY)
-                semanticsSolutionsFilePath = semanticsSolutionsGeneratedFromOwlFilePath;
+                semantics[0] = semanticsGeneratedFromOwlFilePath;
 
         }
         catch(Exception e)
@@ -217,9 +197,9 @@ public class JsonLDManager
     
     public Model inferConfiguration(Model model, String[] rulePths)
     {
-        for (String path : rulePths) {
-        	
-        	File f = new File(System.getProperty("user.dir")+path);        	
+        for (String path : rulePths) 
+        {
+            File f = new File(System.getProperty("user.dir")+ WEBINF_PATH + path);        	
             if (f.exists()) 
             {
 	            List<Rule> rules = Rule.rulesFromURL("file:"+f.getPath());

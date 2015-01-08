@@ -23,7 +23,7 @@ public class RBMM_WebService
     { 
         //transform .owl to JSON-LD
         TransformerManager.getInstance().transformOwlToJSONLD();
-        return Response.status(200).entity("OK - '" + JsonLDManager.getInstance().semanticsSolutionsGeneratedFromOwlFilePath + "' file was generated.\n").build();
+        return Response.status(200).entity("OK - '" + JsonLDManager.getInstance().semanticsGeneratedFromOwlFilePath + "' file was generated.\n").build();
     }
     
     //http://localhost:8080/CLOUD4All_RBMM_Restful_WS/RBMM/runJSONLDRules

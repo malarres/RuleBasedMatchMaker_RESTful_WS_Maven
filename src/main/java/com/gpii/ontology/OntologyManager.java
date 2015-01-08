@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import com.github.jsonldjava.jena.JenaJSONLD;
+import com.gpii.jsonld.JsonLDManager;
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
@@ -60,36 +61,7 @@ public class OntologyManager
     
     public void loadOntology()
     {
-        //read properties file
-        Properties prop = new Properties();
-	InputStream configInputStream = null;
-        
-        String owlPathStr = "";     
-        File f = new File(System.getProperty("user.dir") + "/../webapps/CLOUD4All_RBMM_Restful_WS/WEB-INF/config.properties");
-        try
-        {
-            if(f.exists())  //deployment mode
-            {
-                configInputStream = new FileInputStream(System.getProperty("user.dir") + "/../webapps/CLOUD4All_SST_Restful_WS/WEB-INF/config.properties");
-                //read properties file
-                prop.load(configInputStream);
-
-                owlPathStr = System.getProperty("user.dir") + prop.getProperty("solutionsOntology_DEPLOYMENT");
-            }
-            else            //Jetty integration tests
-            {
-                configInputStream = new FileInputStream(System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/config.properties");
-                //read properties file
-                prop.load(configInputStream);
-                
-                owlPathStr = System.getProperty("user.dir") + prop.getProperty("solutionsOntology_JETTY");
-            }
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        
+        String owlPathStr = JsonLDManager.getInstance().solutionsOntology;
         InputStream in = null;
         
         try {
@@ -322,11 +294,10 @@ public class OntologyManager
     public void populateJSONLDInput(String transIn, String[] uris)
     {
     	InputStream is = new ByteArrayInputStream( transIn.getBytes() );
-   	
         _dmodel = ModelFactory.createOntologyModel().read(is, null, "JSON-LD");
 
         for (int i=0; i < uris.length; i++)
-            _dmodel.read(System.getProperty("user.dir") + uris[i]);
+            _dmodel.read(System.getProperty("user.dir") + JsonLDManager.getInstance().WEBINF_PATH + uris[i]);
     }
     
     public String testHello(String tmpName)
