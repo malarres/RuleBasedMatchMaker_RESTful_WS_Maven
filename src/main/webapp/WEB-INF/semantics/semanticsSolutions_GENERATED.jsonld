@@ -5,9 +5,14 @@
     },
     "@graph": [
         {
-            "@id": "c4a:com.microsoft.windows.mouseTrailing",
+            "@id": "http://registry.gpii.net/applications/com.microsoft.windows.mouseTrailing",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/com.microsoft.windows.mouseTrailing",
+            "c4a:class": [{
+                "@className": "MouseControlSoftware",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.microsoft.windows.mouseTrailing",
             "c4a:name": "com.microsoft.windows.mouseTrailing",
             "c4a:settings": [{
                 "@type": "c4a:Setting",
@@ -22,9 +27,14 @@
             }]
         },
         {
-            "@id": "c4a:MSSurface.assistant",
+            "@id": "http://registry.gpii.net/applications/MSSurface.assistant",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/MSSurface.assistant",
+            "c4a:class": [{
+                "@className": "PortableComputersAndPersonalDigitalAssistants",
+                "@id": "...unknown...",
+                "@type": "...unknown..."
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/MSSurface.assistant",
             "c4a:name": "MSSurface.assistant",
             "c4a:settings": [
                 {
@@ -101,9 +111,14 @@
             ]
         },
         {
-            "@id": "c4a:firefox_10_0_1.webBrowser",
+            "@id": "http://registry.gpii.net/applications/firefox_10_0_1.webBrowser",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/firefox_10_0_1.webBrowser",
+            "c4a:class": [{
+                "@className": "WebBrowsers",
+                "@id": "c4a:browser",
+                "@type": "c4a:AccessibilitySolution"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/firefox_10_0_1.webBrowser",
             "c4a:name": "firefox_10_0_1.webBrowser",
             "c4a:settings": [
                 {
@@ -198,6 +213,12 @@
                 },
                 {
                     "@type": "c4a:Setting",
+                    "c4a:defaultValue": "14",
+                    "c4a:name": "font.minimum-size.x-western",
+                    "c4a:primitive_type": "int"
+                },
+                {
+                    "@type": "c4a:Setting",
                     "c4a:defaultValue": "0",
                     "c4a:name": "browser.display.use_document_fonts",
                     "c4a:primitive_type": "int"
@@ -207,12 +228,6 @@
                     "c4a:defaultValue": "false",
                     "c4a:name": "Accessibility.blockautorefresh",
                     "c4a:primitive_type": "boolean"
-                },
-                {
-                    "@type": "c4a:Setting",
-                    "c4a:defaultValue": "14",
-                    "c4a:name": "font.minimum-size.x-western",
-                    "c4a:primitive_type": "int"
                 },
                 {
                     "@type": "c4a:Setting",
@@ -301,11 +316,22 @@
             ]
         },
         {
-            "@id": "c4a:org.chrome.cloud4chrome",
+            "@id": "http://registry.gpii.net/applications/org.chrome.cloud4chrome",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.chrome.cloud4chrome",
+            "c4a:class": [{
+                "@className": "MagnifyingSoftware",
+                "@id": "c4a:browser",
+                "@type": "c4a:AccessibilitySolution"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.chrome.cloud4chrome",
             "c4a:name": "org.chrome.cloud4chrome",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:defaultValue": "false",
@@ -357,9 +383,14 @@
             ]
         },
         {
-            "@id": "c4a:IE8.webBrowser",
+            "@id": "http://registry.gpii.net/applications/IE8.webBrowser",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/IE8.webBrowser",
+            "c4a:class": [{
+                "@className": "WebBrowsers",
+                "@id": "c4a:browser",
+                "@type": "c4a:AccessibilitySolution"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/IE8.webBrowser",
             "c4a:name": "IE8.webBrowser",
             "c4a:settings": [
                 {
@@ -501,9 +532,14 @@
             ]
         },
         {
-            "@id": "c4a:com.texthelp.readWriteGold",
+            "@id": "http://registry.gpii.net/applications/com.texthelp.readWriteGold",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/com.texthelp.readWriteGold",
+            "c4a:class": [{
+                "@className": "AlternativeInputDevices",
+                "@id": "c4a:os",
+                "@type": "c4a:AccessibilitySolution"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.texthelp.readWriteGold",
             "c4a:name": "com.texthelp.readWriteGold",
             "c4a:settings": [
                 {
@@ -4275,9 +4311,14 @@
             ]
         },
         {
-            "@id": "c4a:speechStreamTextHelp.alternativeInput",
+            "@id": "http://registry.gpii.net/applications/speechStreamTextHelp.alternativeInput",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/speechStreamTextHelp.alternativeInput",
+            "c4a:class": [{
+                "@className": "AlternativeInputDevices",
+                "@id": "c4a:os",
+                "@type": "c4a:AccessibilitySolution"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/speechStreamTextHelp.alternativeInput",
             "c4a:name": "speechStreamTextHelp.alternativeInput",
             "c4a:settings": [
                 {
@@ -4376,7 +4417,7 @@
                 },
                 {
                     "@type": "c4a:Setting",
-                    "c4a:defaultValue": "[This relates to persistent highlighting and sticky notes. This gives the location to store the data to. If omitted this will be the same as?eba_server?if it is undefined.]",
+                    "c4a:defaultValue": "[This relates to persistent highlighting and sticky notes. This gives the location to store the data to. If omitted this will be the same as�eba_server�if it is undefined.]",
                     "c4a:name": "storage_url",
                     "c4a:primitive_type": "string"
                 },
@@ -4525,7 +4566,7 @@
                 },
                 {
                     "@type": "c4a:Setting",
-                    "c4a:defaultValue": "[This is used alongside?eba_cust_id.]",
+                    "c4a:defaultValue": "[This is used alongside�eba_cust_id.]",
                     "c4a:name": "eba_book_id",
                     "c4a:primitive_type": "string"
                 },
@@ -4716,7 +4757,7 @@
                 },
                 {
                     "@type": "c4a:Setting",
-                    "c4a:defaultValue": "[This is used alongside?eba_cust_id.]",
+                    "c4a:defaultValue": "[This is used alongside�eba_cust_id.]",
                     "c4a:name": "eba_page_id",
                     "c4a:primitive_type": "string"
                 },
@@ -4758,23 +4799,33 @@
                 },
                 {
                     "@type": "c4a:Setting",
-                    "c4a:defaultValue": "[This is used with the server side pronunciation feature, sticky note feature and the persistent highlighting feature. For these features the page needseba_cust_id, eba_book_id?and?eba_page_idto be set for it. The?eba_cust_id?value is provided by Texthelp and the other two values provided by the client. All values are string values.]",
+                    "c4a:defaultValue": "[This is used with the server side pronunciation feature, sticky note feature and the persistent highlighting feature. For these features the page needseba_cust_id, eba_book_id�and�eba_page_idto be set for it. The�eba_cust_id�value is provided by Texthelp and the other two values provided by the client. All values are string values.]",
                     "c4a:name": "eba_cust_id",
                     "c4a:primitive_type": "string"
                 }
             ]
         },
         {
-            "@id": "c4a:MSSurface.alternativeInput",
+            "@id": "http://registry.gpii.net/applications/MSSurface.alternativeInput",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/MSSurface.alternativeInput",
+            "c4a:class": [{
+                "@className": "AlternativeInputDevices",
+                "@id": "c4a:os",
+                "@type": "c4a:AccessibilitySolution"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/MSSurface.alternativeInput",
             "c4a:name": "MSSurface.alternativeInput",
             "c4a:settings": []
         },
         {
-            "@id": "c4a:com.microsoft.windows.cursors",
+            "@id": "http://registry.gpii.net/applications/com.microsoft.windows.cursors",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/com.microsoft.windows.cursors",
+            "c4a:class": [{
+                "@className": "SoftwareToModifyThePointerAppearance",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.microsoft.windows.cursors",
             "c4a:name": "com.microsoft.windows.cursors",
             "c4a:settings": [
                 {
@@ -4905,9 +4956,14 @@
             ]
         },
         {
-            "@id": "c4a:eKiosk.eKiosk",
+            "@id": "http://registry.gpii.net/applications/eKiosk.eKiosk",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/eKiosk.eKiosk",
+            "c4a:class": [{
+                "@className": "eKiosks",
+                "@id": "...unknown...",
+                "@type": "...unknown..."
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/eKiosk.eKiosk",
             "c4a:name": "eKiosk.eKiosk",
             "c4a:settings": [
                 {
@@ -4973,11 +5029,22 @@
             ]
         },
         {
-            "@id": "c4a:ISO24751.screenReader",
+            "@id": "http://registry.gpii.net/applications/ISO24751.screenReader",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/ISO24751.screenReader",
+            "c4a:class": [{
+                "@className": "ScreenReaderSoftware",
+                "@id": "c4a:screenreader",
+                "@type": "c4a:AssistiveTechnology"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/ISO24751.screenReader",
             "c4a:name": "ISO24751.screenReader",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:defaultValue": "2",
@@ -5063,11 +5130,22 @@
             ]
         },
         {
-            "@id": "c4a:org.gnome.orca",
+            "@id": "http://registry.gpii.net/applications/org.gnome.orca",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.gnome.orca",
+            "c4a:class": [{
+                "@className": "ScreenReaderSoftware",
+                "@id": "c4a:screenreader",
+                "@type": "c4a:AssistiveTechnology"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.gnome.orca",
             "c4a:name": "org.gnome.orca",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:defaultValue": "required",
@@ -6054,11 +6132,22 @@
             ]
         },
         {
-            "@id": "c4a:com.android.talkback",
+            "@id": "http://registry.gpii.net/applications/com.android.talkback",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/com.android.talkback",
+            "c4a:class": [{
+                "@className": "ScreenReaderSoftware",
+                "@id": "c4a:screenreader",
+                "@type": "c4a:AssistiveTechnology"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.android.talkback",
             "c4a:name": "com.android.talkback",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:defaultValue": "100",
@@ -6105,11 +6194,22 @@
             ]
         },
         {
-            "@id": "c4a:jaws.screenReader",
+            "@id": "http://registry.gpii.net/applications/com.freedomscientific.jaws",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/jaws.screenReader",
-            "c4a:name": "jaws.screenReader",
+            "c4a:class": [{
+                "@className": "ScreenReaderSoftware",
+                "@id": "c4a:screenreader",
+                "@type": "c4a:AssistiveTechnology"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.freedomscientific.jaws",
+            "c4a:name": "com.freedomscientific.jaws",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:defaultValue": "1",
@@ -6306,14 +6406,14 @@
                 },
                 {
                     "@type": "c4a:Setting",
-                    "c4a:defaultValue": "No Annoncement",
-                    "c4a:name": "TextProcessingGroup_IndicateCapitalization",
+                    "c4a:defaultValue": "Beginner Preference",
+                    "c4a:name": "OtherSettings_VerbosityLevel",
                     "c4a:primitive_type": "string"
                 },
                 {
                     "@type": "c4a:Setting",
-                    "c4a:defaultValue": "Beginner Preference",
-                    "c4a:name": "OtherSettings_VerbosityLevel",
+                    "c4a:defaultValue": "No Annoncement",
+                    "c4a:name": "TextProcessingGroup_IndicateCapitalization",
                     "c4a:primitive_type": "string"
                 },
                 {
@@ -6751,23 +6851,47 @@
             ]
         },
         {
-            "@id": "c4a:webinsight.webAnywhere.windows",
+            "@id": "http://registry.gpii.net/applications/webinsight.webAnywhere.windows",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/webinsight.webAnywhere.windows",
+            "c4a:class": [{
+                "@className": "ScreenReaderSoftware",
+                "@id": "c4a:screenreader",
+                "@type": "c4a:AssistiveTechnology"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/webinsight.webAnywhere.windows",
             "c4a:name": "webinsight.webAnywhere.windows",
-            "c4a:settings": [{
-                "@type": "c4a:Setting",
-                "c4a:defaultValue": "(\"af\", \" bs\", \" ca\", \"zh_CN\", \"zh_TW\", \"hr\", \"cs\", \"en\", \"eo\", \"fi\", \"fr\", \"de\", \"el\", \"hu\", \"it\", \"ku\", \"lv\", \"pt\", \"pt-pt\", \"ro\", \"sr\", \"sk\", \"es\", \"sw\", \"sv\", \"ta\", \"tr\")",
-                "c4a:name": "locale",
-                "c4a:primitive_type": "string"
-            }]
+            "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled"
+                },
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:defaultValue": "(\"af\", \" bs\", \" ca\", \"zh_CN\", \"zh_TW\", \"hr\", \"cs\", \"en\", \"eo\", \"fi\", \"fr\", \"de\", \"el\", \"hu\", \"it\", \"ku\", \"lv\", \"pt\", \"pt-pt\", \"ro\", \"sr\", \"sk\", \"es\", \"sw\", \"sv\", \"ta\", \"tr\")",
+                    "c4a:name": "locale",
+                    "c4a:primitive_type": "string"
+                }
+            ]
         },
         {
-            "@id": "c4a:org.nvda-project",
+            "@id": "http://registry.gpii.net/applications/org.nvda-project",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.nvda-project",
+            "c4a:class": [{
+                "@className": "ScreenReaderSoftware",
+                "@id": "c4a:screenreader",
+                "@type": "c4a:AssistiveTechnology"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.nvda-project",
             "c4a:name": "org.nvda-project",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:defaultValue": "true",
@@ -7481,11 +7605,22 @@
             ]
         },
         {
-            "@id": "c4a:org.chrome.cloud4chrome",
+            "@id": "http://registry.gpii.net/applications/org.chrome.cloud4chrome",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.chrome.cloud4chrome",
+            "c4a:class": [{
+                "@className": "MagnifyingSoftware",
+                "@id": "c4a:browser",
+                "@type": "c4a:AccessibilitySolution"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.chrome.cloud4chrome",
             "c4a:name": "org.chrome.cloud4chrome",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:hasDescription": "unknown",
@@ -7561,11 +7696,22 @@
             ]
         },
         {
-            "@id": "c4a:Win7BuiltInNarrator.screenReader",
+            "@id": "http://registry.gpii.net/applications/Win7BuiltInNarrator.screenReader",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/Win7BuiltInNarrator.screenReader",
+            "c4a:class": [{
+                "@className": "ScreenReaderSoftware",
+                "@id": "c4a:screenreader",
+                "@type": "c4a:AssistiveTechnology"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/Win7BuiltInNarrator.screenReader",
             "c4a:name": "Win7BuiltInNarrator.screenReader",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:defaultValue": "true",
@@ -7622,11 +7768,22 @@
             ]
         },
         {
-            "@id": "c4a:com.serotek.satogo",
+            "@id": "http://registry.gpii.net/applications/com.serotek.satogo",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/com.serotek.satogo",
+            "c4a:class": [{
+                "@className": "ScreenReaderSoftware",
+                "@id": "c4a:screenreader",
+                "@type": "c4a:AssistiveTechnology"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.serotek.satogo",
             "c4a:name": "com.serotek.satogo",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:defaultValue": "(off, same voice, alternate voice)",
@@ -7756,21 +7913,39 @@
             ]
         },
         {
-            "@id": "c4a:webinsight.webAnywhere.linux",
+            "@id": "http://registry.gpii.net/applications/webinsight.webAnywhere.linux",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/webinsight.webAnywhere.linux",
+            "c4a:class": [{
+                "@className": "ScreenReaderSoftware",
+                "@id": "c4a:screenreader",
+                "@type": "c4a:AssistiveTechnology"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/webinsight.webAnywhere.linux",
             "c4a:name": "webinsight.webAnywhere.linux",
-            "c4a:settings": [{
-                "@type": "c4a:Setting",
-                "c4a:defaultValue": "(\"af\", \" bs\", \" ca\", \"zh_CN\", \"zh_TW\", \"hr\", \"cs\", \"en\", \"eo\", \"fi\", \"fr\", \"de\", \"el\", \"hu\", \"it\", \"ku\", \"lv\", \"pt\", \"pt-pt\", \"ro\", \"sr\", \"sk\", \"es\", \"sw\", \"sv\", \"ta\", \"tr\")",
-                "c4a:name": "locale",
-                "c4a:primitive_type": "string"
-            }]
+            "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled"
+                },
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:defaultValue": "(\"af\", \" bs\", \" ca\", \"zh_CN\", \"zh_TW\", \"hr\", \"cs\", \"en\", \"eo\", \"fi\", \"fr\", \"de\", \"el\", \"hu\", \"it\", \"ku\", \"lv\", \"pt\", \"pt-pt\", \"ro\", \"sr\", \"sk\", \"es\", \"sw\", \"sv\", \"ta\", \"tr\")",
+                    "c4a:name": "locale",
+                    "c4a:primitive_type": "string"
+                }
+            ]
         },
         {
-            "@id": "c4a:org.gnome.desktop.a11y.keyboard",
+            "@id": "http://registry.gpii.net/applications/org.gnome.desktop.a11y.keyboard",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.gnome.desktop.a11y.keyboard",
+            "c4a:class": [{
+                "@className": "OnScreenKeyboard",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.gnome.desktop.a11y.keyboard",
             "c4a:name": "org.gnome.desktop.a11y.keyboard",
             "c4a:settings": [
                 {
@@ -7871,58 +8046,103 @@
             ]
         },
         {
-            "@id": "c4a:org.gnome.desktop.a11y.applications.onscreen-keyboard",
+            "@id": "http://registry.gpii.net/applications/org.gnome.desktop.a11y.applications.onscreen-keyboard",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.gnome.desktop.a11y.applications.onscreen-keyboard",
+            "c4a:class": [{
+                "@className": "OnScreenKeyboard",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.gnome.desktop.a11y.applications.onscreen-keyboard",
             "c4a:name": "org.gnome.desktop.a11y.applications.onscreen-keyboard",
             "c4a:settings": []
         },
         {
-            "@id": "c4a:org.gnome.desktop.a11y.caribou-keyboard",
+            "@id": "http://registry.gpii.net/applications/org.gnome.desktop.a11y.caribou-keyboard",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.gnome.desktop.a11y.caribou-keyboard",
+            "c4a:class": [{
+                "@className": "OnScreenKeyboard",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.gnome.desktop.a11y.caribou-keyboard",
             "c4a:name": "org.gnome.desktop.a11y.caribou-keyboard",
             "c4a:settings": []
         },
         {
-            "@id": "c4a:com.microsoft.windows.onscreenKeyboard",
+            "@id": "http://registry.gpii.net/applications/com.microsoft.windows.onscreenKeyboard",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/com.microsoft.windows.onscreenKeyboard",
+            "c4a:class": [{
+                "@className": "OnScreenKeyboard",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.microsoft.windows.onscreenKeyboard",
             "c4a:name": "com.microsoft.windows.onscreenKeyboard",
-            "c4a:settings": []
+            "c4a:settings": [{
+                "@type": "c4a:Setting",
+                "c4a:id": "onScreenKeyboard",
+                "c4a:name": "onScreenKeyboard",
+                "c4a:refersTo": "http://registry.gpii.net/common/onScreenKeyboardEnabled"
+            }]
         },
         {
-            "@id": "c4a:WebAnywhere.digitalDocumentsReader",
+            "@id": "http://registry.gpii.net/applications/WebAnywhere.digitalDocumentsReader",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/WebAnywhere.digitalDocumentsReader",
+            "c4a:class": [{
+                "@className": "DigitalDocumentsReader",
+                "@id": "...unknown...",
+                "@type": "...unknown..."
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/WebAnywhere.digitalDocumentsReader",
             "c4a:name": "WebAnywhere.digitalDocumentsReader",
             "c4a:settings": []
         },
         {
-            "@id": "c4a:SpeechStreamTextHelp.digitalDocumentsReader",
+            "@id": "http://registry.gpii.net/applications/SpeechStreamTextHelp.digitalDocumentsReader",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/SpeechStreamTextHelp.digitalDocumentsReader",
+            "c4a:class": [{
+                "@className": "DigitalDocumentsReader",
+                "@id": "...unknown...",
+                "@type": "...unknown..."
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/SpeechStreamTextHelp.digitalDocumentsReader",
             "c4a:name": "SpeechStreamTextHelp.digitalDocumentsReader",
             "c4a:settings": []
         },
         {
-            "@id": "c4a:SATOGo.digitalDocumentsReader",
+            "@id": "http://registry.gpii.net/applications/SATOGo.digitalDocumentsReader",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/SATOGo.digitalDocumentsReader",
+            "c4a:class": [{
+                "@className": "DigitalDocumentsReader",
+                "@id": "...unknown...",
+                "@type": "...unknown..."
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/SATOGo.digitalDocumentsReader",
             "c4a:name": "SATOGo.digitalDocumentsReader",
             "c4a:settings": []
         },
         {
-            "@id": "c4a:net.gpii.smarthouses",
+            "@id": "http://registry.gpii.net/applications/net.gpii.smarthouses",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/net.gpii.smarthouses",
+            "c4a:class": [{
+                "@className": "EnvironmentalControlSoftware",
+                "@id": "...unknown...",
+                "@type": "...unknown..."
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/net.gpii.smarthouses",
             "c4a:name": "net.gpii.smarthouses",
             "c4a:settings": []
         },
         {
-            "@id": "c4a:smartHouse.environmentalControl",
+            "@id": "http://registry.gpii.net/applications/smartHouse.environmentalControl",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/smartHouse.environmentalControl",
+            "c4a:class": [{
+                "@className": "EnvironmentalControlSoftware",
+                "@id": "...unknown...",
+                "@type": "...unknown..."
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/smartHouse.environmentalControl",
             "c4a:name": "smartHouse.environmentalControl",
             "c4a:settings": [
                 {
@@ -8077,11 +8297,22 @@
             ]
         },
         {
-            "@id": "c4a:es.codefactory.android.app.ma",
+            "@id": "http://registry.gpii.net/applications/es.codefactory.android.app.ma",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/es.codefactory.android.app.ma",
+            "c4a:class": [{
+                "@className": "ScreenReaderSoftware",
+                "@id": "c4a:screenreader",
+                "@type": "c4a:AssistiveTechnology"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/es.codefactory.android.app.ma",
             "c4a:name": "es.codefactory.android.app.ma",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:defaultValue": "5",
@@ -8221,9 +8452,14 @@
             ]
         },
         {
-            "@id": "c4a:iphone.softwareInterface",
+            "@id": "http://registry.gpii.net/applications/iphone.softwareInterface",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/iphone.softwareInterface",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/iphone.softwareInterface",
             "c4a:name": "iphone.softwareInterface",
             "c4a:settings": [
                 {
@@ -9003,23 +9239,38 @@
             ]
         },
         {
-            "@id": "c4a:org.gnome.shell.overrides",
+            "@id": "http://registry.gpii.net/applications/org.gnome.shell.overrides",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.gnome.shell.overrides",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.gnome.shell.overrides",
             "c4a:name": "org.gnome.shell.overrides",
             "c4a:settings": []
         },
         {
-            "@id": "c4a:org.gnome.desktop.wm.preferences",
+            "@id": "http://registry.gpii.net/applications/org.gnome.desktop.wm.preferences",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.gnome.desktop.wm.preferences",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.gnome.desktop.wm.preferences",
             "c4a:name": "org.gnome.desktop.wm.preferences",
             "c4a:settings": []
         },
         {
-            "@id": "c4a:com.android.audioManager",
+            "@id": "http://registry.gpii.net/applications/com.android.audioManager",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/com.android.audioManager",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.android.audioManager",
             "c4a:name": "com.android.audioManager",
             "c4a:settings": [
                 {
@@ -9047,9 +9298,14 @@
             ]
         },
         {
-            "@id": "c4a:windowsPhone.softwareInterface",
+            "@id": "http://registry.gpii.net/applications/windowsPhone.softwareInterface",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/windowsPhone.softwareInterface",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/windowsPhone.softwareInterface",
             "c4a:name": "windowsPhone.softwareInterface",
             "c4a:settings": [
                 {
@@ -9661,9 +9917,14 @@
             ]
         },
         {
-            "@id": "c4a:com.android.settings.secure",
+            "@id": "http://registry.gpii.net/applications/com.android.settings.secure",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/com.android.settings.secure",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.android.settings.secure",
             "c4a:name": "com.android.settings.secure",
             "c4a:settings": [
                 {
@@ -9691,9 +9952,14 @@
             ]
         },
         {
-            "@id": "c4a:nokiaS40.softwareInterface",
+            "@id": "http://registry.gpii.net/applications/nokiaS40.softwareInterface",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/nokiaS40.softwareInterface",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/nokiaS40.softwareInterface",
             "c4a:name": "nokiaS40.softwareInterface",
             "c4a:settings": [
                 {
@@ -10197,9 +10463,14 @@
             ]
         },
         {
-            "@id": "c4a:trace.easyOne.communicator.windows",
+            "@id": "http://registry.gpii.net/applications/trace.easyOne.communicator.windows",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/trace.easyOne.communicator.windows",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/trace.easyOne.communicator.windows",
             "c4a:name": "trace.easyOne.communicator.windows",
             "c4a:settings": [
                 {
@@ -10283,16 +10554,26 @@
             ]
         },
         {
-            "@id": "c4a:trace.easyOne.communicator.linux",
+            "@id": "http://registry.gpii.net/applications/trace.easyOne.communicator.linux",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/trace.easyOne.communicator.linux",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/trace.easyOne.communicator.linux",
             "c4a:name": "trace.easyOne.communicator.linux",
             "c4a:settings": []
         },
         {
-            "@id": "c4a:eu.singularlogic.pixelsense.sociable",
+            "@id": "http://registry.gpii.net/applications/eu.singularlogic.pixelsense.sociable",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/eu.singularlogic.pixelsense.sociable",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/eu.singularlogic.pixelsense.sociable",
             "c4a:name": "eu.singularlogic.pixelsense.sociable",
             "c4a:settings": [
                 {
@@ -10329,9 +10610,14 @@
             ]
         },
         {
-            "@id": "c4a:org.gnome.desktop.interface",
+            "@id": "http://registry.gpii.net/applications/org.gnome.desktop.interface",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.gnome.desktop.interface",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.gnome.desktop.interface",
             "c4a:name": "org.gnome.desktop.interface",
             "c4a:settings": [
                 {
@@ -17941,14 +18227,14 @@
                 },
                 {
                     "@type": "c4a:Setting",
-                    "c4a:defaultValue": "1280",
-                    "c4a:name": "Dasher_ScreenWidth",
+                    "c4a:defaultValue": "0",
+                    "c4a:name": "Dasher_SocketInputXMinTimes1000",
                     "c4a:primitive_type": "int"
                 },
                 {
                     "@type": "c4a:Setting",
-                    "c4a:defaultValue": "0",
-                    "c4a:name": "Dasher_SocketInputXMinTimes1000",
+                    "c4a:defaultValue": "1280",
+                    "c4a:name": "Dasher_ScreenWidth",
                     "c4a:primitive_type": "int"
                 },
                 {
@@ -18784,9 +19070,14 @@
             ]
         },
         {
-            "@id": "c4a:socialNetworkApp.softwareInterface",
+            "@id": "http://registry.gpii.net/applications/socialNetworkApp.softwareInterface",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/socialNetworkApp.softwareInterface",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/socialNetworkApp.softwareInterface",
             "c4a:name": "socialNetworkApp.softwareInterface",
             "c4a:settings": [
                 {
@@ -18840,16 +19131,26 @@
             ]
         },
         {
-            "@id": "c4a:org.gnome.nautilus",
+            "@id": "http://registry.gpii.net/applications/org.gnome.nautilus",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.gnome.nautilus",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.gnome.nautilus",
             "c4a:name": "org.gnome.nautilus",
             "c4a:settings": []
         },
         {
-            "@id": "c4a:Maavis.softwareInterface",
+            "@id": "http://registry.gpii.net/applications/Maavis.softwareInterface",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/Maavis.softwareInterface",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/Maavis.softwareInterface",
             "c4a:name": "Maavis.softwareInterface",
             "c4a:settings": [
                 {
@@ -19037,9 +19338,14 @@
             ]
         },
         {
-            "@id": "c4a:com.android.settings.system",
+            "@id": "http://registry.gpii.net/applications/com.android.settings.system",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/com.android.settings.system",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.android.settings.system",
             "c4a:name": "com.android.settings.system",
             "c4a:settings": [
                 {
@@ -19076,7 +19382,7 @@
                 {
                     "@type": "c4a:Setting",
                     "c4a:hasDescription": "unknown",
-                    "c4a:hasValueSpace": "0(0?), 1(90?), 2(180?), 3(270?)",
+                    "c4a:hasValueSpace": "0(0�), 1(90�), 2(180�), 3(270�)",
                     "c4a:id": "http://registry.gpii.net/application/com.android.settings.system/user_rotation",
                     "c4a:isExactMatching": true,
                     "c4a:name": "default_rotation",
@@ -19096,9 +19402,14 @@
             ]
         },
         {
-            "@id": "c4a:com.android.persistentConfiguration",
+            "@id": "http://registry.gpii.net/applications/com.android.persistentConfiguration",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/com.android.persistentConfiguration",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.android.persistentConfiguration",
             "c4a:name": "com.android.persistentConfiguration",
             "c4a:settings": [
                 {
@@ -19127,9 +19438,14 @@
             ]
         },
         {
-            "@id": "c4a:nokiaS60.softwareInterface",
+            "@id": "http://registry.gpii.net/applications/nokiaS60.softwareInterface",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/nokiaS60.softwareInterface",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/nokiaS60.softwareInterface",
             "c4a:name": "nokiaS60.softwareInterface",
             "c4a:settings": [
                 {
@@ -19633,9 +19949,14 @@
             ]
         },
         {
-            "@id": "c4a:android.softwareInterface",
+            "@id": "http://registry.gpii.net/applications/android.softwareInterface",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/android.softwareInterface",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/android.softwareInterface",
             "c4a:name": "android.softwareInterface",
             "c4a:settings": [
                 {
@@ -20781,9 +21102,14 @@
             ]
         },
         {
-            "@id": "c4a:dtv.softwareInterface",
+            "@id": "http://registry.gpii.net/applications/dtv.softwareInterface",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/dtv.softwareInterface",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/dtv.softwareInterface",
             "c4a:name": "dtv.softwareInterface",
             "c4a:settings": [
                 {
@@ -20879,9 +21205,14 @@
             ]
         },
         {
-            "@id": "c4a:org.gnome.desktop.a11y.applications",
+            "@id": "http://registry.gpii.net/applications/org.gnome.desktop.a11y.applications",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.gnome.desktop.a11y.applications",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.gnome.desktop.a11y.applications",
             "c4a:name": "org.gnome.desktop.a11y.applications",
             "c4a:settings": [
                 {
@@ -20907,9 +21238,14 @@
             ]
         },
         {
-            "@id": "c4a:org.alsa-project",
+            "@id": "http://registry.gpii.net/applications/org.alsa-project",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.alsa-project",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.alsa-project",
             "c4a:name": "org.alsa-project",
             "c4a:settings": [{
                 "@type": "c4a:Setting",
@@ -20924,9 +21260,14 @@
             }]
         },
         {
-            "@id": "c4a:info.cloud4all.JME",
+            "@id": "http://registry.gpii.net/applications/info.cloud4all.JME",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/info.cloud4all.JME",
+            "c4a:class": [{
+                "@className": "SoftwareInterfacesForComputersAndMobileDevices",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/info.cloud4all.JME",
             "c4a:name": "info.cloud4all.JME",
             "c4a:settings": [
                 {
@@ -20987,25 +21328,46 @@
             ]
         },
         {
-            "@id": "c4a:SocialNetworkApp.faceToFaceCommunication",
+            "@id": "http://registry.gpii.net/applications/SocialNetworkApp.faceToFaceCommunication",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/SocialNetworkApp.faceToFaceCommunication",
+            "c4a:class": [{
+                "@className": "FaceToFaceCommunicationSoftware",
+                "@id": "...unknown...",
+                "@type": "...unknown..."
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/SocialNetworkApp.faceToFaceCommunication",
             "c4a:name": "SocialNetworkApp.faceToFaceCommunication",
             "c4a:settings": []
         },
         {
-            "@id": "c4a:EasyOneCommunicator.faceToFaceCommunication",
+            "@id": "http://registry.gpii.net/applications/EasyOneCommunicator.faceToFaceCommunication",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/EasyOneCommunicator.faceToFaceCommunication",
+            "c4a:class": [{
+                "@className": "FaceToFaceCommunicationSoftware",
+                "@id": "...unknown...",
+                "@type": "...unknown..."
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/EasyOneCommunicator.faceToFaceCommunication",
             "c4a:name": "EasyOneCommunicator.faceToFaceCommunication",
             "c4a:settings": []
         },
         {
-            "@id": "c4a:com.microsoft.windows.magnifier",
+            "@id": "http://registry.gpii.net/applications/com.microsoft.windows.magnifier",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/com.microsoft.windows.magnifier",
+            "c4a:class": [{
+                "@className": "MagnifyingSoftware",
+                "@id": "c4a:magnifier",
+                "@type": "c4a:AssistiveTechnology"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.microsoft.windows.magnifier",
             "c4a:name": "com.microsoft.windows.magnifier",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "magnifierEnabled",
+                    "c4a:name": "magnifierEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/magnifierEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:defaultValue": "true",
@@ -21109,11 +21471,35 @@
             ]
         },
         {
-            "@id": "c4a:com.yourdolphin.supernova-as",
+            "@id": "http://registry.gpii.net/applications/com.yourdolphin.supernova-as",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/com.yourdolphin.supernova-as",
+            "c4a:class": [
+                {
+                    "@className": "ScreenReaderSoftware",
+                    "@id": "c4a:screenreader",
+                    "@type": "c4a:AssistiveTechnology"
+                },
+                {
+                    "@className": "MagnifyingSoftware",
+                    "@id": "c4a:magnifier",
+                    "@type": "c4a:AssistiveTechnology"
+                }
+            ],
+            "c4a:id": "http://registry.gpii.net/applications/com.yourdolphin.supernova-as",
             "c4a:name": "com.yourdolphin.supernova-as",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled"
+                },
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "magnifierEnabled",
+                    "c4a:name": "magnifierEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/magnifierEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:defaultValue": "true",
@@ -21222,11 +21608,22 @@
             ]
         },
         {
-            "@id": "c4a:org.gnome.desktop.a11y.magnifier",
+            "@id": "http://registry.gpii.net/applications/org.gnome.desktop.a11y.magnifier",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.gnome.desktop.a11y.magnifier",
+            "c4a:class": [{
+                "@className": "MagnifyingSoftware",
+                "@id": "c4a:magnifier",
+                "@type": "c4a:AssistiveTechnology"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.gnome.desktop.a11y.magnifier",
             "c4a:name": "org.gnome.desktop.a11y.magnifier",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "magnifierEnabled",
+                    "c4a:name": "magnifierEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/magnifierEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:defaultValue": "2",
@@ -21345,11 +21742,22 @@
             ]
         },
         {
-            "@id": "c4a:ISO24751.screenMagnifier",
+            "@id": "http://registry.gpii.net/applications/ISO24751.screenMagnifier",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/ISO24751.screenMagnifier",
+            "c4a:class": [{
+                "@className": "MagnifyingSoftware",
+                "@id": "c4a:magnifier",
+                "@type": "c4a:AssistiveTechnology"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/ISO24751.screenMagnifier",
             "c4a:name": "ISO24751.screenMagnifier",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "magnifierEnabled",
+                    "c4a:name": "magnifierEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/magnifierEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:defaultValue": "[mouse, caret, focus]",
@@ -21365,11 +21773,22 @@
             ]
         },
         {
-            "@id": "c4a:org.chrome.cloud4chrome",
+            "@id": "http://registry.gpii.net/applications/org.chrome.cloud4chrome",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/org.chrome.cloud4chrome",
+            "c4a:class": [{
+                "@className": "MagnifyingSoftware",
+                "@id": "c4a:browser",
+                "@type": "c4a:AccessibilitySolution"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/org.chrome.cloud4chrome",
             "c4a:name": "org.chrome.cloud4chrome",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "screenReaderTTSEnabled",
+                    "c4a:name": "screenReaderTTSEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/screenReaderTTSEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:hasDescription": "unknown",
@@ -21445,11 +21864,22 @@
             ]
         },
         {
-            "@id": "c4a:ZoomText.screenMagnifier",
+            "@id": "http://registry.gpii.net/applications/ZoomText.screenMagnifier",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/ZoomText.screenMagnifier",
+            "c4a:class": [{
+                "@className": "MagnifyingSoftware",
+                "@id": "c4a:magnifier",
+                "@type": "c4a:AssistiveTechnology"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/ZoomText.screenMagnifier",
             "c4a:name": "ZoomText.screenMagnifier",
             "c4a:settings": [
+                {
+                    "@type": "c4a:Setting",
+                    "c4a:id": "magnifierEnabled",
+                    "c4a:name": "magnifierEnabled",
+                    "c4a:refersTo": "http://registry.gpii.net/common/magnifierEnabled"
+                },
                 {
                     "@type": "c4a:Setting",
                     "c4a:defaultValue": "0",
@@ -22421,9 +22851,14 @@
             ]
         },
         {
-            "@id": "c4a:com.microsoft.windows.highContrast",
+            "@id": "http://registry.gpii.net/applications/com.microsoft.windows.highContrast",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/com.microsoft.windows.highContrast",
+            "c4a:class": [{
+                "@className": "SoftwareForAdjustingColorCombinationAndTextSize",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.microsoft.windows.highContrast",
             "c4a:name": "com.microsoft.windows.highContrast",
             "c4a:settings": [{
                 "@type": "c4a:Setting",
@@ -22433,13 +22868,18 @@
                 "c4a:isExactMatching": true,
                 "c4a:name": "High contrast",
                 "c4a:primitive_type": "boolean",
-                "c4a:refersTo": "http://registry.gpii.net/common/highContrast"
+                "c4a:refersTo": "http://registry.gpii.net/common/highContrastEnabled"
             }]
         },
         {
-            "@id": "c4a:com.microsoft.windows.nonClientMetrics",
+            "@id": "http://registry.gpii.net/applications/com.microsoft.windows.nonClientMetrics",
             "@type": "c4a:Solution",
-            "c4a:id": "http://registry.gpii.org/applications/com.microsoft.windows.nonClientMetrics",
+            "c4a:class": [{
+                "@className": "SoftwareForAdjustingColorCombinationAndTextSize",
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.microsoft.windows.nonClientMetrics",
             "c4a:name": "com.microsoft.windows.nonClientMetrics",
             "c4a:settings": [
                 {
@@ -22531,6 +22971,41 @@
                     "c4a:refersTo": "http://registry.gpii.net/common/fontSize"
                 }
             ]
+        },
+        {
+            "@id": "http://registry.gpii.net/applications/com.microsoft.windows.displaySettings",
+            "@type": "c4a:Solution",
+            "c4a:class": [{
+                "@id": "c4a:builtin",
+                "@type": "c4a:AccessibilitySetting"
+            }],
+            "c4a:id": "http://registry.gpii.net/applications/com.microsoft.windows.displaySettings",
+            "c4a:name": "com.microsoft.windows.displaySettings"
+        },
+        {
+            "@id": "c4a:screenreader",
+            "@type": "c4a:AssistiveTechnology",
+            "c4a:name": "ScreenReader"
+        },
+        {
+            "@id": "c4a:magnifier",
+            "@type": "c4a:AssistiveTechnology",
+            "c4a:name": "Magnifier"
+        },
+        {
+            "@id": "c4a:builtin",
+            "@type": "c4a:AccessibilitySetting",
+            "c4a:name": "BuiltinFeatures"
+        },
+        {
+            "@id": "c4a:browser",
+            "@type": "c4a:AccessibilitySolution",
+            "c4a:name": "BrowserFeatures"
+        },
+        {
+            "@id": "c4a:os",
+            "@type": "c4a:AccessibilitySolution",
+            "c4a:name": "DesktopSoftware"
         }
     ]
 }

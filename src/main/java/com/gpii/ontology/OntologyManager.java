@@ -116,6 +116,7 @@ public class OntologyManager
                         Individual tmpInstance = (Individual)instances.next();
                         
                         Solution tmpSolution = new Solution();
+                        tmpSolution.className = tmpInstance.getOntClass().getLocalName();
                         tmpSolution.name = tmpInstance.getLocalName();
                         tmpSolution.id = tmpInstance.getPropertyValue(model.getProperty(NS, "id")).asLiteral().getValue().toString();
                         //System.out.println("\t instance: " + tmpInstance.getLocalName());

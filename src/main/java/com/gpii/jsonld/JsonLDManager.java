@@ -111,7 +111,6 @@ public class JsonLDManager
             
             if(USE_THE_REAL_ONTOLOGY)
                 semantics[0] = semanticsGeneratedFromOwlFilePath;
-
         }
         catch(Exception e)
         {

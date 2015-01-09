@@ -120,7 +120,11 @@ public class RBMM_WebServiceIT extends TestCase
 
             String filepathIN = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/preferences/vladimirSubway.json";
             String filepathActualOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/debug/5_RBMMJsonOutput.json";
-            String filepathExpectedOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/vladimirSubwayOUT.json";
+            String filepathExpectedOUT;
+            if(JsonLDManager.getInstance().USE_THE_REAL_ONTOLOGY == false)
+                filepathExpectedOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/vladimirSubwayOUT.json";
+            else
+                filepathExpectedOUT = System.getProperty("user.dir") + "/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/vladimirSubwayRealOntologyOUT.json";
 
             // read input & expected output
             try {
@@ -525,6 +529,40 @@ public class RBMM_WebServiceIT extends TestCase
             System.out.println("test_Franklin INTEGRATION TEST WAS IGNORED because 'PERFORM_INTEGRATION_TESTS=false' in config.properties");
     }
     
+    public void test_transformOwlToJSONLD() 
+    {
+        if(JsonLDManager.getInstance().PERFORM_INTEGRATION_TESTS)
+        {
+            if(JsonLDManager.getInstance().INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD)
+            {
+                System.out.println("\n*********************************************************************************************************************************");
+                System.out.println("* Testing 'transformOwlToJSONLD' web service                                                                                    *");
+                System.out.println("*                                                                                                                               *");
+                System.out.println("* Please be patient. This process will take some minutes. The whole solutions ontology is being transformed into JSON-LD format.*");
+                System.out.println("* You can disable this test by setting in config file -> INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD = false  *");
+                System.out.println("*********************************************************************************************************************************");
+
+                Client client = Client.create();
+                WebResource webResource = client.resource("http://localhost:8080/RBMM/transformOwlToJSONLD");
+                ClientResponse response = webResource.get(ClientResponse.class);
+                String output = response.getEntity(String.class);
+
+                System.out.println("\nWeb service output:\n");
+                System.out.println(output);
+
+                //assertEquals(output, expectedOutputJsonStr);
+            }
+            else
+            {
+                System.out.println("\n******************************************************************************************************************************************************************************");
+                System.out.println("* Testing of 'transformOwlToJSONLD' was skipped because it's a time consuming process (config file -> INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD = false) *");
+                System.out.println("******************************************************************************************************************************************************************************\n");
+            }
+        }
+        else
+            System.out.println("test_transformOwlToJSONLD INTEGRATION TEST WAS IGNORED because 'PERFORM_INTEGRATION_TESTS=false' in config.properties");
+    }
+    
 	/*
     public void test_resolveMSC_OneSolutionPreffered(){
         
@@ -609,35 +647,6 @@ public class RBMM_WebServiceIT extends TestCase
         //IT FAILS BECAUSE IT NEEDS ANOTHER SEMANTIC SOLUTIONS FILE -> assertEquals(actualOutputStr, expectedOutputJsonStr);
     } 
     
-    public void test_transformOwlToJSONLD() 
-    {
-        if(JsonLDManager.getInstance().INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD)
-        {
-            System.out.println("\n*********************************************************************************************************************************");
-            System.out.println("* Testing 'transformOwlToJSONLD' web service                                                                                    *");
-            System.out.println("*                                                                                                                               *");
-            System.out.println("* Please be patient. This process will take some minutes. The whole solutions ontology is being transformed into JSON-LD format.*");
-            System.out.println("* You can disable this test by setting in config file -> INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD = false  *");
-            System.out.println("*********************************************************************************************************************************");
-
-            Client client = Client.create();
-            WebResource webResource = client.resource("http://localhost:8080/RBMM/transformOwlToJSONLD");
-            ClientResponse response = webResource.get(ClientResponse.class);
-            String output = response.getEntity(String.class);
-
-            System.out.println("\nWeb service output:\n");
-            System.out.println(output);
-
-            //assertEquals(output, expectedOutputJsonStr);
-        }
-        else
-        {
-            System.out.println("\n******************************************************************************************************************************************************************************");
-            System.out.println("* Testing of 'transformOwlToJSONLD' was skipped because it's a time consuming process (config file -> INTEGRATION_TESTS_INCLUDE_ONTOLOGY_TRANSFORMATION_INTO_JSONLD = false) *");
-            System.out.println("******************************************************************************************************************************************************************************\n");
-        }
-
-    }
     public void test_BasicAlignment(){
         
     	System.out.println("\n**********************************************************************");

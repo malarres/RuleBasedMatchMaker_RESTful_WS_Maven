@@ -73,13 +73,109 @@ public class TransformerManager
                 Solution tmpSolution = OntologyManager.getInstance().allSolutions.get(i);
                 
                 JSONObject tmpSolutionJsonObj = new JSONObject();
-                tmpSolutionJsonObj.put("@id", C4A_NS + tmpSolution.id);
+                tmpSolutionJsonObj.put("@id", "http://registry.gpii.net/applications/" + tmpSolution.id);
                 tmpSolutionJsonObj.put("@type", C4A_NS + "Solution");
-                tmpSolutionJsonObj.put(C4A_NS + "id", "http://registry.gpii.org/applications/" + tmpSolution.id);
+                tmpSolutionJsonObj.put(C4A_NS + "id", "http://registry.gpii.net/applications/" + tmpSolution.id);
                 tmpSolutionJsonObj.put(C4A_NS + "name", tmpSolution.id);
+                
+                boolean addScreenReaderTTSEnabled = false;
+                boolean addMagnifierEnabled = false;
+                boolean addOnScreenKeyboardEnabled = false;
 
+                //class
+                JSONArray tmpSolClassJsonArray = new JSONArray();
+               
+                if(tmpSolution.id.equals("com.yourdolphin.supernova-as")) //cheat for SuperNova, which is both screenreader and magnifier - it cannot be supported in .owl beacuse each solution must belong only to one class
+                {
+                    JSONObject tmpSolClassJsonObj1 = new JSONObject();
+                    tmpSolClassJsonObj1.put("@ontClassName", "ScreenReaderSoftware");
+                    tmpSolClassJsonObj1.put("@type", C4A_NS + "AssistiveTechnology");
+                    tmpSolClassJsonObj1.put("@id", C4A_NS + "screenreader");
+                    tmpSolClassJsonArray.put(tmpSolClassJsonObj1);
+                    
+                    JSONObject tmpSolClassJsonObj2 = new JSONObject();
+                    tmpSolClassJsonObj2.put("@ontClassName", "MagnifyingSoftware");
+                    tmpSolClassJsonObj2.put("@type", C4A_NS + "AssistiveTechnology");
+                    tmpSolClassJsonObj2.put("@id", C4A_NS + "magnifier");
+                    tmpSolClassJsonArray.put(tmpSolClassJsonObj2);
+                    
+                    addScreenReaderTTSEnabled = true;
+                    addMagnifierEnabled = true;
+                }
+                else if(tmpSolution.id.equals("es.codefactory.android.app.ma")) //another cheat for http://registry.gpii.net/applications/es.codefactory.android.app.ma because in the .owl it's under SoftwareInterfacesForComputersAndMobileDevices while we want it under screenreaders
+                {
+                    JSONObject tmpSolClassJsonObj = new JSONObject();
+                    tmpSolClassJsonObj.put("@ontClassName", "ScreenReaderSoftware");
+                    tmpSolClassJsonObj.put("@type", C4A_NS + "AssistiveTechnology");
+                    tmpSolClassJsonObj.put("@id", C4A_NS + "screenreader");
+                    tmpSolClassJsonArray.put(tmpSolClassJsonObj);
+                    
+                    addScreenReaderTTSEnabled = true;
+                }
+                else if(tmpSolution.id.equals("org.chrome.cloud4chrome")) //another cheat for http://registry.gpii.net/applications/org.chrome.cloud4chrome because in the .owl it's under MagnifyingSoftware while we want it under browser
+                {
+                    JSONObject tmpSolClassJsonObj = new JSONObject();
+                    tmpSolClassJsonObj.put("@ontClassName", "MagnifyingSoftware");
+                    tmpSolClassJsonObj.put("@type", C4A_NS + "AccessibilitySolution");
+                    tmpSolClassJsonObj.put("@id", C4A_NS + "browser");
+                    tmpSolClassJsonArray.put(tmpSolClassJsonObj);
+                    
+                    addScreenReaderTTSEnabled = true;
+                }
+                else //all others
+                {
+                    JSONObject tmpSolClassJsonObj = new JSONObject();
+                    String[] tmpClassAndId = getJSONLDClassAndIDFromOntClassName(tmpSolution.className);
+                    tmpSolClassJsonObj.put("@ontClassName", tmpSolution.className);
+                    tmpSolClassJsonObj.put("@type", tmpClassAndId[0]);
+                    tmpSolClassJsonObj.put("@id", tmpClassAndId[1]);
+                    tmpSolClassJsonArray.put(tmpSolClassJsonObj);
+                    
+                    if(tmpClassAndId[1].equals(C4A_NS + "screenreader")) 
+                        addScreenReaderTTSEnabled = true;
+                    if(tmpClassAndId[1].equals(C4A_NS + "magnifier"))
+                        addMagnifierEnabled = true;
+                    if(tmpSolution.id.equals("com.microsoft.windows.onscreenKeyboard"))
+                        addOnScreenKeyboardEnabled = true;
+                }
+                
+                tmpSolutionJsonObj.put(C4A_NS + "class", tmpSolClassJsonArray);
+                
                 //settings
                 JSONArray tmpSolSettingsJsonArray = new JSONArray();
+                
+                //add screenReaderTTSEnabled for all screenreaders
+                if(addScreenReaderTTSEnabled)
+                {
+                    JSONObject tmpAddScreenReaderTTSEnabledSettingJsonObj = new JSONObject();
+                    tmpAddScreenReaderTTSEnabledSettingJsonObj.put("@type", "c4a:Setting");
+                    tmpAddScreenReaderTTSEnabledSettingJsonObj.put("c4a:id", "screenReaderTTSEnabled");
+                    tmpAddScreenReaderTTSEnabledSettingJsonObj.put("c4a:refersTo", "http://registry.gpii.net/common/screenReaderTTSEnabled");
+                    tmpAddScreenReaderTTSEnabledSettingJsonObj.put("c4a:name", "screenReaderTTSEnabled");
+                    tmpSolSettingsJsonArray.put(tmpAddScreenReaderTTSEnabledSettingJsonObj);
+                }
+                
+                //add magnifierEnabled for all magnifiers
+                if(addMagnifierEnabled)
+                {
+                    JSONObject tmpAddMagnifierEnabledSettingJsonObj = new JSONObject();
+                    tmpAddMagnifierEnabledSettingJsonObj.put("@type", "c4a:Setting");
+                    tmpAddMagnifierEnabledSettingJsonObj.put("c4a:id", "magnifierEnabled");
+                    tmpAddMagnifierEnabledSettingJsonObj.put("c4a:refersTo", "http://registry.gpii.net/common/magnifierEnabled");
+                    tmpAddMagnifierEnabledSettingJsonObj.put("c4a:name", "magnifierEnabled");
+                    tmpSolSettingsJsonArray.put(tmpAddMagnifierEnabledSettingJsonObj);
+                }
+                
+                //add addOnScreenKeyboardEnabled for "com.microsoft.windows.onscreenKeyboard"
+                if(addOnScreenKeyboardEnabled)
+                {
+                    JSONObject tmpAddOnScreenKeyboardEnabledSettingJsonObj = new JSONObject();
+                    tmpAddOnScreenKeyboardEnabledSettingJsonObj.put("@type", "c4a:Setting");
+                    tmpAddOnScreenKeyboardEnabledSettingJsonObj.put("c4a:id", "onScreenKeyboard");
+                    tmpAddOnScreenKeyboardEnabledSettingJsonObj.put("c4a:refersTo", "http://registry.gpii.net/common/onScreenKeyboardEnabled");
+                    tmpAddOnScreenKeyboardEnabledSettingJsonObj.put("c4a:name", "onScreenKeyboard");
+                    tmpSolSettingsJsonArray.put(tmpAddOnScreenKeyboardEnabledSettingJsonObj);
+                }
                 
                 ArrayList<Setting> allSettings = tmpSolution.settings;
                 for(int j=0; j<allSettings.size(); j++)
@@ -150,16 +246,103 @@ public class TransformerManager
                 
                 graph.put(tmpSolutionJsonObj);
             }
+            
+            //cheat for manually adding com.microsoft.windows.displaySettings - it is not included in .owl as it has no settings
+            JSONObject tmpDisplaySettingsJsonObj = new JSONObject();
+            tmpDisplaySettingsJsonObj.put("@id", "http://registry.gpii.net/applications/com.microsoft.windows.displaySettings");
+            tmpDisplaySettingsJsonObj.put("@type", "c4a:Solution");
+            tmpDisplaySettingsJsonObj.put("c4a:id", "http://registry.gpii.net/applications/com.microsoft.windows.displaySettings");
+            tmpDisplaySettingsJsonObj.put("c4a:name", "com.microsoft.windows.displaySettings");
+            JSONArray tmpDisplaySettingsClassJsonArray = new JSONArray();
+            JSONObject tmpDisplaySettingsClassJsonObj = new JSONObject();
+            tmpDisplaySettingsClassJsonObj.put("@type", "c4a:AccessibilitySetting");
+            tmpDisplaySettingsClassJsonObj.put("@id", "c4a:builtin");
+            tmpDisplaySettingsClassJsonArray.put(tmpDisplaySettingsClassJsonObj);
+            tmpDisplaySettingsJsonObj.put("c4a:class", tmpDisplaySettingsClassJsonArray);
+            graph.put(tmpDisplaySettingsJsonObj);
+            //-cheat for manually adding com.microsoft.windows.displaySettings
+            
+            //cheat for manually added some extra json content
+            JSONObject tmpExtraJsonObj1 = new JSONObject();
+            tmpExtraJsonObj1.put("@id", "c4a:screenreader");
+            tmpExtraJsonObj1.put("@type", "c4a:AssistiveTechnology");
+            tmpExtraJsonObj1.put("c4a:name", "ScreenReader");
+            graph.put(tmpExtraJsonObj1);
+            
+            JSONObject tmpExtraJsonObj2 = new JSONObject();
+            tmpExtraJsonObj2.put("@id", "c4a:magnifier");
+            tmpExtraJsonObj2.put("@type", "c4a:AssistiveTechnology");
+            tmpExtraJsonObj2.put("c4a:name", "Magnifier");
+            graph.put(tmpExtraJsonObj2);
+            
+            JSONObject tmpExtraJsonObj3 = new JSONObject();
+            tmpExtraJsonObj3.put("@id", "c4a:builtin");
+            tmpExtraJsonObj3.put("@type", "c4a:AccessibilitySetting");
+            tmpExtraJsonObj3.put("c4a:name", "BuiltinFeatures");
+            graph.put(tmpExtraJsonObj3);
+            
+            JSONObject tmpExtraJsonObj4 = new JSONObject();
+            tmpExtraJsonObj4.put("@id", "c4a:browser");
+            tmpExtraJsonObj4.put("@type", "c4a:AccessibilitySolution");
+            tmpExtraJsonObj4.put("c4a:name", "BrowserFeatures");
+            graph.put(tmpExtraJsonObj4);
+            
+            JSONObject tmpExtraJsonObj5 = new JSONObject();
+            tmpExtraJsonObj5.put("@id", "c4a:os");
+            tmpExtraJsonObj5.put("@type", "c4a:AccessibilitySolution");
+            tmpExtraJsonObj5.put("c4a:name", "DesktopSoftware");
+            graph.put(tmpExtraJsonObj5);       
+            //-cheat for manually added some extra json content
 
             result.put("@context", context);
             result.put("@graph", graph);
 
-            com.gpii.utils.Utils.getInstance().writeFile(JsonLDManager.getInstance().semanticsGeneratedFromOwlFilePath, result.toString(4));     
+            com.gpii.utils.Utils.getInstance().writeFile(System.getProperty("user.dir") + JsonLDManager.getInstance().WEBINF_PATH + JsonLDManager.getInstance().semanticsGeneratedFromOwlFilePath, result.toString(4));     
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
+    }
+    
+    public String[] getJSONLDClassAndIDFromOntClassName(String tmpOntClassName)
+    {
+        String C4A_NS = "c4a:";
+        String[] res = new String[2]; //[0] is for class and [1] is for id
+        res[0] = "...unknown...";
+        res[1] = "...unknown...";
+        
+        if(tmpOntClassName.equals("ScreenReaderSoftware"))
+        {
+            res[0] = C4A_NS + "AssistiveTechnology";
+            res[1] = C4A_NS + "screenreader";
+        }
+        else if(tmpOntClassName.equals("WebBrowsers"))
+        {
+            res[0] = C4A_NS + "AccessibilitySolution";
+            res[1] = C4A_NS + "browser";
+        }
+        else if(tmpOntClassName.equals("MagnifyingSoftware"))
+        {
+            res[0] = C4A_NS + "AssistiveTechnology";
+            res[1] = C4A_NS + "magnifier";
+        }
+        else if(tmpOntClassName.equals("SoftwareForAdjustingColorCombinationAndTextSize")
+                || tmpOntClassName.equals("OnScreenKeyboard")
+                || tmpOntClassName.equals("MouseControlSoftware")
+                || tmpOntClassName.equals("SoftwareToModifyThePointerAppearance")
+                || tmpOntClassName.equals("SoftwareInterfacesForComputersAndMobileDevices"))
+        {
+            res[0] = C4A_NS + "AccessibilitySetting";
+            res[1] = C4A_NS + "builtin";
+        }
+        else if(tmpOntClassName.equals("AlternativeInputDevices"))
+        {
+            res[0] = C4A_NS + "AccessibilitySolution";
+            res[1] = C4A_NS + "os";
+        }
+        
+        return res;
     }
 
     public String transformInput(String in) throws JSONException
