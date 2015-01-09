@@ -11,6 +11,8 @@ To build the RuleBasedMatchMaker web-service:
 
 3) Run "mvn clean install" in the root directory of the source code
 
+4) Deploy the generated .war to your [Apache Tomcat server](http://tomcat.apache.org/)
+
 Usage example using [curl](http://curl.haxx.se/):
 
 	curl -X POST -H "Content-Type: application/json" http://localhost:8080/CLOUD4All_RBMM_Restful_WS/RBMM/runJSONLDRules -d @{MY_INPUT.json}
