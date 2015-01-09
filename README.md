@@ -17,7 +17,11 @@ Usage example using [curl](http://curl.haxx.se/):
 
 ### Troubleshooting 
 	
-If you are encountering problems with test failures, please ensure that the encoding of the debug files, e.g. [5_RBMMJsonOutput.json](https://github.com/NickKaklanis/RuleBasedMatchMaker_RESTful_WS_Maven/blob/JSON-LD/src/main/webapp/WEB-INF/debug/5_RBMMJsonOutput.json), is similar with the encoding of the files including the tests' expected outcomes, e.g. [expected_output_test1.json](https://github.com/NickKaklanis/RuleBasedMatchMaker_RESTful_WS_Maven/blob/JSON-LD/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/expected_output_test1.json). You can check the encoding of a file using e.g. [Notepad++](http://notepad-plus-plus.org/) Menu->Encoding.
+If you are encountering problems with test failures, please ensure that the encoding of the debug files, e.g. [5_RBMMJsonOutput.json](https://github.com/NickKaklanis/RuleBasedMatchMaker_RESTful_WS_Maven/blob/review3/src/main/webapp/WEB-INF/debug/5_RBMMJsonOutput.json), is similar with the encoding of the files including the tests' expected outcomes, e.g. [vladimirLobbyOUT.json](https://github.com/NickKaklanis/RuleBasedMatchMaker_RESTful_WS_Maven/blob/review3/src/main/webapp/WEB-INF/testData/expectedTestOutcomes/vladimirLobbyOUT.json). You can check the encoding of a file using e.g. [Notepad++](http://notepad-plus-plus.org/) Menu->Encoding.
+
+OR 
+
+just simply set [PERFORM_INTEGRATION_TESTS=false](https://github.com/NickKaklanis/RuleBasedMatchMaker_RESTful_WS_Maven/blob/review3/src/main/webapp/WEB-INF/config.properties#L1)
 	
 ### Funding Acknowledgement
 
