@@ -837,7 +837,7 @@ public class TransformerManager
 
                         JSONObject msg = new JSONObject();
                         msg.put("message", soln.get("?msgText").toString());
-                        msg.put("learnMore", "todo Sollution URI");
+                        msg.put("learnMore", "http://wwwpub.zih.tu-dresden.de/~loitsch/review/nvdaTutorial.html");
                         msgSet.put(soln.get("?msgLang").toString(), msg);
                     }
                 }
