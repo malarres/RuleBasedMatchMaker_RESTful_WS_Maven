@@ -92,7 +92,8 @@ public class Utils
         return res;
     }
     
-    public Object transformValueSpace(Object o){
+    public Object transformValueSpace(Object o)
+    {
     	Object transVal = o; 
         
     	try {
@@ -109,7 +110,7 @@ public class Utils
         catch (NumberFormatException e){
         }
     	
-		return transVal;    	
+        return transVal;    	
     }
     
 }
