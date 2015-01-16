@@ -4,6 +4,7 @@ import com.gpii.jsonld.JsonLDManager;
 import com.gpii.ontology.OntologyManager;
 import com.gpii.ontology.Setting;
 import com.gpii.ontology.Solution;
+import com.gpii.utils.Utils;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -771,8 +772,12 @@ public class TransformerManager
                          */
                         condition.put("type", soln.get("?condOp").toString());
                         condition.put("inputPath", soln.get("?condPa").toString());
-                        condition.put("min", soln.get("?condMi").toString());
-                        condition.put("max", soln.get("?condMa").toString());
+                        
+                        Object setMin = soln.get("?condMi"); 
+                        Object setMax = soln.get("?condMa");
+                       
+                        condition.put("min", Utils.getInstance().transformValueSpace(setMin));
+                        condition.put("max", Utils.getInstance().transformValueSpace(setMax));
 
                         conSet.put(condition);								
                     }
@@ -837,7 +842,7 @@ public class TransformerManager
 
                         JSONObject msg = new JSONObject();
                         msg.put("message", soln.get("?msgText").toString());
-                        msg.put("learnMore", "todo Sollution URI");
+                        msg.put("learnMore", "http://wwwpub.zih.tu-dresden.de/~loitsch/review/nvdaTutorial.html");
                         msgSet.put(soln.get("?msgLang").toString(), msg);
                     }
                 }

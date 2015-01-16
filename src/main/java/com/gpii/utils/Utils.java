@@ -13,6 +13,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 /**
  *
  * @author nkak
+ * @author claudia loitsch
  */
 public class Utils 
 {
@@ -89,6 +90,26 @@ public class Utils
             ex.printStackTrace();
         }          
         return res;
+    }
+    
+    public Object transformValueSpace(Object o){
+    	Object transVal = o; 
+        
+    	try {
+            int i = Integer.parseInt(o.toString());
+            transVal = i;
+        } 
+        catch (NumberFormatException e) {
+        }
+
+        try {
+            double i = Double.parseDouble(o.toString());
+            transVal = i;
+        } 
+        catch (NumberFormatException e){
+        }
+    	
+		return transVal;    	
     }
     
 }
