@@ -639,7 +639,14 @@
                     "c4a:id":"access_commonprefs_editingkeyboardecho",
                     "c4a:refersTo":"http://registry.gpii.net/common/keyEcho",
                     "c4a:name":"pitch"
-                }
+                },
+                {
+                    "@type":"c4a:Setting",
+                    "c4a:id":"access_commonprefs_screenReaderBrailleOutput",
+                    "c4a:refersTo":"http://registry.gpii.net/common/screenReaderBrailleOutput",
+                    "c4a:name":"braille"
+                }                
+                
             ]
         },
         {

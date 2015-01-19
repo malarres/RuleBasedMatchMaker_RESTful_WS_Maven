@@ -17,20 +17,22 @@
         "com.microsoft.windows.mouseTrailing" : {
           "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/mouseTrailing" : 19.0
+            "http://registry.gpii.net/common/mouseTrailing" : 5.0
           }
         },
         "org.chrome.cloud4chrome" : {
-          "active" : true,
+          "active" : false,
           "settings" : {
             "http://registry.gpii.net/applications/org.chrome.cloud4chrome" : {
-              "fontSize" : "medium"
+              "fontSize" : "medium",
+              "highContrastEnabled" : true
             }
           }
         },
         "org.nvda-project" : {
           "active" : true,
           "settings" : {
+            "http://registry.gpii.net/common/readingUnit" : "sentence",
             "http://registry.gpii.net/common/screenReaderTTSEnabled" : true,
             "http://registry.gpii.net/common/speechRate" : 300.0
           }
@@ -55,7 +57,7 @@
         "type" : "helpMessage"
       } ]
     },
-    "noise" : {
+    "subway" : {
       "applications" : {
         "com.microsoft.windows.cursors" : {
           "active" : true,
@@ -72,30 +74,32 @@
         "com.microsoft.windows.mouseTrailing" : {
           "active" : true,
           "settings" : {
-            "http://registry.gpii.net/common/mouseTrailing" : 10.0
+            "http://registry.gpii.net/common/mouseTrailing" : 5.0
           }
         },
         "org.chrome.cloud4chrome" : {
-          "active" : true,
+          "active" : false,
           "settings" : {
             "http://registry.gpii.net/applications/org.chrome.cloud4chrome" : {
-              "fontSize" : "medium"
+              "fontSize" : "medium",
+              "highContrastEnabled" : true
             }
           }
         },
         "org.nvda-project" : {
           "active" : true,
           "settings" : {
+            "http://registry.gpii.net/common/readingUnit" : "sentence",
             "http://registry.gpii.net/common/screenReaderTTSEnabled" : true,
             "http://registry.gpii.net/common/speechRate" : 300.0
           }
         }
       },
       "conditions" : [ {
-        "inputPath" : "http://registry.gpii.net/conditions/noise",
-        "max" : "6:00",
-        "min" : "18:00",
-        "type" : "http://gpii.net/common/operators/inRange"
+        "inputPath" : "http://registry\\.gpii\\.net/common/environment/visual\\.luminance",
+        "max" : 400000.0,
+        "min" : 400.0,
+        "type" : "http://registry.gpii.net/conditions/inRange"
       } ],
       "metadata" : [ {
         "message" : {

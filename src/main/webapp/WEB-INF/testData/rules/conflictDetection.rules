@@ -39,27 +39,15 @@
 	print('CONTEXT' ?if_id)
 	print('AFFECTED SOLUTION: ' ?s1)
 	]
-
-// DETECTION AND RESOLUTIN OF HIGH CONTRAST CONFLICT ON WINDOWS
-	[DetectHighcontrastConflict:
-	(?if rdf:type c4a:InferredConfiguration)
-	(?if c4a:id ?if_id)	
+	
+	// HACK - Google Chrome Browser plugins schall not be activated per default
+	[DeactivateGoogleChrome:
 	(?if c4a:refersTo ?config_x)
-	(?if c4a:refersTo ?config_y)
 	(?config_x rdf:type c4a:Configuration)
-	(?config_y rdf:type c4a:Configuration)
-	(?config_x c4a:refersTo http://registry.gpii.net/applications/com.microsoft.windows.highContrast)
-	(?config_y c4a:refersTo ?s2)
-	(?config_y c4a:settings ?s2_set)
-	(?s2_set c4a:name "highContrastEnabled")
-	(?s2_set c4a:value "true")
-	notEqual(?config_x, ?config_y)
+	(?config_x c4a:isActive "true")	
+	(?config_x c4a:refersTo http://registry.gpii.net/applications/org.chrome.cloud4chrome)
 	->
-	drop(8)
-	print('************ CONFLICT DETECTION ****************')
-	print('CONFLICT DETECTED: High Contrast Conflict on Windows')
-	print('CONFLICT CLASS: Layer Based Conclicts')
-	print('CONTEXT' ?if_id)	
-	print('AFFECTED SOLUTION: ' ?s2)
-	print('CONFLICT RESOLUTION: deactivate high contrast')
-	] 
+	drop(2)
+	(?config_x c4a:isActive "false")
+	print('************ HACK GOOGLE CHROME HAS BEEN DEACTIVATED ****************')
+	]
