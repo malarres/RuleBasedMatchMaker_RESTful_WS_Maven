@@ -5,6 +5,7 @@
         "es.codefactory.android.app.ma" : {
           "active" : true,
           "settings" : {
+            "http://registry.gpii.net/common/screenReaderBrailleOutput" : true,
             "http://registry.gpii.net/common/screenReaderTTSEnabled" : true,
             "http://registry.gpii.net/common/speechRate" : 350.0
           }
