@@ -32,6 +32,7 @@
         "org.nvda-project" : {
           "active" : true,
           "settings" : {
+            "http://registry.gpii.net/common/readingUnit" : "sentence",
             "http://registry.gpii.net/common/screenReaderTTSEnabled" : true,
             "http://registry.gpii.net/common/speechRate" : 300.0
           }
@@ -88,6 +89,7 @@
         "org.nvda-project" : {
           "active" : true,
           "settings" : {
+            "http://registry.gpii.net/common/readingUnit" : "sentence",
             "http://registry.gpii.net/common/screenReaderTTSEnabled" : true,
             "http://registry.gpii.net/common/speechRate" : 300.0
           }
